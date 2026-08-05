@@ -10,7 +10,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -23,6 +23,17 @@ jobs:
       - name: Copy .env
         run: cp .env.example .env
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.19.1'
+
+      - name: Install NPM Dependencies
+        run: npm ci
+
+      - name: Build Assets
+        run: npm run build
+
       - name: Generate App Key & Run Migrations
         run: |
           php artisan key:generate --ansi
@@ -30,14 +41,3 @@ jobs:
 
       - name: Run PHP Tests
         run: php artisan test
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-
-      - name: Install NPM Dependencies
-        run: npm ci
-
-      - name: Build Assets
-        run: npm run build --if-present 

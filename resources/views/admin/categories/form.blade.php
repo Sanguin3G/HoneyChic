@@ -81,11 +81,11 @@
                     <a href="{{ route('admin.categories.index') }}" class="text-sm font-medium text-zinc-900 dark:text-white hover:text-zinc-700 dark:hover:text-zinc-300">Cancel</a>
                     @if (isset($category))
                         <button type="submit" class="text-sm font-medium text-zinc-900 bg-yellow-400 hover:bg-yellow-500 rounded-md px-4 py-2 focus:ring-0 focus:border-zinc-300 flex items-center gap-2">
-                            <x-heroicon-o-pencil-square class="w-4 h-4 text-zinc-900" /> Update Category
+                            <x-icon name="pencil-square" class="w-4 h-4 text-zinc-900" /> Update Category
                         </button>
                     @else
                         <button type="submit" class="text-sm font-medium text-white bg-amber-600 hover:bg-amber-700 rounded-md px-4 py-2 focus:ring-0 focus:border-amber-300 flex items-center gap-2">
-                            <x-heroicon-o-plus class="w-4 h-4 text-white" /> Create Category
+                            <x-icon name="plus" class="w-4 h-4 text-white" /> Create Category
                         </button>
                     @endif
                 </div>

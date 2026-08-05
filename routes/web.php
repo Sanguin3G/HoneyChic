@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\OrderController;
+use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Auth\ConfirmPasswordController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
@@ -74,11 +75,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 
     // Admin routes
-    Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () {
+    Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(function () {
         Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
         // Admin Products
-        Route::resource('products', ProductController::class)->except(['show']);
+        Route::resource('products', AdminProductController::class)->except(['show']);
 
         // Admin Categories
         Route::resource('categories', CategoryController::class)->except(['show']);

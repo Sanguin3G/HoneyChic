@@ -30,7 +30,7 @@ import { getOrders } from './api';
         name: 'Actions',
         formatter: (cell, row) => html(
           `<a href="/admin/orders/${row.cells[0].data}" class="text-blue-600 hover:underline mr-2">View</a>` +
-          `<form action="/admin/orders/${row.cells[0].data}/update-status" method="POST" style="display:inline;">` +
+          `<form action="/admin/orders/${row.cells[0].data}/status" method="POST" style="display:inline;">` +
           `<input type="hidden" name="_token" value="${document.querySelector('meta[name=csrf-token]').getAttribute('content')}">` +
           `<input type="hidden" name="_method" value="PUT">` +
           `<select name="status" onchange="this.form.submit()" class="text-sm">` +

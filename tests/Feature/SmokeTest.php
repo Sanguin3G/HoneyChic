@@ -6,10 +6,10 @@ use Tests\TestCase;
 
 class SmokeTest extends TestCase
 {
-    /** @test */
-    public function home_page_loads_successfully()
+    public function test_home_page_loads_successfully(): void
     {
         $response = $this->get('/');
-        $response->assertStatus(200);
+
+        $response->assertOk();
     }
-} 
+}

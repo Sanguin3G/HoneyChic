@@ -16,7 +16,7 @@ class UpdateProductRequest extends FormRequest
         // Assuming any authenticated admin user can update products
         // Add specific authorization logic if needed (e.g., check ownership or permissions)
         // Example: return $this->user()->can('update', $this->route('product'));
-        return true;
+        return $this->user()?->isAdmin() === true;
     }
 
     /**

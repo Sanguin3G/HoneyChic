@@ -1,16 +1,16 @@
 import Alpine from 'alpinejs';
-import { checkout } from './api';
 
-Alpine.data('checkoutPage', () => ({
+Alpine.data('checkoutPage', (initialItems = []) => ({
+    items: initialItems,
     form: {
-        // define form fields as needed
+        name: '',
+        email: '',
+        phone: '',
+        shipping_address: '',
+        billing_address: '',
+        sameAsShipping: false,
+        payment_method: 'Cash on Delivery',
+        notes: '',
+        receive_email_confirmation: false,
     },
-    async submit() {
-        try {
-            await checkout(this.form);
-            window.location.href = '/customer/orders';
-        } catch (error) {
-            console.error('Checkout failed:', error);
-        }
-    }
-})); 
+}));

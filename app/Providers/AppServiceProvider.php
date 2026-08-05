@@ -9,22 +9,19 @@ use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
-    /**
-     * Register any application services.
-     */
     public function register(): void
     {
         //
     }
 
-    /**
-     * Bootstrap any application services.
-     */
     public function boot(): void
     {
-        Blade::anonymousComponentPath(resource_path('views/components/phosphor'), 'phosphor');
+        $phosphorPath = resource_path('views/components/phosphor');
 
-        // Attach CartComposer to ALL views
+        if (is_dir($phosphorPath)) {
+            Blade::anonymousComponentPath($phosphorPath, 'phosphor');
+        }
+
         View::composer('*', CartComposer::class);
     }
 }

@@ -7,22 +7,18 @@ use App\Http\Requests\Customer\Checkout\ProcessCheckoutRequest;
 use App\Mail\OrderProcessedMail;
 use App\Models\Order;
 use App\Models\OrderItem;
-use Exception;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use App\Models\Product;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
 use Illuminate\View\View;
-use Illuminate\Http\RedirectResponse;
+use RuntimeException;
 
 class CheckoutController extends Controller
 {
-    /**
-     * Show the checkout form if cart is not empty.
-     */
-    public function show(Request $request): View|RedirectResponse
+    public function show(): View|RedirectResponse
     {
         $cart = Session::get('cart', []);
 
@@ -31,14 +27,11 @@ class CheckoutController extends Controller
                 ->with('error', 'Your cart is empty. Please add items before proceeding to checkout.');
         }
 
-        $user = $request->user();
+        $user = request()->user();
 
         return view('customer.checkout.index', compact('user', 'cart'));
     }
 
-    /**
-     * Process the checkout and create an order.
-     */
     public function process(ProcessCheckoutRequest $request): RedirectResponse
     {
         $validated = $request->validated();
@@ -48,52 +41,76 @@ class CheckoutController extends Controller
             return redirect()->route('cart.view')->with('error', 'Your cart became empty during checkout. Please try again.');
         }
 
-        DB::beginTransaction();
         try {
-            $totalAmount = 0;
-            foreach ($cart as $item) {
-                $totalAmount += $item['price'] * $item['quantity'];
-            }
+            $order = DB::transaction(function () use ($validated, $cart): Order {
+                $items = [];
+                $totalAmount = 0.0;
 
-            $order = Order::create([
-                'user_id' => Auth::check() ? Auth::id() : null,
-                'total_amount' => $totalAmount,
-                'status' => 'pending',
-                'shipping_address' => $validated['shipping_address'],
-                'billing_address' => $validated['billing_address'] ?? null,
-                'payment_method' => $validated['payment_method'],
-                'notes' => $validated['notes'] ?? null,
-            ]);
+                foreach ($cart as $productId => $item) {
+                    $product = Product::query()->lockForUpdate()->find((int) ($item['product_id'] ?? $productId));
 
-            foreach ($cart as $productId => $details) {
-                OrderItem::create([
-                    'order_id' => $order->id,
-                    'product_id' => $productId,
-                    'quantity' => $details['quantity'],
-                    'price' => $details['price'],
+                    if (!$product || !$product->is_published) {
+                        throw new RuntimeException('One of the products in your cart is no longer available.');
+                    }
+
+                    $quantity = (int) ($item['quantity'] ?? 0);
+                    if ($quantity < 1 || $product->stock_quantity < $quantity) {
+                        throw new RuntimeException("Not enough stock is available for {$product->name}.");
+                    }
+
+                    $price = (float) $product->price;
+                    $items[] = [
+                        'product_id' => $product->id,
+                        'quantity' => $quantity,
+                        'price' => $price,
+                    ];
+                    $totalAmount += $price * $quantity;
+                }
+
+                if (empty($items)) {
+                    throw new RuntimeException('Your cart is empty. Please add items before checking out.');
+                }
+
+                $order = Order::create([
+                    'user_id' => $validated['user_id'] ?? auth()->id(),
+                    'total_amount' => $totalAmount,
+                    'status' => 'pending',
+                    'shipping_address' => $validated['shipping_address'],
+                    'billing_address' => $validated['billing_address'] ?? null,
+                    'payment_method' => $validated['payment_method'],
+                    'notes' => $validated['notes'] ?? null,
                 ]);
-            }
 
-            DB::commit();
+                foreach ($items as $item) {
+                    OrderItem::create([
+                        'order_id' => $order->id,
+                        ...$item,
+                    ]);
+                }
+
+                return $order;
+            });
 
             if ($validated['receive_email_confirmation'] ?? false) {
                 $order->load('user', 'orderItems.product');
+
                 try {
-                    Mail::to($validated['email'])->send(new OrderProcessedMail($order, $validated['name'], $validated['email']));
-                    Log::info("Order processed email sent to {$validated['email']} for order {$order->id}.");
-                } catch (Exception $e) {
-                    Log::error("Failed to send order processed email for order {$order->id}: " . $e->getMessage());
+                    Mail::to($validated['email'])->send(
+                        new OrderProcessedMail($order, $validated['name'], $validated['email'])
+                    );
+                } catch (\Throwable $e) {
+                    Log::error("Failed to send order processed email for order {$order->id}: {$e->getMessage()}");
                 }
             }
 
             Session::forget('cart');
 
-            return redirect()->route('orders.show', $order)->with('success', 'Your order #' . $order->order_number . ' has been placed successfully!');
-
-        } catch (Exception $e) {
-            DB::rollBack();
+            return redirect()->route('orders.show', $order)
+                ->with('success', 'Your order #' . $order->order_number . ' has been placed successfully!');
+        } catch (\Throwable $e) {
             Log::error('Checkout Error: ' . $e->getMessage());
-            return back()->with('error', 'There was an error processing your order. Please try again.')->withInput();
+
+            return back()->with('error', $e->getMessage())->withInput();
         }
     }
-} 
+}

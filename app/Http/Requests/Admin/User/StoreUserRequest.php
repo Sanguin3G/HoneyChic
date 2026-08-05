@@ -16,7 +16,7 @@ class StoreUserRequest extends FormRequest
     public function authorize(): bool
     {
         // Assuming any authenticated admin user can create users
-        return true;
+        return $this->user()?->isAdmin() === true;
     }
 
     /**

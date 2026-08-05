@@ -32,11 +32,11 @@
             <flux:spacer />
 
             <flux:navlist variant="outline">
-                <flux:navlist.item icon="folder-git-2" href="https://github.com/imacrayon/blade-starter-kit" target="_blank">
+                <flux:navlist.item icon="archive-box" href="https://github.com/imacrayon/blade-starter-kit" target="_blank">
                 {{ __('Repository') }}
                 </flux:navlist.item>
 
-                <flux:navlist.item icon="book-open-text" href="https://laravel.com/docs/starter-kits" target="_blank">
+                <flux:navlist.item icon="book-open" href="https://laravel.com/docs/starter-kits" target="_blank">
                 {{ __('Documentation') }}
                 </flux:navlist.item>
             </flux:navlist>
@@ -47,13 +47,13 @@
                 <flux:profile
                     :name="auth()->user()->name"
                     :initials="auth()->user()->initials()"
-                    icon-trailing="chevrons-up-down"
+                    icon-trailing="arrow-down"
                 />
                 @else
                 <flux:profile
                     :name="__('Guest')"
                     initials="G"
-                    icon-trailing="chevrons-up-down"
+                    icon-trailing="arrow-down"
                 />
                 @endauth
 

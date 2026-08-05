@@ -1,8 +1,8 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "laravel/livewire-starter-kit",
+    "name": "sanguine3/larastore",
     "type": "project",
-    "description": "The official Laravel starter kit for Livewire.",
+    "description": "A small Laravel e-commerce learning project built with Blade and Alpine.js.",
     "keywords": ["laravel", "framework"],
     "license": "MIT",
     "require": {

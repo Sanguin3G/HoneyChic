@@ -14,7 +14,7 @@ class StoreCategoryRequest extends FormRequest
     public function authorize(): bool
     {
         // Assuming any authenticated admin user can create categories
-        return true;
+        return $this->user()?->isAdmin() === true;
     }
 
     /**

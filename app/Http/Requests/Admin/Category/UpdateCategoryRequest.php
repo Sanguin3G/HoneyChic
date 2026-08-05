@@ -17,7 +17,7 @@ class UpdateCategoryRequest extends FormRequest
         // Assuming any authenticated admin user can update categories
         // Add specific authorization logic if needed
         // Example: return $this->user()->can('update', $this->route('category'));
-        return true;
+        return $this->user()?->isAdmin() === true;
     }
 
     /**

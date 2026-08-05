@@ -130,6 +130,11 @@ class ProductController extends Controller
      */
     public function destroy(Product $product): RedirectResponse
     {
+        if ($product->orderItems()->exists()) {
+            return redirect()->route('admin.products.index')
+                ->with('error', 'Products used in orders cannot be deleted.');
+        }
+
         $product->delete();
 
         return redirect()->route('admin.products.index')

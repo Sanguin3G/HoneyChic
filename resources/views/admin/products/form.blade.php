@@ -74,7 +74,7 @@
                         <div class="md:col-span-1 space-y-6">
                             <div class="flex flex-col space-y-2">
                                 <label for="image_url" class="text-sm font-medium text-zinc-900 dark:text-white">Product Image URL</label>
-                                <input name="image" id="image" placeholder="Paste image URL..." value="{{ old('image', $product->image ?? '') }}" class="block w-full p-2 border border-zinc-200 dark:border-zinc-700 rounded-md focus:ring-0 focus:border-zinc-300" />
+                                <input name="image_url" id="image_url" placeholder="Paste image URL..." value="{{ old('image_url', $product->image ?? '') }}" class="block w-full p-2 border border-zinc-200 dark:border-zinc-700 rounded-md focus:ring-0 focus:border-zinc-300" />
                                 @if(isset($product) && $product->image)
                                     <img src="{{ $product->image }}" alt="Preview" class="mt-2 h-24 w-24 object-cover rounded border border-zinc-200 dark:border-zinc-700" />
                                 @endif
@@ -148,11 +148,11 @@
                     <a href="{{ route('admin.products.index') }}" class="text-sm font-medium text-zinc-900 dark:text-white hover:text-zinc-700 dark:hover:text-zinc-300">Cancel</a>
                     @if (isset($product))
                         <button type="submit" class="text-sm font-medium text-zinc-900 bg-yellow-400 hover:bg-yellow-500 rounded-md px-4 py-2 focus:ring-0 focus:border-zinc-300 flex items-center gap-2">
-                            <x-heroicon-o-pencil-square class="w-4 h-4 text-zinc-900" /> Update Product
+                            <x-icon name="pencil-square" class="w-4 h-4 text-zinc-900" /> Update Product
                         </button>
                     @else
                         <button type="submit" class="text-sm font-medium text-white bg-amber-600 hover:bg-amber-700 rounded-md px-4 py-2 focus:ring-0 focus:border-amber-300 flex items-center gap-2">
-                            <x-heroicon-o-plus class="w-4 h-4 text-white" /> Create Product
+                            <x-icon name="plus" class="w-4 h-4 text-white" /> Create Product
                         </button>
                     @endif
                 </div>

@@ -8,9 +8,10 @@
     <div class="py-12">
         <div class="max-w-6xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white dark:bg-gray-900 shadow-xl sm:rounded-lg">
-                <div x-data="checkoutPage()" class="md:grid md:grid-cols-10 md:gap-x-12 p-6 sm:p-8">
+                <div x-data="checkoutPage(@js(array_values($cart)))" class="md:grid md:grid-cols-10 md:gap-x-12 p-6 sm:p-8">
                     <div class="md:col-span-6">
-                        <form id="checkout-form" @submit.prevent="submit()" class="space-y-10">
+                        <form id="checkout-form" method="POST" action="{{ route('checkout.process') }}" class="space-y-10">
+                            @csrf
                             {{-- Contact Information Section --}}
                             <section aria-labelledby="contact-info-heading">
                                 <h3 id="contact-info-heading" class="text-xl font-semibold text-gray-900 dark:text-white mb-5 border-b border-gray-200 dark:border-gray-700 pb-3">Contact Information</h3>
@@ -86,7 +87,7 @@
                                 <div class="space-y-4">
                                     <template x-for="item in items" :key="item.product_id">
                                         <div class="flex justify-between items-start">
-                                            <img :src="item.image" alt="" class="w-12 h-12 object-cover rounded mr-3 flex-shrink-0">
+                                            <img :src="item.image || 'https://via.placeholder.com/48'" alt="" class="w-12 h-12 object-cover rounded mr-3 flex-shrink-0">
                                             <div class="flex-grow pr-2 min-w-0">
                                                 <p class="font-medium text-gray-800 dark:text-gray-200 leading-tight break-words" x-text="item.name"></p>
                                                 <p class="text-xs text-gray-500 dark:text-gray-400" x-text="`Qty: ${item.quantity} @ $${item.price.toFixed(2)}`"></p>

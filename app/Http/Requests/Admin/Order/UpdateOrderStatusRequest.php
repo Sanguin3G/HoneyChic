@@ -16,7 +16,7 @@ class UpdateOrderStatusRequest extends FormRequest
         // Assuming any authenticated admin user can update order statuses
         // Add specific authorization logic if needed (e.g., check permissions)
         // Example: return $this->user()->can('updateStatus', $this->route('order'));
-        return true;
+        return $this->user()?->isAdmin() === true;
     }
 
     /**

@@ -15,7 +15,7 @@ class StoreProductRequest extends FormRequest
     {
         // Assuming any authenticated admin user can create products
         // Adjust authorization logic if needed (e.g., check permissions)
-        return true;
+        return $this->user()?->isAdmin() === true;
     }
 
     /**

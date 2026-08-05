@@ -10,6 +10,10 @@ class OrderItem extends Model
     use HasFactory;
 
     // Fillable attributes for order items.
+    protected $casts = [
+        'price' => 'float',
+    ];
+
     protected $fillable = [
         'order_id',
         'product_id',

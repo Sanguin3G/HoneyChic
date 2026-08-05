@@ -5,7 +5,7 @@
         </h2>
     </x-slot>
 
-    <div x-data="cartPage()" x-init="init()" class="py-12">
+    <div x-data="cartPage(@js(array_values($cart)))" class="py-12">
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white dark:bg-gray-800 shadow-xl sm:rounded-lg">
                 <template x-if="items.length > 0">
@@ -15,7 +15,7 @@
                             <template x-for="item in items" :key="item.product_id">
                                 <div class="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
                                     <div class="flex items-center gap-4">
-                                        <img :src="item.image" alt="" class="w-16 h-16 object-cover rounded">
+                                        <img :src="item.image || 'https://via.placeholder.com/64'" alt="" class="w-16 h-16 object-cover rounded">
                                         <div>
                                             <h4 class="font-semibold text-gray-800 dark:text-gray-200" x-text="item.name"></h4>
                                             <p class="text-sm text-gray-600 dark:text-gray-400" x-text="`Price: $${item.price.toFixed(2)}`"></p>
@@ -23,11 +23,11 @@
                                     </div>
                                     <div class="flex items-center gap-4">
                                         <div class="flex items-center border border-gray-300 dark:border-gray-600 rounded-md overflow-hidden">
-                                            <button type="button" @click="decrement(item)" class="px-2 py-1">
+                                            <button type="button" @click="change(item, -1)" class="px-2 py-1">
                                                 <x-icon name="minus" class="w-4 h-4"/>
                                             </button>
                                             <input type="text" x-model="item.quantity" class="w-10 text-center" readonly>
-                                            <button type="button" @click="increment(item)" class="px-2 py-1">
+                                            <button type="button" @click="change(item, 1)" class="px-2 py-1">
                                                 <x-icon name="plus" class="w-4 h-4"/>
                                             </button>
                                         </div>

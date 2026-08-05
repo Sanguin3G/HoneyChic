@@ -18,7 +18,7 @@ class UpdateUserRequest extends FormRequest
         // Assuming any authenticated admin user can update users
         // Add specific authorization logic if needed (e.g., prevent non-admins from changing roles)
         // Example: return $this->user()->can('update', $this->route('user'));
-        return true;
+        return $this->user()?->isAdmin() === true;
     }
 
     /**

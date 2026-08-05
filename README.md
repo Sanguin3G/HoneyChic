@@ -1,104 +1,79 @@
-# MyApp
+# LaraStore
 
-A Laravel web application using Blade, Alpine.js, and Grid.js for a streamlined front-end experience.
+LaraStore is my first small Laravel e-commerce project. It is intentionally simple: a Blade and Alpine.js storefront with a session cart, checkout flow, customer orders, and a small admin area for managing products, categories, users, and order status.
 
-## ✨ Features
+The current code reflects an early stage of my programming journey. The goal is a working learning project with the original rough visual style kept intact.
 
-- Laravel 12.x
-- Blade Components for reusable UI
-- Alpine.js for lightweight interactivity
-- Grid.js for dynamic tables (search, sort, pagination)
-- Tailwind CSS for styling
-- Blade Icons (Heroicons, Phosphor, Tabler)
-- Vanilla JS fetch helpers for AJAX
+## Features
 
-## 📦 Tech Stack
+- Public product browsing with search, category filtering, sorting, and pagination
+- Authenticated customer dashboard, cart, checkout, and order history
+- Session-based cart with stock checks
+- Admin product, category, user, and order management
+- Order status changes with stock adjustment
+- Blade, Alpine.js, Tailwind CSS, Vite, and Grid.js
+- PHPUnit feature tests
 
-- **Backend**: PHP 8.4+, Laravel 12
-- **Frontend**: Blade + Alpine.js + Grid.js
-- **Styling**: Tailwind CSS
-- **Build Tool**: Vite
-- **Testing**: PHPUnit
-- **CI**: GitHub Actions
+## Requirements
 
-## 🚀 Getting Started
-
-### Prerequisites
-
-- PHP >= 8.4
+- PHP 8.4+
 - Composer
-- Node.js >= 18
-- Git
-- SQLite (default) or MySQL/PostgreSQL
+- Node.js 18+
+- SQLite (the default setup) or another Laravel-supported database
 
-### Installation
+## Local setup
 
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/<your-username>/my-app.git
-   cd my-app
-   ```
-2. Install PHP dependencies:
-   ```bash
-   composer install --no-interaction --prefer-dist
-   ```
-3. Install Node.js dependencies:
-   ```bash
-   npm ci
-   ```
-4. Copy and configure environment variables:
-   ```bash
-   cp .env.example .env
-   php artisan key:generate
-   ```
-5. Run database migrations:
-   ```bash
-   php artisan migrate
-   ```
+~~~
+git clone https://github.com/Sanguine3/LaraStore.git
+cd LaraStore
 
-## 🛠 Development
+composer install
+npm install
 
-Run the local development server and asset watcher:
-
-```bash
-npm run dev
-php artisan serve --host=127.0.0.1 --port=8000
-```
-
-Visit http://127.0.0.1:8000
-
-## 🧪 Testing
-
-Run the PHP test suite with PHPUnit:
-
-```bash
-php artisan test
-```
-
-## 🎨 Building for Production
-
-Compile and minify assets for production:
-
-```bash
+cp .env.example .env
+php artisan key:generate
+php artisan migrate --seed
 npm run build
-```
+php artisan serve
+~~~
 
-## 🔄 Continuous Integration
+Open [http://127.0.0.1:8000](http://127.0.0.1:8000).
 
-A minimal GitHub Actions workflow (`.github/workflows/ci.yml`) runs on push/PR to `main`:
+The seeded admin account is:
 
-- Installs PHP & Node.js dependencies
-- Runs migrations & PHPUnit tests
-- Builds frontend assets
+- Email: admin@example.com
+- Password: adminPassword123
 
-## 🤝 Contributing
+Change or remove that account before using the project anywhere public.
 
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/YourFeature`)
-3. Commit your changes (`git commit -m 'Add new feature'`)
-4. Push to origin (`git push origin feature/YourFeature`)
-5. Open a Pull Request
+## Development
 
-## 📄 License
+Run the backend and Vite watcher in separate terminals:
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details. 
+~~~
+php artisan serve
+npm run dev
+~~~
+
+Or use the Composer helper:
+
+~~~
+composer run dev
+~~~
+
+## Checks
+
+~~~
+php artisan test
+npm run build
+~~~
+
+PHPUnit uses an in-memory SQLite database, so tests do not require a running MySQL server.
+
+## Project notes
+
+This repository is a learning project, not a production-ready store. Payments are represented by the current payment-method field, email confirmation uses Laravel's configured mailer, and product images are stored as URLs. The design is intentionally left close to the original project while the core flows are kept dependable.
+
+## License
+
+This project is for personal learning and is released under the MIT License.

@@ -1,5 +1,7 @@
 @import 'tailwindcss';
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @source '../views';
 @source '../js';
 @source '../../app/Livewire';
@@ -20,9 +22,11 @@
         border-color: var(--color-slate-200);
     }
 
-    html { scroll-behavior: smooth; }
+    html { scroll-behavior: smooth; color-scheme: light; }
     body { @apply bg-slate-50 text-slate-900 antialiased; }
     ::selection { @apply bg-orange-200 text-orange-950; }
+
+    html.dark { color-scheme: dark; }
 }
 
 @layer components {
@@ -41,4 +45,39 @@
 
 @layer utilities {
     [x-cloak] { display: none !important; }
+
+    html.dark body { background-color: #020617; color: #e2e8f0; }
+    html.dark ::selection { background-color: #7c2d12; color: #fff7ed; }
+
+    html.dark .bg-white,
+    html.dark .bg-white\/95 { background-color: #0f172a; }
+    html.dark .bg-slate-50 { background-color: #020617; }
+    html.dark .bg-slate-100 { background-color: #0f172a; }
+    html.dark .bg-slate-900 { background-color: #020617; }
+    html.dark .bg-orange-50 { background-color: #431407; }
+    html.dark .bg-orange-50\/50 { background-color: rgb(124 45 18 / 0.35); }
+    html.dark .bg-orange-100 { background-color: #7c2d12; }
+    html.dark .bg-amber-50 { background-color: #451a03; }
+    html.dark .bg-amber-100 { background-color: #78350f; }
+    html.dark .bg-red-50 { background-color: #450a0a; }
+    html.dark .bg-emerald-50 { background-color: #052e16; }
+
+    html.dark .text-slate-950 { color: #f8fafc; }
+    html.dark .text-slate-900 { color: #f1f5f9; }
+    html.dark .text-slate-700,
+    html.dark .text-slate-600 { color: #cbd5e1; }
+    html.dark .text-slate-500,
+    html.dark .text-slate-400 { color: #94a3b8; }
+    html.dark .text-orange-700 { color: #fdba74; }
+    html.dark .text-orange-600 { color: #fb923c; }
+
+    html.dark .border-slate-100 { border-color: #1e293b; }
+    html.dark .border-slate-200 { border-color: #334155; }
+    html.dark .border-slate-300 { border-color: #475569; }
+    html.dark .surface { border-color: #334155; background-color: #0f172a; }
+    html.dark .field-control { border-color: #475569; background-color: #0f172a; color: #f8fafc; }
+    html.dark .field-control::placeholder { color: #64748b; }
+    html.dark .btn-secondary { border-color: #475569; background-color: #0f172a; color: #e2e8f0; }
+    html.dark .hover\:bg-slate-50:hover,
+    html.dark .hover\:bg-slate-100:hover { background-color: #1e293b; }
 }

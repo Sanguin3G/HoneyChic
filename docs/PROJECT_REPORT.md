@@ -22,9 +22,16 @@ LaraStore is now my second Laravel practice project. The repository began as an 
 - Added admin CRUD/moderation surfaces for products, categories, orders, customers, and reviews.
 - Added product soft deletes, featured products, order/customer/product snapshots, order status history, and reviews.
 
+### Assistant and configuration safety
+
+- Added a Livewire shop-assistant bubble with local answers for delivery, returns, payment, orders, stock, cart, account, and catalogue questions.
+- Added an optional OpenAI-compatible LLM fallback behind a short server-side timeout. The system instruction is customizable by an admin, while non-negotiable safety rules are appended in application code.
+- Added an admin-only `/admin/chatbot` settings screen. API keys are encrypted with Laravel's encrypted cast, never loaded into a public Livewire property, never displayed after saving, and can be replaced or cleared.
+- Added a 500-character input limit, twelve requests per minute per session/IP, bounded chat history, prompt-extraction refusal, and a local fallback when the provider is disabled or unavailable.
+
 ### Data and documentation
 
-- Rebuilt the seed around a portable SQLite database with 4 categories, 12 curated products, 3 sample orders, realistic stock movement, 4 users, and an approved product review.
+- Rebuilt the seed around a portable SQLite database with 4 categories, 12 curated products with fitting photography, 4 sample orders, realistic stock movement, 4 users, and 7 approved product reviews.
 - Updated CI to install and build the Vite frontend before migrations and tests.
 - Captured the screenshots in this folder from the running seeded local app.
 
@@ -33,10 +40,10 @@ LaraStore is now my second Laravel practice project. The repository began as an 
 The following checks passed during the rebuild:
 
 - `php artisan route:list --except-vendor`
-- `php artisan test --env=testing` — 5 tests, 11 assertions
+- `php artisan test --env=testing` — 9 tests, 19 assertions
 - `npm run build` — Vite production build succeeded
-- Fresh local migration and seed — 4 users, 4 categories, 12 products, 3 orders, 5 order lines, 1 review
-- Browser smoke pass — home page, collection filters, product details, seeded review, quantity controls, cart badge, cart summary, and login screen
+- Fresh local migration and seed — 4 users, 4 categories, 12 products, 4 orders, 8 order lines, 7 approved reviews, and the chatbot settings table
+- Browser smoke pass — image-backed storefront cards, collection filters, product details, seeded reviews, quantity controls, live cart badge, cart summary, login screen, assistant FAQ response, and admin chatbot settings
 
 The browser pass also caught and fixed a real issue that request-level tests missed: two Alpine runtimes were fighting over Livewire's event handling. The app now lets Livewire provide Alpine consistently.
 

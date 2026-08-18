@@ -20,6 +20,7 @@
                     ['admin.orders.index', 'Orders', 'shopping-bag'],
                     ['admin.users.index', 'Customers', 'users'],
                     ['admin.reviews.index', 'Reviews', 'star'],
+                    ['admin.chatbot.edit', 'Chatbot', 'message-circle'],
                 ] as [$route, $label, $icon])
                     <a href="{{ route($route) }}" class="flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium {{ request()->routeIs($route === 'admin.dashboard' ? $route : str_replace('.index', '.*', $route)) ? 'bg-white/10 text-white' : 'text-slate-400 hover:bg-white/5 hover:text-white' }}"><x-icon :name="$icon" size="16" />{{ $label }}</a>
                 @endforeach
@@ -36,6 +37,7 @@
             <a href="{{ route('admin.orders.index') }}" class="rounded-xl px-3 py-2 text-sm text-slate-300 hover:bg-white/10 hover:text-white">Orders</a>
             <a href="{{ route('admin.users.index') }}" class="rounded-xl px-3 py-2 text-sm text-slate-300 hover:bg-white/10 hover:text-white">Customers</a>
             <a href="{{ route('admin.reviews.index') }}" class="rounded-xl px-3 py-2 text-sm text-slate-300 hover:bg-white/10 hover:text-white">Reviews</a>
+            <a href="{{ route('admin.chatbot.edit') }}" class="rounded-xl px-3 py-2 text-sm text-slate-300 hover:bg-white/10 hover:text-white">Chatbot</a>
         </nav>
     </header>
     @if(session('success') || session('status') || session('error'))

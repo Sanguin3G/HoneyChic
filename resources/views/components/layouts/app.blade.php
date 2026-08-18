@@ -37,12 +37,7 @@
                 <a href="{{ route('products.index') }}" class="rounded-xl p-2.5 text-slate-600 hover:bg-slate-100 md:hidden" aria-label="Shop">
                     <x-icon name="search" size="20" />
                 </a>
-                <a href="{{ route('cart.view') }}" class="relative rounded-xl p-2.5 text-slate-600 hover:bg-slate-100" aria-label="Shopping cart">
-                    <x-icon name="shopping-bag" size="21" />
-                    @if(($cartItemCount ?? 0) > 0)
-                        <span class="absolute -right-1 -top-1 flex size-5 items-center justify-center rounded-full bg-orange-600 text-[11px] font-bold text-white">{{ $cartItemCount }}</span>
-                    @endif
-                </a>
+                @livewire('storefront.cart-indicator')
 
                 <div class="relative hidden sm:block">
                     <button type="button" @click="accountOpen = !accountOpen" @keydown.escape="accountOpen = false" :aria-expanded="accountOpen.toString()" class="flex items-center gap-2 rounded-xl p-2 text-sm font-medium text-slate-700 hover:bg-slate-100">
@@ -104,6 +99,7 @@
         </div>
     </footer>
 
+    @livewire('storefront.chatbot')
     @livewireScripts
     @stack('scripts')
 </body>

@@ -10,12 +10,14 @@ class CartPage extends Component
     public function updateQuantity(int $productId, int $quantity): void
     {
         app(CartManager::class)->update($productId, $quantity);
+        $this->dispatch('cart-updated');
         session()->flash('success', 'Cart updated.');
     }
 
     public function remove(int $productId): void
     {
         app(CartManager::class)->remove($productId);
+        $this->dispatch('cart-updated');
         session()->flash('success', 'Item removed from your cart.');
     }
 

@@ -10,8 +10,9 @@ It started as my rough first Laravel store. At this stage of my programming jour
 - A session cart with quantity controls, stock validation, subtotal calculations, and a simple cash-on-delivery checkout.
 - Transactional order creation with product and customer snapshots, stock adjustment, order status history, cancellation, and customer reviews.
 - Livewire account pages for orders and profile settings.
-- Livewire admin pages for products, categories, orders, customers, and review moderation.
-- A deterministic SQLite seed with an admin, sample customers, 12 products, realistic orders, stock movement, and an approved review.
+- Livewire admin pages for products, categories, orders, customers, review moderation, and chatbot settings.
+- A deterministic SQLite seed with an admin, sample customers, 12 products with fitting photography, realistic orders, stock movement, and seven approved reviews.
+- A bottom-right shop assistant with local FAQ answers, rate limits, prompt-injection boundaries, and an optional OpenAI-compatible LLM fallback.
 - CI that installs PHP and Node dependencies, builds Vite assets, migrates SQLite, and runs the feature suite.
 
 ## Screenshots
@@ -59,6 +60,12 @@ The seeded accounts are for local learning only:
 
 Change or remove these credentials before using the project anywhere public.
 
+### Optional LLM chatbot
+
+The assistant works without an API key using LaraStore's local FAQ responses. To enable the optional LLM fallback, sign in as the seeded admin, open `/admin/chatbot`, and enter an OpenAI-compatible API key, model, and base URL. The key is encrypted in SQLite, is never displayed after saving, and is only used server-side. You can also customize the system instruction there; application safety rules remain enforced.
+
+The `.env.example` also contains an optional developer-only configuration path using `CHATBOT_LLM_API_KEY`. Leave it empty if you want FAQ-only mode.
+
 ## Development and checks
 
 Run the backend and Vite watcher in separate terminals:
@@ -79,7 +86,7 @@ Tests use SQLite and the repository's seeded local database is intentionally sep
 
 ## Honest limits
 
-This is a learning project, not a production store. It has no payment gateway, shipping provider, image-upload pipeline, guest checkout, tax engine, coupon system, or deployment configuration. Those omissions are deliberate: the useful e-commerce fundamentals are implemented first, and the code remains small enough to understand.
+This is a learning project, not a production store. It has no payment gateway, shipping provider, image-upload pipeline, guest checkout, tax engine, coupon system, or deployment configuration. Product photography is loaded from remote image URLs, so an offline deployment should replace those URLs with local assets. The optional LLM assistant is deliberately bounded and cannot perform account or order actions. These omissions are deliberate: the useful e-commerce fundamentals are implemented first, and the code remains small enough to understand.
 
 ## Project report
 

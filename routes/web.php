@@ -14,6 +14,7 @@ use App\Livewire\Account\Dashboard as AccountDashboard;
 use App\Livewire\Account\OrderIndex;
 use App\Livewire\Account\OrderShow;
 use App\Livewire\Admin\Categories as AdminCategories;
+use App\Livewire\Admin\ChatbotSettings as AdminChatbotSettings;
 use App\Livewire\Admin\Dashboard as AdminDashboard;
 use App\Livewire\Admin\Orders as AdminOrders;
 use App\Livewire\Admin\Products as AdminProducts;
@@ -67,6 +68,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/orders', AdminOrders::class)->name('orders.index');
         Route::get('/users', AdminUsers::class)->name('users.index');
         Route::get('/reviews', AdminReviews::class)->name('reviews.index');
+        Route::get('/chatbot', AdminChatbotSettings::class)->name('chatbot.edit');
     });
 });
 

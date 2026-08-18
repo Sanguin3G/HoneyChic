@@ -20,6 +20,7 @@ class ProductShow extends Component
     public function addToCart(): void
     {
         app(CartManager::class)->add($this->product, $this->quantity);
+        $this->dispatch('cart-updated');
         session()->flash('success', "{$this->product->name} was added to your cart.");
     }
 

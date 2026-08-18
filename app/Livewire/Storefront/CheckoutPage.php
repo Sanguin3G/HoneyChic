@@ -117,6 +117,7 @@ class CheckoutPage extends Component
         });
 
         $cart->clear();
+        $this->dispatch('cart-updated');
 
         return redirect()->route('orders.show', $order)->with('success', "Order {$order->order_number} placed successfully.");
     }

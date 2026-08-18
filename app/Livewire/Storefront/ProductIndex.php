@@ -33,6 +33,7 @@ class ProductIndex extends Component
     public function addToCart(int $productId): void
     {
         app(CartManager::class)->add(Product::findOrFail($productId));
+        $this->dispatch('cart-updated');
         session()->flash('success', 'Added to your cart.');
     }
 

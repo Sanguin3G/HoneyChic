@@ -32,6 +32,7 @@
         @case('calendar') <rect x="3" y="4" width="18" height="17" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/> @break
         @case('circle-alert') <circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/> @break
         @case('mail') <rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/> @break
+        @case('message-circle') <path d="M20 11.5a8 8 0 0 1-8 8 8.7 8.7 0 0 1-3.9-.9L4 20l1.4-3.6A8 8 0 1 1 20 11.5Z"/><path d="M8 12h.01M12 12h.01M16 12h.01"/> @break
         @default <circle cx="12" cy="12" r="9"/>
     @endswitch
 </svg>

@@ -1,25 +1,30 @@
 <?php
 
-use App\Http\Controllers\Admin\CategoryController;
-use App\Http\Controllers\Admin\DashboardController;
-use App\Http\Controllers\Admin\OrderController;
-use App\Http\Controllers\Admin\ProductController as AdminProductController;
-use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Auth\ConfirmPasswordController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Auth\VerifyEmailController;
-use App\Http\Controllers\Customer\CartController;
-use App\Http\Controllers\Customer\CheckoutController;
-use App\Http\Controllers\Customer\DashboardController as CustomerDashboardController;
-use App\Http\Controllers\Customer\OrderController as CustomerOrderController;
-use App\Http\Controllers\Customer\ProductController;
 use App\Http\Controllers\Settings\AppearanceController;
 use App\Http\Controllers\Settings\DeleteUserController;
 use App\Http\Controllers\Settings\PasswordController;
 use App\Http\Controllers\Settings\ProfileController;
+use App\Livewire\Account\Dashboard as AccountDashboard;
+use App\Livewire\Account\OrderIndex;
+use App\Livewire\Account\OrderShow;
+use App\Livewire\Admin\Categories as AdminCategories;
+use App\Livewire\Admin\ChatbotSettings as AdminChatbotSettings;
+use App\Livewire\Admin\Dashboard as AdminDashboard;
+use App\Livewire\Admin\Orders as AdminOrders;
+use App\Livewire\Admin\Products as AdminProducts;
+use App\Livewire\Admin\Reviews as AdminReviews;
+use App\Livewire\Admin\Users as AdminUsers;
+use App\Livewire\Storefront\CartPage;
+use App\Livewire\Storefront\CheckoutPage;
+use App\Livewire\Storefront\Home;
+use App\Livewire\Storefront\ProductIndex;
+use App\Livewire\Storefront\ProductShow;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -28,39 +33,21 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 
-Route::get('/', static function () {
-    return view('welcome');
-})->name('home');
+Route::get('/', Home::class)->name('home');
 
-//Product routes
-Route::get('/products', [ProductController::class, 'index'])->name('products.index');
-Route::get('/products/{product}', [ProductController::class, 'show'])->name('products.show');
+Route::get('/products', ProductIndex::class)->name('products.index');
+Route::get('/products/{product:slug}', ProductShow::class)->name('products.show');
+Route::get('/cart', CartPage::class)->name('cart.view');
 
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/dashboard', [CustomerDashboardController::class, 'index'])
-        ->name('dashboard');
-
-    // Order routes
-    Route::get('/orders', [CustomerOrderController::class, 'index'])->name('orders');
-    Route::get('/orders/{order}', [CustomerOrderController::class, 'show'])->name('orders.show');
-
-    // Cart routes
-    Route::prefix('cart')->name('cart.')->group(function () {
-        Route::post('/add/{product}', [CartController::class, 'add'])->name('add');
-        Route::get('/', [CartController::class, 'view'])->name('view');
-        Route::patch('/update/{productId}', [CartController::class, 'update'])->name('update');
-        Route::delete('/remove/{productId}', [CartController::class, 'remove'])->name('remove');
-    });
-
-    // Checkout routes
-    Route::prefix('checkout')->name('checkout.')->group(function () {
-        Route::get('/', [CheckoutController::class, 'show'])->name('show');
-        Route::post('/', [CheckoutController::class, 'process'])->name('process');
-    });
+    Route::get('/dashboard', AccountDashboard::class)->name('dashboard');
+    Route::get('/orders', OrderIndex::class)->name('orders');
+    Route::get('/orders/{order}', OrderShow::class)->name('orders.show');
+    Route::get('/checkout', CheckoutPage::class)->name('checkout.show');
 
     // Settings routes
-    Route::middleware(['auth'])->group(function () {
+    Route::middleware(['auth', 'verified'])->group(function () {
         Route::redirect('settings', 'settings/profile');
 
         Route::get('settings/profile', [ProfileController::class, 'edit'])->name('settings.profile');
@@ -74,24 +61,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 
 
-    // Admin routes
     Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(function () {
-        Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
-
-        // Admin Products
-        Route::resource('products', AdminProductController::class)->except(['show']);
-
-        // Admin Categories
-        Route::resource('categories', CategoryController::class)->except(['show']);
-
-        // Admin Users
-        Route::resource('users', UserController::class)->except(['show']);
-        Route::put('/users/{user}/restore', [UserController::class, 'restore'])->name('users.restore');
-
-        // Admin Orders
-        Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
-        Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
-        Route::put('/orders/{order}/status', [OrderController::class, 'updateStatus'])->name('orders.updateStatus');
+        Route::get('/', AdminDashboard::class)->name('dashboard');
+        Route::get('/products', AdminProducts::class)->name('products.index');
+        Route::get('/categories', AdminCategories::class)->name('categories.index');
+        Route::get('/orders', AdminOrders::class)->name('orders.index');
+        Route::get('/users', AdminUsers::class)->name('users.index');
+        Route::get('/reviews', AdminReviews::class)->name('reviews.index');
+        Route::get('/chatbot', AdminChatbotSettings::class)->name('chatbot.edit');
     });
 });
 

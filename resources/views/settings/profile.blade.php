@@ -115,7 +115,7 @@
                 </x-button>
 
                 {{-- Confirmation Modal --}}
-                <x-modal :show="confirmingUserDeletion">
+                <x-modal show="confirmingUserDeletion">
                     <form method="POST" action="{{ route('settings.delete-account') }}" class="p-6">
                         @csrf
                         @method('DELETE')

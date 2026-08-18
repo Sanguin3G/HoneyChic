@@ -1,17 +1,16 @@
-@props([
-    'type' => 'button',
-    'variant' => 'primary'
-])
+@props(['type' => 'button', 'variant' => 'primary', 'href' => null])
 
 @php
-    $classes = $variant === 'primary'
-        ? 'bg-blue-600 text-white hover:bg-blue-700'
-        : 'bg-gray-200 text-gray-800 hover:bg-gray-300';
+    $variantClass = match ($variant) {
+        'secondary', 'outline' => 'btn-secondary',
+        'dark' => 'btn-dark',
+        'danger' => 'btn-danger',
+        default => 'btn-primary',
+    };
 @endphp
 
-<button
-    type="{{ $type }}"
-    {{ $attributes->merge(['class' => 'px-4 py-2 rounded ' . $classes]) }}
->
-    {{ $slot }}
-</button> 
+@if($href)
+    <a href="{{ $href }}" {{ $attributes->merge(['class' => "btn {$variantClass}"]) }}>{{ $slot }}</a>
+@else
+    <button type="{{ $type }}" {{ $attributes->merge(['class' => "btn {$variantClass}"]) }}>{{ $slot }}</button>
+@endif

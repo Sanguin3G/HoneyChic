@@ -35,4 +35,12 @@ return [
         ],
     ],
 
+    'larastore_chatbot' => [
+        'api_key' => env('CHATBOT_LLM_API_KEY'),
+        'base_url' => env('CHATBOT_LLM_BASE_URL', 'https://api.openai.com/v1'),
+        'model' => env('CHATBOT_LLM_MODEL', 'gpt-4o-mini'),
+        'timeout' => env('CHATBOT_LLM_TIMEOUT', 12),
+        'system_prompt' => env('CHATBOT_SYSTEM_PROMPT'),
+    ],
+
 ];

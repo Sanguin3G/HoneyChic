@@ -21,17 +21,19 @@ class OrderItemFactory extends Factory
      *
      * @return array
      */
-    public function definition()
+    public function definition(): array
     {
         // Get random order and product IDs; provide fallbacks if necessary.
         $orderId = Order::inRandomOrder()->value('id') ?: 1;
         $product = Product::inRandomOrder()->first();
         $productId = $product ? $product->id : 1;
-        $price     = $product ? $product->price : $this->faker->randomFloat(2, 10, 100);
+        $price = $product ? $product->price : $this->faker->randomFloat(2, 10, 100);
 
         return [
             'order_id'   => $orderId,
             'product_id' => $productId,
+            'product_name' => $product?->name ?? 'Sample Product',
+            'sku' => $product?->sku,
             'quantity'   => $this->faker->numberBetween(1, 5),
             'price'      => $price,
         ];

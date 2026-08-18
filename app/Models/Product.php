@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Product extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     // Attributes that can be mass assigned.
     protected $fillable = [
@@ -18,6 +19,7 @@ class Product extends Model
         'image',
         'category_id',
         'is_published',
+        'is_featured',
         'stock_quantity',
         'sku',
     ];
@@ -26,6 +28,8 @@ class Product extends Model
     protected $casts = [
         'price' => 'float',
         'is_published' => 'boolean',
+        'is_featured' => 'boolean',
+        'stock_quantity' => 'integer',
     ];
 
     /**
@@ -42,6 +46,20 @@ class Product extends Model
     public function orderItems()
     {
         return $this->hasMany(OrderItem::class);
+    }
+
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
+
+    public function getInitialsAttribute(): string
+    {
+        return collect(preg_split('/\s+/', trim($this->name)))
+            ->filter()
+            ->take(2)
+            ->map(fn (string $word) => strtoupper($word[0]))
+            ->implode('');
     }
 
 }

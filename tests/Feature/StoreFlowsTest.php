@@ -5,7 +5,10 @@ namespace Tests\Feature;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\User;
+use App\Livewire\Storefront\CheckoutPage;
+use App\Support\CartManager;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Livewire\Livewire;
 use Tests\TestCase;
 
 class StoreFlowsTest extends TestCase
@@ -32,21 +35,19 @@ class StoreFlowsTest extends TestCase
             'price' => 12.50,
         ]);
 
-        $this->actingAs($customer)
-            ->post(route('cart.add', $product), ['quantity' => 2])
-            ->assertRedirect();
+        $this->actingAs($customer);
+        app(CartManager::class)->add($product, 2);
 
-        $this->actingAs($customer)
-            ->post(route('checkout.process'), [
-                'name' => $customer->name,
-                'email' => $customer->email,
-                'phone' => '0123456789',
-                'shipping_address' => '123 Store Street',
-                'billing_address' => '',
-                'payment_method' => 'Cash on Delivery',
-                'notes' => '',
-            ])
-            ->assertRedirect();
+        Livewire::test(CheckoutPage::class)
+            ->set('name', $customer->name)
+            ->set('email', $customer->email)
+            ->set('phone', '0123456789')
+            ->set('shippingAddress', '123 Store Street')
+            ->set('billingAddress', '')
+            ->set('paymentMethod', 'Cash on Delivery')
+            ->set('notes', '')
+            ->call('placeOrder')
+            ->assertRedirect(route('orders.show', ['order' => 1]));
 
         $this->assertDatabaseHas('orders', [
             'user_id' => $customer->id,

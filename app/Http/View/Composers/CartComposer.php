@@ -16,9 +16,7 @@ class CartComposer
     public function compose(View $view): void
     {
         $cart = Session::get('cart', []);
-        // Directly count the number of unique product lines in the cart.
-        // If the cart is empty, count($cart) will be 0.
-        $cartItemCount = count($cart);
+        $cartItemCount = collect($cart)->sum(fn ($item) => (int) ($item['quantity'] ?? 0));
         $view->with('cartItemCount', $cartItemCount);
     }
 }

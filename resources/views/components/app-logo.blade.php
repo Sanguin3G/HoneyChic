@@ -1,6 +1,6 @@
 <div class="flex items-center">
-    <div class="flex aspect-square size-10 items-center justify-center rounded-md bg-transparent">
-        <img src="{{ asset('favicon.ico') }}" alt="Logo" class="w-8 h-8" />
+    <div class="flex size-10 items-center justify-center rounded-xl bg-orange-600 text-white shadow-sm">
+        <x-icon name="shopping-bag" size="21" />
     </div>
-    <span class="ml-2 self-center truncate leading-none font-semibold text-base">LaraStore</span>
+    <span class="ml-2 self-center truncate text-base font-bold tracking-tight text-slate-900">LaraStore</span>
 </div>

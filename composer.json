@@ -2,7 +2,7 @@
     "$schema": "https://getcomposer.org/schema.json",
     "name": "sanguine3/larastore",
     "type": "project",
-    "description": "A small Laravel e-commerce learning project built with Blade and Alpine.js.",
+    "description": "A polished Laravel e-commerce learning project exploring the TALL stack.",
     "keywords": ["laravel", "framework"],
     "license": "MIT",
     "require": {

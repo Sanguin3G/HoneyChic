@@ -34,6 +34,9 @@ jobs:
       - name: Build Assets
         run: npm run build
 
+      - name: Prepare SQLite
+        run: touch database/database.sqlite
+
       - name: Generate App Key & Run Migrations
         run: |
           php artisan key:generate --ansi

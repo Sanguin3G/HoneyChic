@@ -9,10 +9,8 @@
     },
     "dependencies": {
         "@tailwindcss/vite": "^4.0.7",
-        "alpinejs": "^3.14.9",
         "autoprefixer": "^10.4.20",
         "concurrently": "^9.0.1",
-        "gridjs": "^6.2.0",
         "laravel-vite-plugin": "^1.0",
         "tailwindcss": "^4.1.5",
         "vite": "^6.0"

@@ -12,12 +12,19 @@ class Order extends Model
 
     protected $casts = [
         'total_amount' => 'float',
+        'subtotal' => 'float',
+        'shipping_amount' => 'float',
     ];
 
     protected $fillable = [
         'user_id',
+        'customer_name',
+        'customer_email',
+        'customer_phone',
         'status',
         'total_amount',
+        'subtotal',
+        'shipping_amount',
         'order_number',
         'shipping_address',
         'billing_address',
@@ -58,6 +65,26 @@ class Order extends Model
     public function orderItems()
     {
         return $this->hasMany(OrderItem::class);
+    }
+
+    public function statusHistories()
+    {
+        return $this->hasMany(OrderStatusHistory::class)->latest();
+    }
+
+    public function canBeCancelled(): bool
+    {
+        return in_array($this->status, ['pending', 'processing'], true);
+    }
+
+    public function isFulfilled(): bool
+    {
+        return in_array($this->status, ['shipped', 'completed'], true);
+    }
+
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
     }
 }
 

@@ -9,6 +9,15 @@ export default class StoreSetting extends BaseModel {
   @column() declare email: string | null
   @column() declare phone: string | null
   @column() declare address: string
+  @column() declare logoKey: string | null
+  @column() declare faviconKey: string | null
+  @column() declare website: string | null
+  @column() declare facebook: string | null
+  @column() declare instagram: string | null
+  @column() declare youtube: string | null
+  @column() declare tiktok: string | null
+  @column() declare primaryColor: string | null
+  @column() declare accentColor: string | null
   @column() declare currency: string
   @column() declare defaultLocale: Locale
   @column() declare timezone: string

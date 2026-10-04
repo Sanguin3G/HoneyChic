@@ -69,7 +69,7 @@ Run node ace migration:run and node ace db:seed after updating this slice. Devel
 
 Browse /products. Owners/staff edit /admin/products and /admin/categories. Products start as drafts; simple products require one default variant. Add generic option values and explicitly define sellable combinations. Prices use decimal text in the displayed currency (whole values for VND). Store currency changes apply only to new products.
 
-Product images accept a JPEG, PNG, WebP, or AVIF upload up to 5 MB, or an existing relative key. Uploads are stored as `uploads/<uuid>.<ext>` through Drive. SVG uploads are rejected; the seeded SVG keys remain valid. The default disk is local `public/media`, served at `/media`. Set `DRIVE_DISK=s3` only when the S3 variables in `.env.example` point at a real bucket. An upload that is never saved can remain on disk; there is no sweeper.
+Product images accept a JPEG, PNG, WebP, or AVIF upload up to 5 MB, or an existing relative key. Uploads are stored as `uploads/<uuid>.<ext>` through Drive. SVG uploads are rejected; the seeded SVG keys remain valid. The default disk is local `public/media`, served at `/media`. Set `DRIVE_DISK=s3` only when the S3 variables in `.env.example` point at a real bucket. Logo and favicon use that same upload path and are removed only when no product image or brand field still references the key. An upload that is never saved can remain on disk; there is no sweeper.
 
 ## Inventory development
 

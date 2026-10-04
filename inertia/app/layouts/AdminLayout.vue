@@ -4,6 +4,7 @@ import { Link, router, usePage } from '@inertiajs/vue3'
 import { PhStorefront, PhGear, PhHouse } from '@phosphor-icons/vue'
 import LocaleSwitcher from '~/app/navigation/LocaleSwitcher.vue'
 import HcButton from '~/app/design/HcButton.vue'
+import BrandHead from '~/app/shared/BrandHead.vue'
 import { useI18n, type SharedProps } from '~/app/shared/i18n'
 const navOpen = ref(false)
 const page = usePage<SharedProps>()
@@ -11,6 +12,7 @@ const { t } = useI18n()
 </script>
 
 <template>
+  <BrandHead />
   <a class="skip-link" href="#main">{{ t('navigation', 'skip') }}</a>
   <div class="admin-shell">
     <aside

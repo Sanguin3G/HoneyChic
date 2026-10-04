@@ -28,6 +28,14 @@
   color: var(--brand-accent);
   flex-shrink: 0;
 }
+.store-logo {
+  width: 2rem;
+  height: 2rem;
+  object-fit: contain;
+  flex-shrink: 0;
+  border-radius: 4px;
+  background: #fff;
+}
 .store-primary-links a {
   color: var(--text-on-brand);
   display: flex;
@@ -117,6 +125,24 @@
   justify-content: space-between;
   gap: 1rem;
   margin-bottom: 0.5rem;
+}
+.store-footer > .store-footer-copy {
+  display: block;
+  max-width: 65ch;
+  margin-bottom: 0.75rem;
+}
+.store-footer > .store-footer-contact,
+.store-footer > .store-footer-social {
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  gap: 0.35rem 1rem;
+}
+.store-footer-contact a,
+.store-footer-social a {
+  color: var(--text-primary);
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
 }
 .store-mobile-menu {
   display: none;

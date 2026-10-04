@@ -25,5 +25,10 @@
   "noResults": "Try a different search or clear a filter.",
   "image": "Product image",
   "explore": "Explore",
-  "preview": "Catalog preview"
+  "preview": "Catalog preview",
+  "website": "Website",
+  "facebook": "Facebook",
+  "instagram": "Instagram",
+  "youtube": "YouTube",
+  "tiktok": "TikTok"
 }

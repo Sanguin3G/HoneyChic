@@ -16,6 +16,18 @@ export type SharedProps = {
   store: {
     name: string
     description?: string
+    email?: string | null
+    phone?: string | null
+    address?: string
+    logoUrl?: string | null
+    faviconUrl?: string | null
+    website?: string | null
+    facebook?: string | null
+    instagram?: string | null
+    youtube?: string | null
+    tiktok?: string | null
+    primaryColor?: string | null
+    accentColor?: string | null
     defaultLocale: Locale
     currency: string
     timezone: string

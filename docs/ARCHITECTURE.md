@@ -52,7 +52,7 @@ Health liveness bypasses store/database loading; readiness queries PostgreSQL. T
 
 ## Storefront composition
 
-Home composes merchant branding, active categories and publication-aware product previews. Catalog uses SearchCatalog for search, category and available-stock filtering. These availability reads do not reserve stock.
+Home composes merchant branding, active categories and publication-aware product previews. Public branding is the store name, description, contact, logo, favicon, https social links, and optional primary/accent colors. Null colors leave the default tokens in place. Catalog uses SearchCatalog for search, category and available-stock filtering. These availability reads do not reserve stock.
 
 Feature components under inertia/features/storefront and catalog compose thin pages. Desktop filters and the native dialog drawer share draft state; applying commits URL filters and resets pagination. Locale switching preserves whitelisted local query parameters. Product options resolve to an offered variant; price and availability follow that variant. Gallery selection is local presentation state. Native dialog supplies modal focus, Escape and focus restoration.
 

@@ -105,6 +105,7 @@ router
     router.get('/admin/modules', [Modules, 'index'])
     router.put('/admin/modules', [Modules, 'update'])
     router.get('/admin', [Dashboard, 'index']).as('admin')
+    router.post('/admin/settings/images', [Settings, 'storeImage'])
     router.get('/admin/settings', [Settings, 'edit']).as('admin.settings')
     router.put('/admin/settings', [Settings, 'update'])
   })

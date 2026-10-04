@@ -7,7 +7,7 @@ Review and stabilize the rewrite on `stabilize/honeychic-mvp`, based on `rewrite
 | Original phases | Current position | Work to close out |
 | --- | --- | --- |
 | 0–1: preservation and foundation | v1 preserved; Adonis/Vue/Inertia SSR foundation exists | Keep main/tag intact; verify clean-checkout commands and CI |
-| 2: accounts and store configuration | Accounts, typed settings and capabilities exist | Complete merchant branding/contact settings; document account recovery limits |
+| 2: accounts and store configuration | Accounts, typed settings, branding, and capabilities exist | Document account recovery limits; store profiles and a setup wizard remain deferred |
 | 3–4: catalog and inventory | Generic variants, media metadata, search, recorded stock, and merchant image uploads exist | Preserve targeted integrity/concurrency checks; point uploads at durable storage before a hosted launch |
 | 5–6: storefront and cart | Responsive storefront, EN/VI and session cart exist | Review accessibility, interaction states and reusable controls as screens require them |
 | 7–8: checkout and admin | Transactional orders, snapshots, cancellation and Vue admin exist | Verify real browser checkout/admin flows and session edge cases |
@@ -20,7 +20,7 @@ Keep documentation consistent with actual behavior and the README illustrated wi
 
 - Launch preparation still needs a chosen host. Transactional confirmation, shipped, and cancellation mail, password reset, and guest recovery links are in place. Email verification remains optional and is not implemented.
 - Choose a hosting provider, configure HTTPS/proxy trust and database TLS, deploy staging, and verify production migrations and readiness. Exercise an isolated PostgreSQL restore and record recovery steps, including the merchant upload bucket or volume.
-- Complete practical merchant settings: logo/favicon, description/contact/address, social links, theme colors and checkout options. Existing currency, locale, timezone, order prefix, stock threshold and capability settings remain typed.
+- Logo, favicon, description, public contact, social links, and optional primary/accent colors are stored with the existing settings. Checkout and module switches stay where they are. Store profiles and a setup wizard remain deferred.
 - Add Simple seller / Standard store / Catalog only / Custom presets that initialize settings/capabilities, then a setup wizard over the same implementation. Do not make it a prerequisite for development.
 - Point `DRIVE_DISK` at durable S3-compatible storage before hosted merchant uploads. The local disk is ephemeral in a container. Relative keys stay in the database.
 

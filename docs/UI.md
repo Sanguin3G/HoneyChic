@@ -18,13 +18,13 @@ Current primitives are Button, Panel, Input, Textarea, Notice and Dialog. Add ot
 
 Account forms, a small account sidebar, and admin settings/capability tables use those primitives. Desktop admin navigation remains persistent; mobile uses a compact navigation grid with comfortable targets. UI and validation dictionaries exist in both languages. Dashboard metrics come from real orders and inventory.
 
-Catalog has cohesive option/variant/image editors and compact admin tables. Image controls edit metadata only; uploads are not implemented. Storefront components compose desktop filters and a mobile drawer. Prices follow the product currency and locale; merchant text remains unchanged.
+Catalog has cohesive option/variant/image editors and compact admin tables. Staff upload JPEG, PNG, WebP, and AVIF product images; the editor keeps the generated key, alt text, and order. Storefront components compose desktop filters and a mobile drawer. Prices follow the product currency and locale; merchant text remains unchanged.
 
 Inventory uses compact tables, text-labelled stock states, signed adjustments and paginated movement history. Owner/staff see balances; public product/catalog pages show availability only. Low stock means active stock greater than zero and at or below the merchant threshold. Zero stock is out of stock. History timestamps use the merchant timezone. Stock controls stay separate from catalog pricing/options so catalog edits cannot reset balances.
 
 ## Storefront
 
-Merchant home uses actual categories/products and merchant identity. Desktop catalog has left filters; mobile uses a native modal drawer with shared draft state and explicit Apply/Reset. Header search and locale switching preserve useful catalog context. Mobile navigation uses a labelled disclosure.
+Merchant home uses actual categories/products and merchant identity. A saved logo replaces the header icon. The footer shows the description, email, phone, address, and https social links when those values exist. Optional primary and accent colors override only those two tokens; blank colors keep navy and orange. Desktop catalog has left filters; mobile uses a native modal drawer with shared draft state and explicit Apply/Reset. Header search and locale switching preserve useful catalog context. Mobile navigation uses a labelled disclosure.
 
 Product pages compose image thumbnails and generic options. Selection always resolves to an offered variant and announces its price/availability. Public balances remain private. No fake discounts, ratings, delivery promises or inactive cart/wishlist buttons are shown. Public indexing requires the explicit production SEO setting.
 

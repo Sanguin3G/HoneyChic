@@ -25,5 +25,8 @@
   "image.file": "Choose an image file.",
   "image.file.extname": "Upload a JPEG, PNG, WebP, or AVIF image.",
   "image.file.size": "Images must be 5 MB or smaller.",
+  "hexColor": "Enter a color as #rrggbb, or leave it blank.",
+  "httpsUrl": "Enter an https link, or leave it blank.",
+  "managedUpload": "Use an image uploaded for this store.",
   "uuid": "The {{ field }} field must be a valid identifier."
 }

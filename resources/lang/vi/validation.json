@@ -25,5 +25,8 @@
   "image.file": "Hãy chọn một tệp ảnh.",
   "image.file.extname": "Tải ảnh JPEG, PNG, WebP hoặc AVIF.",
   "image.file.size": "Ảnh phải từ 5 MB trở xuống.",
+  "hexColor": "Nhập màu dạng #rrggbb hoặc để trống.",
+  "httpsUrl": "Nhập liên kết https hoặc để trống.",
+  "managedUpload": "Dùng ảnh đã tải lên cho cửa hàng.",
   "uuid": "Trường {{ field }} phải là mã hợp lệ."
 }

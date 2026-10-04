@@ -103,8 +103,12 @@ test.group('Store configuration and authorization', (group) => {
       configured: false,
       available: false,
     })
-    assert.notProperty(page.props.store, 'email')
+    assert.equal(page.props.store.email, settings.email)
+    assert.equal(page.props.store.phone, null)
     assert.notProperty(page.props.store, 'registrationEnabled')
+    assert.notProperty(page.props.store, 'orderPrefix')
+    assert.notProperty(page.props.store, 'lowStockThreshold')
+    assert.notProperty(page.props.store, 'logoKey')
   })
 
   test('invalid regional settings cannot overwrite saved settings', async ({ client, assert }) => {

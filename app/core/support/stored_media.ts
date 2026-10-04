@@ -31,20 +31,24 @@ export function mediaUrl(key: string) {
 }
 
 /**
- * Deletes generated upload keys that no product image still references.
+ * Deletes generated upload keys that no product image, logo, or favicon still references.
  * A missing file or a storage error is logged and left in place.
- * Brand files on this disk must be added to the reference check with their columns.
  */
 export async function releaseUnusedUploads(keys: string[]) {
   const managed = [...new Set(keys.filter(isManagedUpload))]
   if (!managed.length) return
   let referenced: Set<string>
   try {
-    const rows = await db
+    const images = await db
       .from('product_images')
       .whereIn('storage_key', managed)
       .select('storage_key')
-    referenced = new Set(rows.map((row) => String(row.storage_key)))
+    const brand = await db.from('store_settings').select('logo_key', 'favicon_key')
+    referenced = new Set(images.map((row) => String(row.storage_key)))
+    for (const row of brand) {
+      if (row.logo_key) referenced.add(String(row.logo_key))
+      if (row.favicon_key) referenced.add(String(row.favicon_key))
+    }
   } catch (error) {
     logger.error(
       { error: error instanceof Error ? error.name : 'Error' },

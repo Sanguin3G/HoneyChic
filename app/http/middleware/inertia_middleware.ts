@@ -4,6 +4,7 @@ import BaseInertiaMiddleware from '@adonisjs/inertia/inertia_middleware'
 import type { HttpContext } from '@adonisjs/core/http'
 import type { NextFn } from '@adonisjs/core/types/http'
 import { storeConfig } from '#core/store/store_config'
+import { publicStore } from '#core/store/public_store'
 import { messagesFor } from '#core/support/translations'
 import { accessAdmin, manageStore } from '#policies/admin'
 import { resolveLocale } from '#core/support/locale'
@@ -16,15 +17,7 @@ export default class InertiaMiddleware extends BaseInertiaMiddleware {
       locale,
       seo: { origin: publicOrigin, indexable: indexingEnabled },
       messages: messagesFor(locale),
-      store: ctx.store
-        ? {
-            name: ctx.store.name,
-            description: ctx.store.description,
-            defaultLocale: ctx.store.defaultLocale,
-            currency: ctx.store.currency,
-            timezone: ctx.store.timezone,
-          }
-        : storeConfig,
+      store: ctx.store ? publicStore(ctx.store) : storeConfig,
       auth: ctx.auth?.user
         ? {
             id: ctx.auth.user.id,

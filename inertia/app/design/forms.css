@@ -34,6 +34,34 @@ legend {
   font-size: 0.9rem;
   line-height: 1.5;
 }
+.brand-preview {
+  width: 4.5rem;
+  height: 4.5rem;
+  object-fit: contain;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-control);
+  background: var(--surface-raised);
+}
+.brand-file {
+  min-height: 44px;
+}
+.brand-color {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.brand-color .hc-input {
+  flex: 1;
+  min-width: 0;
+}
+.brand-color input[type='color'] {
+  width: 3rem;
+  height: 44px;
+  padding: 0.2rem;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-control);
+  background: var(--surface-raised);
+}
 .hc-notice {
   background: var(--surface-inset);
   border-left: 4px solid var(--success);

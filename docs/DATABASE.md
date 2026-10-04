@@ -5,7 +5,7 @@ PostgreSQL 17 is the local/CI database. Lucid uses PostgreSQL with no SQLite fal
 ## Current schema
 
 - users: normalized unique email, hashed password, name, owner/staff/customer role and nullable en/vi preference.
-- store_settings: singleton business/contact information, currency, locale, timezone, order prefix, stock threshold and explicit account/registration/guest-checkout plus optional-module enablement booleans.
+- store_settings: singleton business/contact information, logo and favicon keys, https social links, optional primary/accent colors, currency, locale, timezone, order prefix, stock threshold and explicit account/registration/guest-checkout plus optional-module enablement booleans. Brand files use the same generated upload keys as product images.
 - rate_limits: authentication throttle state.
 - categories: unique slug, merchant name/description and active state. Categories are flat.
 - products: nullable category, unique slug, merchant text and draft/published/archived state. A generated simple-language tsvector has a GIN index.

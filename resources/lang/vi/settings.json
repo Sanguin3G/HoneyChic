@@ -1,0 +1,22 @@
+{
+  "title": "Cài đặt cửa hàng",
+  "overview": "Tổng quan",
+  "foundationHelp": "Cấu hình cửa hàng và truy cập tài khoản đã sẵn sàng. Danh mục và quy trình bán hàng sẽ được triển khai ở các giai đoạn sau.",
+  "business": "Thông tin doanh nghiệp",
+  "name": "Tên cửa hàng",
+  "description": "Mô tả",
+  "phone": "Điện thoại",
+  "address": "Địa chỉ",
+  "regional": "Ngôn ngữ, tiền tệ và thời gian",
+  "currency": "Mã tiền tệ (VND, USD, EUR…)",
+  "defaultLocale": "Ngôn ngữ mặc định",
+  "timezone": "Múi giờ (Asia/Ho_Chi_Minh, UTC…)",
+  "preferences": "Tùy chọn cửa hàng",
+  "orderPrefix": "Tiền tố mã đơn hàng",
+  "lowStockThreshold": "Ngưỡng tồn kho thấp",
+  "customerAccountsEnabled": "Bật tài khoản khách hàng",
+  "registrationEnabled": "Cho phép khách hàng đăng ký",
+  "accountsHelp": "Tắt tài khoản sẽ chặn đăng nhập và truy cập tài khoản khách hàng. Chủ cửa hàng và nhân viên vẫn có thể truy cập. Tùy chọn đơn hàng sẽ có hiệu lực khi chức năng bán hàng được triển khai.",
+  "save": "Lưu cài đặt",
+  "saved": "Đã lưu cài đặt cửa hàng."
+}

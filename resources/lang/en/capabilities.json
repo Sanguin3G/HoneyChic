@@ -1,0 +1,21 @@
+{
+  "title": "Store capabilities",
+  "help": "Installed means the code exists. Enabled is the merchant preference. Configured means prerequisites are ready. A feature is available only when all three are true.",
+  "feature": "Feature",
+  "installed": "Installed",
+  "enabled": "Enabled",
+  "configured": "Configured",
+  "yes": "Yes",
+  "no": "No",
+  "customer_accounts": "Customer accounts",
+  "guest_checkout": "Guest checkout",
+  "reviews": "Reviews",
+  "wishlist": "Wishlist",
+  "coupons": "Coupons",
+  "shipping": "Shipping",
+  "payments.cod": "Cash on delivery",
+  "payments.stripe": "Stripe",
+  "payments.vnpay": "VNPay",
+  "assistant": "Assistant",
+  "payments.fake": "Fake payment (development only)"
+}

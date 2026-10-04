@@ -1,0 +1,10 @@
+{
+  "notFound": "Không tìm thấy trang",
+  "notFoundBody": "Trang này không khả dụng. Bạn có thể quay về trang chủ cửa hàng.",
+  "serverError": "Đã xảy ra lỗi",
+  "serverErrorBody": "Vui lòng thử lại sau ít phút.",
+  "forbiddenTitle": "Không có quyền truy cập",
+  "forbiddenDescription": "Tài khoản của bạn không có quyền mở trang này.",
+  "throttledTitle": "Vui lòng chờ",
+  "throttledDescription": "Có quá nhiều lần đăng nhập. Chờ một phút trước khi thử lại."
+}

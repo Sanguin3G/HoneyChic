@@ -1,0 +1,108 @@
+.shop-hero {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  align-items: center;
+  gap: 2rem;
+  padding: clamp(1.25rem, 4vw, 2.75rem);
+  background: var(--surface-raised);
+  border: 1px solid var(--border-strong);
+  border-top: 4px solid var(--brand-accent);
+  border-radius: var(--radius-panel);
+  box-shadow: var(--elevation-panel);
+}
+.shop-hero .eyebrow {
+  color: var(--brand-primary);
+}
+.shop-hero-copy h1 {
+  overflow-wrap: anywhere;
+  max-width: 20ch;
+}
+.shop-hero-copy .hc-button {
+  margin-top: 1.5rem;
+  gap: 0.65rem;
+}
+.shop-hero-product {
+  padding: 0.75rem;
+  background: var(--surface-inset);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
+  transition: border-color 120ms;
+}
+.shop-hero-product:hover {
+  border-color: var(--brand-accent);
+}
+.shop-hero-product img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 480 / 340;
+  object-fit: contain;
+}
+.shop-hero-product span {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 650;
+  padding: 0.6rem 0.25rem 0.1rem;
+}
+.shop-categories,
+.shop-collection {
+  margin-top: 2rem;
+}
+.section-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+.section-heading h2 {
+  font-size: 1.35rem;
+  margin: 0;
+}
+.section-heading p {
+  color: var(--text-muted);
+}
+.section-heading a {
+  font-weight: 650;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.category-links {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+  gap: 0.75rem;
+}
+.category-links a {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: linear-gradient(var(--surface-raised), var(--surface));
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-control);
+  min-height: 64px;
+  box-shadow: var(--elevation-control);
+}
+.category-links a strong {
+  flex: 1;
+}
+.category-links a:hover {
+  border-color: var(--brand-accent);
+  background: var(--brand-accent-soft);
+}
+.category-links a:active {
+  box-shadow: inset 0 2px 4px rgb(23 45 72 / 15%);
+  transform: translateY(1px);
+}
+@media (max-width: 640px) {
+  .shop-hero {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+  .shop-hero-product {
+    max-width: 480px;
+    width: 100%;
+  }
+}

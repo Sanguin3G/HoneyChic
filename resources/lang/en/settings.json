@@ -1,0 +1,22 @@
+{
+  "title": "Store settings",
+  "overview": "Overview",
+  "foundationHelp": "Store configuration and account access are ready. Catalog and commerce workflows will follow in later phases.",
+  "business": "Business information",
+  "name": "Store name",
+  "description": "Description",
+  "phone": "Phone",
+  "address": "Address",
+  "regional": "Language, currency and time",
+  "currency": "Currency code (VND, USD, EUR…)",
+  "defaultLocale": "Default language",
+  "timezone": "Timezone (Asia/Ho_Chi_Minh, UTC…)",
+  "preferences": "Store preferences",
+  "orderPrefix": "Order prefix",
+  "lowStockThreshold": "Low-stock threshold",
+  "customerAccountsEnabled": "Enable customer accounts",
+  "registrationEnabled": "Allow customer registration",
+  "accountsHelp": "Disabling accounts blocks customer sign-in and account access. Owner and staff access remains available. Order preferences will take effect when commerce is implemented.",
+  "save": "Save settings",
+  "saved": "Store settings saved."
+}

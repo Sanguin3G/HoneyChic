@@ -1,0 +1,69 @@
+@import 'tailwindcss';
+@import './tokens.css';
+@import './elevations.css';
+@import './controls.css';
+@import './motion.css';
+@import './orders.css';
+
+@import './forms.css';
+@import './admin.css';
+@import './storefront-shell.css';
+@import '../../features/catalog/catalog.css';
+@import '../../features/catalog/storefront.css';
+@import '../../features/catalog/product.css';
+@import '../../features/storefront/home.css';
+@import '../../features/cart/cart.css';
+
+body {
+  margin: 0;
+  background: var(--surface);
+  color: var(--text-primary);
+  font-family:
+    system-ui,
+    -apple-system,
+    'Segoe UI',
+    sans-serif;
+  line-height: 1.6;
+}
+h1,
+h2 {
+  line-height: 1.2;
+  font-weight: 750;
+}
+h1 {
+  font-size: clamp(2rem, 5vw, 3.25rem);
+  max-width: 22ch;
+  margin: 0.6rem 0 1rem;
+}
+h2 {
+  font-size: 1.1rem;
+  margin: 0.8rem 0;
+}
+p {
+  margin: 0;
+}
+.eyebrow {
+  color: var(--text-muted);
+  font-weight: 650;
+  font-size: 0.85rem;
+}
+.intro {
+  max-width: 60ch;
+  color: var(--text-muted);
+  font-size: 1.05rem;
+}
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 1rem;
+  background: var(--surface-raised);
+  padding: 0.8rem;
+  z-index: 20;
+}
+.skip-link:focus {
+  top: 0.5rem;
+}
+
+body:has(.hc-dialog[open]) {
+  overflow: hidden;
+}

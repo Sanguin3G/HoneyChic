@@ -1,0 +1,26 @@
+{
+  "extends": "@adonisjs/tsconfig/tsconfig.app.json",
+  "compilerOptions": {
+    "rootDir": "./",
+    "outDir": "./build"
+  },
+  "references": [
+    {
+      "path": "./tsconfig.inertia.json"
+    }
+  ],
+  "include": [
+    "app/**/*.ts",
+    "shared/**/*.ts",
+    "commands/**/*.ts",
+    "bin/**/*.ts",
+    "config/**/*.ts",
+    "database/**/*.ts",
+    "start/**/*.ts",
+    "tests/**/*.ts",
+    "adonisrc.ts",
+    "vite.config.ts",
+    ".adonisjs/**/*.ts"
+  ],
+  "exclude": ["node_modules", "build", "inertia", ".honeychic-tools"]
+}

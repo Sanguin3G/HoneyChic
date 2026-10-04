@@ -1,0 +1,10 @@
+node_modules
+build
+.adonisjs
+.honeychic-tools
+package-lock.json
+vendor
+storage
+bootstrap
+
+public/assets

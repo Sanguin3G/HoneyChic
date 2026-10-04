@@ -1,0 +1,21 @@
+{
+  "title": "Chức năng cửa hàng",
+  "help": "Đã cài đặt nghĩa là đã có mã nguồn. Đã bật là lựa chọn của chủ cửa hàng. Đã cấu hình nghĩa là các điều kiện đã sẵn sàng. Chức năng chỉ khả dụng khi cả ba đều đúng.",
+  "feature": "Chức năng",
+  "installed": "Đã cài đặt",
+  "enabled": "Đã bật",
+  "configured": "Đã cấu hình",
+  "yes": "Có",
+  "no": "Không",
+  "customer_accounts": "Tài khoản khách hàng",
+  "guest_checkout": "Thanh toán không cần tài khoản",
+  "reviews": "Đánh giá",
+  "wishlist": "Yêu thích",
+  "coupons": "Mã giảm giá",
+  "shipping": "Vận chuyển",
+  "payments.cod": "Thanh toán khi nhận hàng",
+  "payments.stripe": "Stripe",
+  "payments.vnpay": "VNPay",
+  "assistant": "Trợ lý",
+  "payments.fake": "Thanh toán mô phỏng (chỉ phát triển)"
+}

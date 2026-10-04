@@ -1,0 +1,47 @@
+:where(a, button, input, select, textarea, summary):focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+}
+.hc-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0.5rem 0.8rem;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-control);
+  font-weight: 650;
+  cursor: pointer;
+  box-shadow: var(--elevation-control);
+  transition:
+    background-color 120ms,
+    transform 120ms;
+}
+.hc-button--primary {
+  color: var(--text-on-brand);
+  background: linear-gradient(#284766, var(--brand-primary));
+}
+.hc-button--primary:hover {
+  background: #284766;
+}
+.hc-button--quiet {
+  background: var(--surface-raised);
+  color: var(--text-primary);
+}
+.hc-button--quiet:hover {
+  background: var(--surface-inset);
+}
+.hc-button[aria-pressed='true'] {
+  background: var(--brand-accent-soft);
+  border-color: var(--brand-accent);
+  box-shadow: inset 0 1px 3px rgb(23 45 72 / 18%);
+}
+.hc-button:active:not(:disabled) {
+  transform: translateY(1px);
+  box-shadow: inset 0 1px 3px rgb(23 45 72 / 20%);
+}
+.hc-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  box-shadow: none;
+}

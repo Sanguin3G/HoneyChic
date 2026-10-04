@@ -1,0 +1,10 @@
+{
+  "notFound": "Page not found",
+  "notFoundBody": "This page is unavailable. You can return to the store home.",
+  "serverError": "Something went wrong",
+  "serverErrorBody": "Please try again in a moment.",
+  "forbiddenTitle": "Access denied",
+  "forbiddenDescription": "Your account does not have permission to open this page.",
+  "throttledTitle": "Please wait",
+  "throttledDescription": "Too many sign-in attempts. Wait a minute before trying again."
+}

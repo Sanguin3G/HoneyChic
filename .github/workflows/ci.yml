@@ -1,46 +1,54 @@
-name: CI
+name: HoneyChic CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [rewrite/honeychic-v2, main]
   pull_request:
-    branches: [ main ]
+    branches: [rewrite/honeychic-v2, main]
+
+permissions:
+  contents: read
 
 jobs:
-  build:
+  foundation:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_DB: honeychic
+          POSTGRES_USER: honeychic
+          POSTGRES_PASSWORD: honeychic_ci
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U honeychic -d honeychic"
+          --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      DB_HOST: 127.0.0.1
+      DB_PORT: 5432
+      DB_USER: honeychic
+      DB_PASSWORD: honeychic_ci
+      DB_DATABASE: honeychic
     steps:
       - uses: actions/checkout@v4
-
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
+      - uses: actions/setup-node@v4
         with:
-          php-version: '8.4'
-
-      - name: Install PHP Dependencies
-        run: composer install --no-progress --prefer-dist
-
-      - name: Copy .env
-        run: cp .env.example .env
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20.19.1'
-
-      - name: Install NPM Dependencies
-        run: npm ci
-
-      - name: Build Assets
-        run: npm run build
-
-      - name: Prepare SQLite
-        run: touch database/database.sqlite
-
-      - name: Generate App Key & Run Migrations
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Configure local build environment
         run: |
-          php artisan key:generate --ansi
-          php artisan migrate --database=sqlite --force
-
-      - name: Run PHP Tests
-        run: php artisan test
+          cp .env.example .env
+          node ace generate:key
+      - run: node ace migration:run
+      - run: node ace db:seed
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm run build
+      - name: Create isolated test database
+        run: PGPASSWORD="$DB_PASSWORD" createdb -h "$DB_HOST" -U "$DB_USER" honeychic_test
+      - run: npm test
+        env:
+          DB_DATABASE: honeychic_test
+          LIMITER_STORE: memory

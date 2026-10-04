@@ -1,60 +1,26 @@
-# Composer / Dependencies
-/vendor/
-composer.phar
-auth.json
-
-# Node Dependencies
-/node_modules/
-npm-debug.log
-yarn-error.log
-
-# Laravel / Build Artifacts
-/public/build/
-/public/hot
-/public/storage
-/storage/*.key
-/storage/pail
-/bootstrap/cache/*
-!/bootstrap/cache/.gitignore
-
-# Environment Files
+node_modules/
+build/
+.adonisjs/
+.honeychic-tools/
 .env
 .env.*
 !.env.example
-
-# Laravel Storage - Ignore generated files but keep directory structure placeholders
-/storage/app/*
-/storage/framework/cache/*
-/storage/framework/sessions/*
-/storage/framework/testing/*
-/storage/framework/views/*
-/storage/logs/*
-!/storage/*/.gitignore
-!/storage/app/public
-
-# Databases
-*.db
-*.sqlite
-*.sqlite-journal
-*.sqlite3
-*.db-journal
-
-# PHPUnit / Testing
-.phpunit.result.cache
-/.phpunit.cache
-
-# Homestead / Vagrant
-Homestead.json
-Homestead.yaml
-
-# IDE specific files
-/.idea/
-/.vscode/
-/.fleet/
-/.nova/
-/.zed/
-.phpactor.json
-
-# OS specific files
+!.env.production.example
+!.env.test
+*.log
+coverage/
+tmp/*
+!tmp/.gitkeep
+.idea/
+.vscode/
 .DS_Store
-Thumbs.db
+# Existing local PHP runtime artifacts are not part of HoneyChic.
+vendor/
+storage/
+bootstrap/cache/
+database/*.sqlite*
+.phpunit.result.cache
+public/build/
+public/hot
+
+public/assets/

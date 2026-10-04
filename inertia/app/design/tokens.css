@@ -1,0 +1,28 @@
+:root {
+  --surface: #f1f3f5;
+  --surface-raised: #ffffff;
+  --surface-inset: #e5eaf0;
+  --border: #c2cbd5;
+  --border-strong: #778a9f;
+  --brand-primary: #172d48;
+  --brand-accent: #e5802e;
+  --brand-accent-soft: #fff0dc;
+  --text-primary: #172d48;
+  --text-muted: #516174;
+  --text-on-brand: #ffffff;
+  --success: #217047;
+  --warning: #855500;
+  --danger: #b52e2e;
+  --focus: #1465ac;
+  --radius-control: 6px;
+  --radius-panel: 10px;
+}
+@theme inline {
+  --color-surface: var(--surface);
+  --color-surface-raised: var(--surface-raised);
+  --color-surface-inset: var(--surface-inset);
+  --color-brand-primary: var(--brand-primary);
+  --color-brand-accent: var(--brand-accent);
+  --color-text-primary: var(--text-primary);
+  --color-text-muted: var(--text-muted);
+}

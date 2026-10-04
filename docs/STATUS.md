@@ -4,7 +4,7 @@ Updated: 2026-10-04. **Core commerce and optional modules are implemented; produ
 
 ## What exists and works
 
-- Laravel v1 stays on `main` at the pushed `larastore-v1-final` tag (`3cad9fd`). HoneyChic work is on `rewrite/honeychic-v2`. The GitHub repository has not been renamed.
+- Laravel v1 stays on `main` at the pushed `larastore-v1-final` tag (`3cad9fd`). HoneyChic work is on `rewrite/honeychic-v2`. The existing remote redirects to `Sanguin3G/HoneyChic`; that repository move predated this push. No repository rename was performed during this review.
 - AdonisJS 7, Vue 3, Inertia SSR, PostgreSQL, Tailwind 4, Phosphor, VineJS and Japa. One monolith. No Redis, search engine, or AI provider.
 - Accounts, store settings, catalog, inventory, session cart, guest/account checkout, historical orders and shared cancellation remain as in Phases 2–8.
 - The header language control is a globe button with an English / Tiếng Việt menu. It keeps the existing locale session and saved preference.

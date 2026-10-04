@@ -58,5 +58,15 @@
   "recheck": "Kiểm tra giỏ hàng",
   "selectAddress": "Chọn địa chỉ",
   "view": "Xem đơn hàng",
-  "customer": "Khách hàng"
+  "customer": "Khách hàng",
+  "mailFailed": "Đơn hàng đã được lưu, nhưng email không gửi được.",
+  "mailConfirmationSubject": "Đơn {number} tại {store}",
+  "mailShippedSubject": "{store} đã gửi đơn {number}",
+  "mailCancelledSubject": "{store} đã hủy đơn {number}",
+  "mailConfirmationIntro": "Chúng tôi đã nhận đơn {number}.",
+  "mailShippedIntro": "Đơn {number} đã được gửi đi.",
+  "mailCancelledIntro": "Đơn {number} đã hủy và tồn kho đã được hoàn lại.",
+  "mailRecovery": "Mở đơn hàng",
+  "mailRecoveryHelp": "Liên kết riêng này có hiệu lực trong 7 ngày.",
+  "mailView": "Xem đơn hàng"
 }

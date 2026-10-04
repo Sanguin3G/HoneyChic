@@ -14,3 +14,11 @@ export const registrationValidator = vine.create({
 export const profileValidator = vine.create({
   fullName: vine.string().trim().minLength(1).maxLength(120),
 })
+
+export const forgotPasswordValidator = vine.create({
+  email: vine.string().trim().toLowerCase().email().maxLength(254),
+})
+
+export const resetPasswordValidator = vine.create({
+  password: vine.string().minLength(12).maxLength(128).confirmed(),
+})

@@ -18,7 +18,7 @@ Keep documentation consistent with actual behavior and the README illustrated wi
 
 ## Next
 
-- Launch preparation: transactional order/shipping mail, password recovery and verification where enabled, and emailed guest receipt recovery. Send notifications after committed commerce changes; a mail failure must not duplicate or undo an order.
+- Launch preparation still needs a chosen host. Transactional confirmation, shipped, and cancellation mail, password reset, and guest recovery links are in place. Email verification remains optional and is not implemented.
 - Choose a hosting provider, configure HTTPS/proxy trust and database TLS, deploy staging, and verify production migrations and readiness. Exercise an isolated PostgreSQL restore and record recovery steps; include uploaded media when uploads exist.
 - Complete practical merchant settings: logo/favicon, description/contact/address, social links, theme colors and checkout options. Existing currency, locale, timezone, order prefix, stock threshold and capability settings remain typed.
 - Add Simple seller / Standard store / Catalog only / Custom presets that initialize settings/capabilities, then a setup wizard over the same implementation. Do not make it a prerequisite for development.

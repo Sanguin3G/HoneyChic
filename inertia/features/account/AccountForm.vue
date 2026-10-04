@@ -62,6 +62,7 @@ function submit() {
       />
     </template>
     <HcButton type="submit" :disabled="form.processing">{{ t('auth', mode) }}</HcButton>
+    <Link v-if="mode === 'login'" href="/forgot-password">{{ t('auth', 'forgot') }}</Link>
     <Link v-if="mode === 'login' && canRegister" href="/register">{{
       t('auth', 'createAccount')
     }}</Link>

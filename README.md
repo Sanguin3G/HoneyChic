@@ -10,7 +10,7 @@ HoneyChic is the platform; merchants use their own store name, currency and cata
 
 Generic products and variants, recorded inventory movements, search, session cart, guest/account checkout, historical orders and a custom Vue admin. Reviews, wishlist, coupons, shipping and cash on delivery are optional. A fake payment gateway is available in development only.
 
-**Rewrite in progress:** production container foundations exist, but merchant launch work remains. Transactional mail, password recovery and merchant uploads are not implemented. See [current status](docs/STATUS.md) and the [roadmap](docs/ROADMAP.md) before deploying.
+**Rewrite in progress:** production container foundations exist, but merchant launch work remains. Order mail, password reset and guest order recovery are implemented. Merchant uploads are not. See [current status](docs/STATUS.md) and the [roadmap](docs/ROADMAP.md) before deploying.
 
 <details>
 <summary>More screenshots: product page and language menu</summary>

@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="{{ locale }}">
+  <body>
+    <p>{{ storeName }}</p>
+    <p>{{ intro }}</p>
+    @each(row in rows)
+      <p>{{ row.label }}: {{ row.value }}</p>
+    @end
+    @if(actionUrl)
+      <p><a href="{{ actionUrl }}">{{ actionLabel }}</a></p>
+    @end
+    @if(footnote)
+      <p>{{ footnote }}</p>
+    @end
+  </body>
+</html>

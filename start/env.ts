@@ -28,6 +28,12 @@ const env = await Env.create(new URL('../', import.meta.url), {
   STORE_DEFAULT_LOCALE: Env.schema.enum(['en', 'vi'] as const),
   STORE_CURRENCY: Env.schema.string(),
   STORE_TIMEZONE: Env.schema.string(),
+  SMTP_HOST: Env.schema.string.optional(),
+  SMTP_PORT: Env.schema.number.optional(),
+  SMTP_USERNAME: Env.schema.string.optional(),
+  SMTP_PASSWORD: Env.schema.secret.optional(),
+  MAIL_FROM_ADDRESS: Env.schema.string.optional(),
+  MAIL_FROM_NAME: Env.schema.string.optional(),
 })
 
 const appUrl = new URL(env.get('APP_URL'))

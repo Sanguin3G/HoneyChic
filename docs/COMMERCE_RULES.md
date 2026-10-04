@@ -62,7 +62,8 @@ Record any intended change here, alongside the action and meaningful regression 
 - Fulfillment: pending → processing → shipped → completed; processing may complete directly for pickup/local fulfillment. Pending/processing may cancel. No backwards transitions. Payment starts unpaid and is unaffected by fulfillment changes.
 - Customers/guests may cancel only their pending unpaid order. Admins may cancel pending/processing unpaid orders. Paid, shipped or completed orders need a future refund/return workflow.
 - CancelOrder locks the order, returns an already-cancelled order unchanged, restores each variant once and marks cancelled in the same transaction. A variant retired after sale still receives its historical restoration; admins may remove its restored balance with a recorded negative correction.
-- Guest access uses the most recent guest order in the encrypted two-hour session. A public UUID alone never authorizes access. No guest email lookup or emailed receipt exists yet. Accounts can access only their own orders. Private cart/checkout/order responses are no-store.
+- The order stores the checkout locale. Confirmation, shipped, and cancellation emails use that snapshot and are sent only after the order transaction commits. A mail failure does not roll back the order or stock, and retrying checkout does not send another confirmation.
+- Guest access uses the most recent guest order in the encrypted two-hour session, or a hashed recovery link from the order email. The link lasts 7 days and can be opened again until it expires. A public UUID, email address, or order number alone never authorizes access. Accounts can access only their own orders. Private cart/checkout/order responses are no-store.
 - Addresses are customer-scoped, at most 20 per account. Editing/deleting a saved address never changes an order snapshot. Guest orders are not automatically attached to later registrations.
 
 ## Optional-module decisions

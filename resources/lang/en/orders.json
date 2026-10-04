@@ -58,5 +58,15 @@
   "recheck": "Review cart",
   "selectAddress": "Choose address",
   "view": "View order",
-  "customer": "Customer"
+  "customer": "Customer",
+  "mailFailed": "The order was saved, but the email could not be sent.",
+  "mailConfirmationSubject": "{store} order {number}",
+  "mailShippedSubject": "{store} shipped order {number}",
+  "mailCancelledSubject": "{store} cancelled order {number}",
+  "mailConfirmationIntro": "We received your order {number}.",
+  "mailShippedIntro": "Order {number} has been shipped.",
+  "mailCancelledIntro": "Order {number} was cancelled and its stock was restored.",
+  "mailRecovery": "Open your order",
+  "mailRecoveryHelp": "This private link works for 7 days.",
+  "mailView": "View your order"
 }

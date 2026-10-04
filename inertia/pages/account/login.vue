@@ -3,6 +3,7 @@ import { Head } from '@inertiajs/vue3'
 import StorefrontLayout from '~/app/layouts/StorefrontLayout.vue'
 import HcPanel from '~/app/design/HcPanel.vue'
 import AccountForm from '~/features/account/AccountForm.vue'
+import HcNotice from '~/app/design/HcNotice.vue'
 import { useI18n } from '~/app/shared/i18n'
 defineProps<{ canRegister: boolean }>()
 const { t } = useI18n()
@@ -13,6 +14,7 @@ const { t } = useI18n()
   <StorefrontLayout>
     <HcPanel class="account-panel">
       <h1>{{ t('auth', 'login') }}</h1>
+      <HcNotice />
       <AccountForm mode="login" :can-register="canRegister" />
     </HcPanel>
   </StorefrontLayout>

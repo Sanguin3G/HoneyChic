@@ -3,6 +3,7 @@ import { BaseModel, column, hasMany } from '@adonisjs/lucid/orm'
 import type { HasMany } from '@adonisjs/lucid/types/relations'
 import OrderItem from './order_item.js'
 import type { OrderStatus } from '#domains/orders/data/order_states'
+import type { Locale } from '#core/support/locale'
 export default class Order extends BaseModel {
   @column({ isPrimary: true }) declare id: number
   @column() declare publicId: string
@@ -22,6 +23,7 @@ export default class Order extends BaseModel {
   @column() declare customerPhone: string
   @column() declare deliveryAddress: string
   @column() declare note: string
+  @column() declare locale: Locale
   @column.dateTime({ autoCreate: true }) declare createdAt: DateTime
   @column.dateTime({ autoCreate: true, autoUpdate: true }) declare updatedAt: DateTime | null
   @column.dateTime() declare cancelledAt: DateTime | null

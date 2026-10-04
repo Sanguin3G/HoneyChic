@@ -8,7 +8,8 @@ import { randomUUID } from 'node:crypto'
 import type { HttpContext } from '@adonisjs/core/http'
 import { cartSessionKey, emptyCart, readCartState } from '#domains/cart/data/cart_state'
 import { readCart } from '#domains/cart/queries/read_cart'
-import PlaceOrder from '#domains/orders/actions/place_order'
+import PlaceOrder, { orderWasJustPlaced } from '#domains/orders/actions/place_order'
+import DeliverOrderMail from '#domains/orders/actions/deliver_order_mail'
 import CustomerAddress from '#domains/customers/models/customer_address'
 import { checkoutValidator } from '#domains/orders/validators/orders'
 import { rejectOrder } from '#domains/orders/errors/reject_order'
@@ -103,6 +104,10 @@ export default class CheckoutController {
     if (!order.customerId) ctx.session.put('guestOrder', order.publicId)
     if (!ctx.session.get('checkoutCompleted')) ctx.session.put(cartSessionKey, emptyCart())
     ctx.session.put('checkoutCompleted', true)
+    if (orderWasJustPlaced(order)) {
+      const sent = await new DeliverOrderMail().execute(order, 'confirmation')
+      if (!sent) ctx.session.flash('notice', 'orders.mailFailed')
+    }
     return ctx.response.redirect().toPath('/orders/' + order.publicId)
   }
 }

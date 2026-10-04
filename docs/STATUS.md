@@ -13,24 +13,25 @@ Updated: 2026-10-04. **Core commerce and optional modules are implemented; produ
 - Checkout can add a shipping rate, coupon and payment method inside the order transaction. Orders store the discount, shipping name and coupon code. Core Orders does not import those modules.
 - Cash on delivery stays unpaid until staff record collection after processing starts. Fake settlement cannot run in production. Repeating a payment event does not pay twice. A cancelled order cannot be paid, and a paid order cannot restore stock.
 - Public pages have titles, descriptions, canonical URLs and social metadata. Product pages include structured data. Indexing and the sitemap stay off unless `NODE_ENV=production` and `SEO_INDEXABLE=true`.
-- Production Dockerfile, Compose example, health checks, CSP and deployment/backup notes are in place. The root license is MIT. Mail is documented but not sent yet. CI runs for `rewrite/honeychic-v2`, `stabilize/honeychic-mvp` and `main`.
+- Production Dockerfile, Compose example, health checks, CSP and deployment/backup notes are in place. The root license is MIT. CI runs for `rewrite/honeychic-v2`, `stabilize/honeychic-mvp` and `main`.
+- Order confirmation, shipped, and cancellation mail is sent after the order transaction commits. A mail failure is reported on the order and does not undo the order or stock. Guest emails include a hashed 7-day recovery link that can be opened again until it expires. Password reset uses a hashed one-hour token that cannot be reused. Mailpit is the development SMTP target. Delivery is skipped until `SMTP_HOST` and a sender address are set.
 
 ## Verification
 
-- On 2026-10-04 the clean tree passed container migrations, typecheck, lint, production build and **77 Japa tests**. After the low-stock correction, the commerce-admin and inventory suites passed (12 tests) and eslint passed on the touched files. Checks use an isolated database; no merchant data is used.
+- On 2026-10-04 the clean tree passed container migrations, typecheck, lint, production build and **77 Japa tests**. After the low-stock correction, the commerce-admin and inventory suites passed (12 tests). Storefront and admin were then opened in English and Vietnamese, at desktop and mobile widths. No concrete layout or interaction defect was changed. A refused Vite HMR socket on port 24678 came from the unpublished preview container port, not from the pages. Checks use an isolated database; no merchant data is used.
 - New coverage includes coupon races, payment versus cancellation, review eligibility, wishlist bounds, and accounts-off module configuration.
 - Playwright on Microsoft Edge verified the production image: guest shipping/coupon/COD checkout and cancellation, account checkout, wishlist, admin cash collection/retry, completed-purchase review submission, EN/VI, mobile layout, CSP, indexing/sitemaps and production fake-payment rejection. Browser fixtures used a separate test database. Existing storefront screenshots remain in `docs/screenshots/`.
-- Host checks on the Windows-mounted tree are too slow to trust; the passing suite ran inside Docker against PostgreSQL. `npm audit --omit=dev` on that image reports 20 high findings, all braces. The suggested force fix would downgrade Adonis. No override is applied.
+- Host checks on the Windows-mounted tree are too slow to trust; the passing suite ran inside Docker against PostgreSQL. After order mail, typecheck, lint, and the full suite passed again: **81 tests**. `npm audit --omit=dev` reports 22 high findings: 21 from the braces chain, now also reached through `@adonisjs/mail`, and nodemailer 9.1.1. The suggested braces fix would downgrade Adonis. The nodemailer fixes are outside the mail package's declared range. No override is applied.
 - Reviewed 22 Markdown files and checked their local links. Removed empty Laravel/Filament directories; ignored local PHP runtime artifacts remain excluded from the application image. No unused Vue component was identified in the reference scan. This is not an exhaustive proof that all code is necessary.
 
 ## Still open
 
-No transactional mail, password recovery, guest-receipt email, refunds, returns, unpaid-order expiry, uploads or S3. Guest receipts still live only in the current session. Admin can rename customers, not change their email or role.
+No email verification, refunds, returns, unpaid-order expiry, uploads or S3. Guest orders still leave the browser session after two hours; the emailed recovery link is the way back. Admin can rename customers, not change their email or role. There is no queue: a process crash after commit and before SMTP accepts the message can drop that email. The order itself remains.
 
 Checkout review clears selections for unavailable modules and recalculates the displayed charges. Submission still rejects stale choices under transactional capability checks. The review HTTP adapter passes only rating/body to persistence. A leftover static robots file was removed so the dynamic indexing policy takes effect.
 
 Full merchant branding settings, store profiles/setup, imports/exports and other deferred items remain in ROADMAP.
 
-The braces advisory `GHSA-vfj7-8cjw-p6xm` still has no patched release. Do not call the dependency tree clean. See [SECURITY](SECURITY.md).
+The braces advisory `GHSA-vfj7-8cjw-p6xm` still has no patched release. Nodemailer 9.1.1, pulled in by mail, has separate high advisories whose fixes are not in the declared 9.x range. Do not call the dependency tree clean. See [SECURITY](SECURITY.md).
 
 No hosted staging deploy or restore drill on a real host yet. Local production images are not a backup test. The rewrite stays on its dedicated branch; `main` and the v1 tag are untouched.

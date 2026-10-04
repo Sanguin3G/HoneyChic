@@ -7,6 +7,7 @@ export default defineConfig({
     () => import('@adonisjs/lucid/commands'),
     () => import('@adonisjs/session/commands'),
     () => import('@adonisjs/inertia/commands'),
+    () => import('@adonisjs/mail/commands'),
   ],
   providers: [
     () => import('@adonisjs/core/providers/app_provider'),
@@ -23,6 +24,7 @@ export default defineConfig({
     () => import('@adonisjs/auth/auth_provider'),
     () => import('@adonisjs/bouncer/bouncer_provider'),
     () => import('@adonisjs/limiter/limiter_provider'),
+    () => import('@adonisjs/mail/mail_provider'),
   ],
   preloads: [
     () => import('#start/routes'),

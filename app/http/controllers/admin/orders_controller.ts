@@ -10,6 +10,7 @@ import {
 } from '#domains/orders/validators/orders'
 import { orderTransitions } from '#domains/orders/data/order_states'
 import ChangeOrderStatus from '#domains/orders/actions/change_order_status'
+import DeliverOrderMail from '#domains/orders/actions/deliver_order_mail'
 import { validationMessages } from '#core/support/validation_messages'
 export default class OrdersController {
   async index(ctx: HttpContext) {
@@ -58,7 +59,21 @@ export default class OrdersController {
     const { id } = await orderIdValidator.validate(ctx.params, {
       messagesProvider: validationMessages(ctx.locale),
     })
-    await new ChangeOrderStatus().execute(id, status, ctx.auth.getUserOrFail().id, ctx.locale)
+    const current = await Order.query().where('publicId', id).firstOrFail()
+    const order = await new ChangeOrderStatus().execute(
+      id,
+      status,
+      ctx.auth.getUserOrFail().id,
+      ctx.locale
+    )
+    const kind = order.status === 'shipped' || order.status === 'cancelled' ? order.status : null
+    if (kind && current.status !== order.status) {
+      const sent = await new DeliverOrderMail().execute(order, kind)
+      if (!sent) {
+        ctx.session.flash('notice', 'orders.mailFailed')
+        return ctx.response.redirect().toPath('/admin/orders/' + ctx.params.id)
+      }
+    }
     ctx.session.flash('notice', 'admin.orderSaved')
     return ctx.response.redirect().toPath('/admin/orders/' + ctx.params.id)
   }

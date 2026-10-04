@@ -15,7 +15,7 @@ node ace owner:create
 npm run dev
 ```
 
-App: http://localhost:3333. Mailpit UI: http://localhost:8025; SMTP: 127.0.0.1:1025. PostgreSQL: 127.0.0.1:5432. Set a free `DB_PORT` if needed.
+App: http://localhost:3333. Mailpit UI: http://localhost:8025. The app sends through `SMTP_HOST` and `SMTP_PORT` (127.0.0.1:1025 in the example). Set the store contact email or `MAIL_FROM_ADDRESS`; otherwise order and reset mail is skipped. PostgreSQL: 127.0.0.1:5432. Set a free `DB_PORT` if needed.
 
 `owner:create` securely prompts for name, email and a password of at least 12 characters. It creates only the initial owner, serializes concurrent bootstrap attempts and refuses if an owner already exists. No credentials are seeded. Log in at `/login`; owners manage settings at `/admin/settings`, staff access `/admin`, customers use `/account`.
 

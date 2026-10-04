@@ -3,6 +3,7 @@ import Order from '#domains/orders/models/order'
 import { scopedOrder } from '#domains/orders/queries/scoped_order'
 import { orderPayment } from '#modules/payments/queries/order_payment'
 import CancelOrder from '#domains/orders/actions/cancel_order'
+import DeliverOrderMail from '#domains/orders/actions/deliver_order_mail'
 import { orderDetail, orderSummary } from '#domains/orders/data/order_data'
 import { orderListValidator } from '#domains/orders/validators/orders'
 import { validationMessages } from '#core/support/validation_messages'
@@ -40,7 +41,8 @@ export default class OrdersController {
       ctx.session.get('guestOrder'),
       ctx.locale
     )
-    await new CancelOrder().execute(
+    const before = order.status
+    const updated = await new CancelOrder().execute(
       order.publicId,
       {
         id: ctx.auth.user?.id ?? null,
@@ -49,6 +51,13 @@ export default class OrdersController {
       },
       ctx.locale
     )
+    if (before !== updated.status) {
+      const sent = await new DeliverOrderMail().execute(updated, 'cancelled')
+      if (!sent) {
+        ctx.session.flash('notice', 'orders.mailFailed')
+        return ctx.response.redirect().toPath('/orders/' + order.publicId)
+      }
+    }
     ctx.session.flash('notice', 'orders.cancelledNotice')
     return ctx.response.redirect().toPath('/orders/' + order.publicId)
   }

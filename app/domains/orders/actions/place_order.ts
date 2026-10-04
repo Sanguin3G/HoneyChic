@@ -14,6 +14,10 @@ import type { Locale } from '#core/support/locale'
 import type { Infer } from '@vinejs/vine/types'
 import type { checkoutValidator } from '#domains/orders/validators/orders'
 
+export function orderWasJustPlaced(order: Order) {
+  return order.$extras.justPlaced === true
+}
+
 export default class PlaceOrder {
   async execute(
     state: CartState,
@@ -126,6 +130,7 @@ export default class PlaceOrder {
           customerPhone: input.customerPhone,
           deliveryAddress: input.deliveryAddress,
           note: input.note ?? '',
+          locale,
         },
         { client: trx }
       )
@@ -163,6 +168,7 @@ export default class PlaceOrder {
         )
       }
       if (participation) await participation.created(order, trx)
+      order.$extras.justPlaced = true
       return order
     })
   }

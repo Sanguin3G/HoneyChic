@@ -34,7 +34,7 @@ Read this document before changing important commerce workflows. Catalog, invent
 - Initial stock is positive and allowed only before the first movement. Restock/return/cancellation are positive; sale is negative; manual adjustment/correction are signed. PlaceOrder and CancelOrder supply order idempotency/authorization. Payment settlement never writes inventory.
 - Only owner/staff can read/adjust inventory. Manual endpoints allow initial_stock, manual_adjustment, restock and correction; actor comes from the session, never submitted input.
 - Movement history has no mutation endpoint. Variant deletion is restricted; deleting an actor nulls the actor relationship while retaining the movement.
-- Retired variants permit cancellation restoration and negative corrections only; manual positive additions remain blocked. Low stock means active stock greater than zero and at or below the merchant threshold; zero stock has a separate state.
+- Retired variants permit cancellation restoration and negative corrections only; manual positive additions remain blocked. Out of stock means stock at or below zero. Low stock means active stock greater than zero and at or below the merchant threshold. Dashboard counts and the inventory filter use that same split.
 - Public availability is informational; checkout rechecks stock under locks. Multi-variant transactions must lock IDs consistently to avoid deadlocks.
 
 Record any intended change here, alongside the action and meaningful regression protection.

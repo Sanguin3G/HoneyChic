@@ -6,6 +6,8 @@ import StoreSetting from '#core/store/store_setting'
 import Order from '#domains/orders/models/order'
 import PlaceOrder from '#domains/orders/actions/place_order'
 import CustomerAddress from '#domains/customers/models/customer_address'
+import ProductVariant from '#domains/catalog/models/product_variant'
+import AdjustInventory from '#domains/inventory/actions/adjust_inventory'
 import { cartFixture, inertiaPage } from '../support/cart_fixture.js'
 async function customer(email: string, role: 'customer' | 'staff' | 'owner' = 'customer') {
   return User.create({ fullName: 'Account ' + role, email, password: 'test-password-123456', role })
@@ -248,5 +250,27 @@ test.group('Commerce administration and account boundaries', (group) => {
     await order.merge({ status: 'cancelled' }).save()
     const refreshed = await client.get('/admin').loginAs(staff).header('Accept', 'text/html')
     assert.lengthOf(inertiaPage(refreshed.text()).props.dashboard.totals, 0)
+    const variants = await ProductVariant.query().orderBy('stock', 'desc')
+    await new AdjustInventory().execute(
+      {
+        variantId: variants[0].id,
+        quantityDelta: -variants[0].stock,
+        reason: 'sale',
+        actorId: null,
+      },
+      'en'
+    )
+    const counted = await client.get('/admin').loginAs(staff).header('Accept', 'text/html')
+    assert.equal(inertiaPage(counted.text()).props.dashboard.counts.low_stock, 1)
+    const low = await client
+      .get('/admin/inventory?state=low')
+      .loginAs(staff)
+      .header('Accept', 'text/html')
+    const out = await client
+      .get('/admin/inventory?state=out')
+      .loginAs(staff)
+      .header('Accept', 'text/html')
+    assert.lengthOf(inertiaPage(low.text()).props.variants, 1)
+    assert.lengthOf(inertiaPage(out.text()).props.variants, 1)
   })
 })

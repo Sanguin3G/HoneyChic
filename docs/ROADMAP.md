@@ -2,7 +2,7 @@
 
 ## Now
 
-Review and stabilize the rewrite on `rewrite/honeychic-v2`. Core commerce and first-party optional modules exist; production foundations exist. This does not mean the entire rewrite plan is finished or the application is ready for a merchant launch.
+Review and stabilize the rewrite on `stabilize/honeychic-mvp`, based on `rewrite/honeychic-v2`. Core commerce and first-party optional modules exist; production foundations exist. This does not mean the entire rewrite plan is finished or the application is ready for a merchant launch.
 
 | Original phases | Current position | Work to close out |
 | --- | --- | --- |

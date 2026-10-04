@@ -16,19 +16,19 @@ All interface text exists in both English and Vietnamese. Merchant product conte
 
 Current primitives are Button, Panel, Input, Textarea, Notice and Dialog. Add other primitives only when real workflows require them.
 
-Phase 2 adds labelled input/error/notice primitives, account forms, a small account sidebar, and admin settings/capability tables. Desktop admin navigation remains persistent; mobile uses a compact navigation grid with comfortable targets. UI and validation dictionaries exist in both languages. No fake dashboard metrics are shown.
+Account forms, a small account sidebar, and admin settings/capability tables use those primitives. Desktop admin navigation remains persistent; mobile uses a compact navigation grid with comfortable targets. UI and validation dictionaries exist in both languages. Dashboard metrics come from real orders and inventory.
 
-Catalog has cohesive option/variant/image editors and compact admin tables. Image controls edit metadata only; uploads are not implemented. Storefront components compose desktop filters/mobile drawers. Prices follow the product currency and locale; merchant text remains unchanged.
+Catalog has cohesive option/variant/image editors and compact admin tables. Image controls edit metadata only; uploads are not implemented. Storefront components compose desktop filters and a mobile drawer. Prices follow the product currency and locale; merchant text remains unchanged.
 
-Phase 4 adds compact inventory tables, text-labelled stock states, signed adjustments and paginated movement history. Owner/staff see balances; public product/catalog pages show availability only. Low-stock and out-of-stock states remain distinct. History timestamps use the merchant timezone. Stock controls stay separate from catalog pricing/options so catalog edits cannot reset balances.
+Inventory uses compact tables, text-labelled stock states, signed adjustments and paginated movement history. Owner/staff see balances; public product/catalog pages show availability only. Low stock means active stock greater than zero and at or below the merchant threshold. Zero stock is out of stock. History timestamps use the merchant timezone. Stock controls stay separate from catalog pricing/options so catalog edits cannot reset balances.
 
-## Phase 5 storefront
+## Storefront
 
 Merchant home uses actual categories/products and merchant identity. Desktop catalog has left filters; mobile uses a native modal drawer with shared draft state and explicit Apply/Reset. Header search and locale switching preserve useful catalog context. Mobile navigation uses a labelled disclosure.
 
 Product pages compose image thumbnails and generic options. Selection always resolves to an offered variant and announces its price/availability. Public balances remain private. No fake discounts, ratings, delivery promises or inactive cart/wishlist buttons are shown. Public indexing requires the explicit production SEO setting.
 
-## Phase 6 cart
+## Cart and checkout
 
 The top navigation has a cart count, including mobile. Product pages have labelled quantity/add controls tied to the selected variant; sold-out variants disable addition. The cart composes variant rows with current/original prices, stock warnings, quantity controls, remove/clear and a subtotal panel. Mobile stacks the rows and summary without tiny controls.
 
@@ -38,6 +38,6 @@ Checkout composes customer/contact/address fields with a current-price review an
 
 Mobile checkout repeats the current total beside its submit button. Admin grid tracks use minmax(0,1fr); wide tables scroll within their panels rather than widening the page.
 
-## Phase 9/10 additions
+## Locale, modules and payment controls
 
 Locale selection uses a globe button and dropdown menu of language names, with a selected check, outside-click closing, Escape focus restoration and arrow-key movement. Product reviews/wishlist and checkout shipping/coupon/payment controls appear only when capabilities allow them. Checkout requires an explicit authoritative total review after option selection. Admin configures rates/coupons through the same tactile Vue primitives. Payment controls state when cash is being recorded or a non-charging development simulation is used. SEO metadata never changes merchant content.

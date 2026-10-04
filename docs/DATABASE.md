@@ -43,6 +43,6 @@ docker compose exec postgres createdb -U honeychic honeychic_test
 
 Inventory, orders and future payments must follow [commerce invariants](COMMERCE_RULES.md).
 
-## Phase 9 schema
+## Optional module schema
 
-The additive optional-module migration adds typed enablement flags, order discount/shipping/name/code snapshots, wishlists, reviews, shipping_rates, coupons, coupon_redemptions, payments and payment_events. Unique constraints protect wishlist/review duplicates, checkout redemption, one payment per order and callback references. Coupon/payment business records restrict destructive deletion; wishlist/reviews cascade with their account/product. Shipping/coupon currency and amounts are constrained. Configuration changes do not rewrite old order snapshots. Migration down discards module history; production must use backups and forward fixes.
+The optional-module migration adds typed enablement flags, order discount/shipping/name/code snapshots, wishlists, reviews, shipping_rates, coupons, coupon_redemptions, payments and payment_events. Unique constraints protect wishlist/review duplicates, checkout redemption, one payment per order and callback references. Coupon/payment business records restrict destructive deletion; wishlist/reviews cascade with their account/product. Shipping/coupon currency and amounts are constrained. Configuration changes do not rewrite old order snapshots. Migration down discards module history; production must use backups and forward fixes.

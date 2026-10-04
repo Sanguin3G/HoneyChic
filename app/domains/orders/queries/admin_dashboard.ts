@@ -8,7 +8,7 @@ export async function adminDashboard(threshold: number) {
     (SELECT COUNT(*) FROM orders WHERE status IN ('pending','processing')) AS open_orders,
     (SELECT COUNT(*) FROM products) AS products,
     (SELECT COUNT(*) FROM users WHERE role = 'customer') AS customers,
-    (SELECT COUNT(*) FROM product_variants WHERE is_active AND stock <= ?) AS low_stock`,
+    (SELECT COUNT(*) FROM product_variants WHERE is_active AND stock > 0 AND stock <= ?) AS low_stock`,
     [threshold]
   )
   const totals =

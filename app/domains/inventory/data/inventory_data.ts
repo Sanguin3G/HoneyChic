@@ -9,7 +9,7 @@ export function inventoryData(variant: ProductVariant, threshold: number) {
     product: { id: variant.product.id, name: variant.product.name },
     state: !variant.isActive
       ? 'retired'
-      : variant.stock === 0
+      : variant.stock <= 0
         ? 'out'
         : variant.stock <= threshold
           ? 'low'

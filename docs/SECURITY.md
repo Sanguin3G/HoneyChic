@@ -1,6 +1,6 @@
 # Security review
 
-Reviewed 2026-10-04 for the Phase 9/10 slice.
+Reviewed 2026-10-04.
 
 ## Protections and boundaries
 
@@ -12,7 +12,7 @@ Fake settlement is blocked by both central capability configuration and the prov
 
 ## Dependency finding
 
-The upstream [GHSA-vfj7-8cjw-p6xm](https://github.com/advisories/GHSA-vfj7-8cjw-p6xm) affects braces through 3.0.3 and lists no patched release as of review. The package is present through framework/build transitive dependencies. Forced npm audit downgrades are not a safe resolution for this stack.
+Re-checked 2026-10-04 with `npm audit --omit=dev`: 20 high findings and no critical findings. All of them are [GHSA-vfj7-8cjw-p6xm](https://github.com/advisories/GHSA-vfj7-8cjw-p6xm), braces through 3.0.3, reached through fast-glob and `@adonisjs/assembler`. The advisory lists no patched release. `npm audit fix --force` would install `@adonisjs/assembler@5.9.6`, which downgrades the Adonis 7 stack. No override is applied.
 
 The application does not accept user-supplied glob/brace patterns. Catalog search is bounded text used in parameterized PostgreSQL queries. This reduces the direct application attack surface; it does not establish that every framework path is unreachable. Track the upstream patch and rerun npm audit --omit=dev before public launch. Do not describe the dependency tree as clean.
 

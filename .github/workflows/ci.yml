@@ -2,9 +2,9 @@ name: HoneyChic CI
 
 on:
   push:
-    branches: [rewrite/honeychic-v2, main]
+    branches: [rewrite/honeychic-v2, stabilize/honeychic-mvp, main]
   pull_request:
-    branches: [rewrite/honeychic-v2, main]
+    branches: [rewrite/honeychic-v2, stabilize/honeychic-mvp, main]
 
 permissions:
   contents: read

@@ -1,3 +1,4 @@
+import { mediaUrl } from '#core/support/stored_media'
 import { cartQuantity, type CartState } from '#domains/cart/data/cart_state'
 import { loadCartVariants, isPublicVariant } from './load_cart_variants.js'
 
@@ -37,7 +38,7 @@ export async function readCart(state: CartState) {
               slug: product.slug,
               sku: variant.sku,
               description: variant.description,
-              image: image ? { url: '/media/' + image.storageKey, altText: image.altText } : null,
+              image: image ? { url: mediaUrl(image.storageKey), altText: image.altText } : null,
             }
           : null,
       unitPriceMinor: price,

@@ -1,4 +1,5 @@
 import type Product from '#domains/catalog/models/product'
+import { mediaUrl } from '#core/support/stored_media'
 import { decimalPrice } from '#shared/money'
 
 export function productSummary(product: Product) {
@@ -16,7 +17,7 @@ export function productSummary(product: Product) {
       : null,
     priceMinor: variant?.priceMinor ?? null,
     currency: variant?.currency ?? null,
-    image: image ? { url: '/media/' + image.storageKey, altText: image.altText } : null,
+    image: image ? { url: mediaUrl(image.storageKey), altText: image.altText } : null,
   }
 }
 
@@ -41,7 +42,7 @@ export function productDetail(product: Product) {
       storageKey: image.storageKey,
       altText: image.altText,
       isPrimary: image.isPrimary,
-      url: '/media/' + image.storageKey,
+      url: mediaUrl(image.storageKey),
     })),
   }
 }
@@ -61,10 +62,11 @@ export function productEditor(product: Product) {
       price: decimalPrice(variant.priceMinor, variant.currency),
       selections: variant.selections,
     })),
-    images: detail.images.map(({ storageKey, altText, isPrimary }) => ({
+    images: detail.images.map(({ storageKey, altText, isPrimary, url }) => ({
       storageKey,
       altText,
       isPrimary,
+      url,
     })),
   }
 }

@@ -49,3 +49,10 @@
   border-bottom: 1px solid var(--border);
   padding: 0.65rem;
 }
+.catalog-preview {
+  width: 4.5rem;
+  height: 4.5rem;
+  object-fit: cover;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
+}

@@ -17,6 +17,7 @@ bootstrap
 database/*.sqlite*
 public/build
 public/hot
+public/media/uploads
 *.log
 coverage
 

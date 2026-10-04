@@ -15,7 +15,7 @@ PostgreSQL 17 is the local/CI database. Lucid uses PostgreSQL with no SQLite fal
 - orders: unique public UUID/submission key/number, nullable customer, fulfillment/payment status, safe integer total/currency and customer/contact/address snapshots.
 - order_items: restrictive order link, nullable catalog links and historical name/options/SKU/price/quantity/discount/tax.
 - customer_addresses: customer-scoped editable address book; order snapshots are independent.
-- product_images: relative storage key, alt text, sort order and primary state.
+- product_images: relative storage key, alt text, sort order and primary state. Generated uploads use an `uploads/<uuid>.<ext>` key. Seeded illustrations use `catalog/`. The file is not part of the database transaction.
 
 Checks constrain roles, locales, singleton identity, nonnegative safe money, currency format and publication states. Unique indexes protect SKU, option names/values, active variant combinations one primary image and a single initial-stock movement. Actions enforce at least one variant, coherent selections and exactly one primary image when images exist.
 

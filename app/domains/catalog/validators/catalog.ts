@@ -58,6 +58,13 @@ export const productValidator = vine.create({
 })
 export type ProductInput = Infer<typeof productValidator>
 
+export const productImageValidator = vine.create({
+  image: vine.file({
+    size: '5mb',
+    extnames: ['jpg', 'jpeg', 'png', 'webp', 'avif'],
+  }),
+})
+
 export const catalogQueryValidator = vine.create({
   inStock: vine.enum(['1']).optional(),
   q: vine.string().trim().maxLength(200).optional(),

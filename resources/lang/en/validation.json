@@ -22,5 +22,8 @@
   "slug.regex": "Use lowercase letters, numbers and single hyphens.",
   "variants.*.sku.regex": "Use letters, numbers, dots, underscores or hyphens for the SKU.",
   "images.*.storageKey.regex": "Use a relative image key, without URLs or parent paths.",
+  "image.file": "Choose an image file.",
+  "image.file.extname": "Upload a JPEG, PNG, WebP, or AVIF image.",
+  "image.file.size": "Images must be 5 MB or smaller.",
   "uuid": "The {{ field }} field must be a valid identifier."
 }

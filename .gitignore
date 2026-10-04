@@ -22,5 +22,6 @@ database/*.sqlite*
 .phpunit.result.cache
 public/build/
 public/hot
+public/media/uploads/
 
 public/assets/

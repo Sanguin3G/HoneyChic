@@ -85,6 +85,7 @@ router
     router.post('/admin/inventory/:id/adjust', [Inventory, 'adjust'])
     router.get('/admin/products', [Products, 'index'])
     router.get('/admin/products/create', [Products, 'create'])
+    router.post('/admin/products/images', [Products, 'storeImage'])
     router.post('/admin/products', [Products, 'store'])
     router.get('/admin/products/:id/edit', [Products, 'edit'])
     router.put('/admin/products/:id', [Products, 'update'])

@@ -22,7 +22,7 @@ Catalog controllers validate and authorize; CreateProduct, UpdateProduct and Sav
 
 SearchCatalog applies publication/category visibility and parameterized PostgreSQL full-text/name/SKU search. Explicit data objects control public and editor props. The pure shared/money module uses BigInt decimal conversion and exact Intl formatting in both backend and frontend; stored safe integer minor units never use floating-point price arithmetic.
 
-Local product media records relative keys; the current public/media mapping is explicit in product data. Upload handling and an S3-compatible storage mapping remain later work. Core catalog depends on no optional module.
+Local product media records relative keys. `@adonisjs/drive` stores new files under `public/media/uploads` on the `fs` disk, or on the configured S3-compatible disk when `DRIVE_DISK=s3`. Public URLs are derived when reading; records do not store them. Catalog persistence does not delete files. The product controller deletes an unreferenced `uploads/` key only after commit. Core catalog depends on no optional module.
 
 ## Inventory slice
 

@@ -1,7 +1,14 @@
 import type { HttpContext } from '@adonisjs/core/http'
 import Category from '#domains/catalog/models/category'
 import { accessAdmin } from '#policies/admin'
-import { productValidator, catalogQueryValidator } from '#domains/catalog/validators/catalog'
+import {
+  productValidator,
+  productImageValidator,
+  catalogQueryValidator,
+} from '#domains/catalog/validators/catalog'
+import ProductImage from '#domains/catalog/models/product_image'
+import { mediaUrl, releaseUnusedUploads } from '#core/support/stored_media'
+import { storePublicImage } from '#core/support/store_public_image'
 import { validationMessages } from '#core/support/validation_messages'
 import { rejectCatalog } from '#domains/catalog/errors/reject_catalog'
 import CreateProduct from '#domains/catalog/actions/create_product'
@@ -57,6 +64,15 @@ export default class CatalogProductsController {
     return this.save(ctx)
   }
 
+  async storeImage(ctx: HttpContext) {
+    await ctx.bouncer.authorize(accessAdmin)
+    const { image } = await ctx.request.validateUsing(productImageValidator, {
+      messagesProvider: validationMessages(ctx.locale),
+    })
+    const storageKey = await storePublicImage(image)
+    return { storageKey, url: mediaUrl(storageKey) }
+  }
+
   async update(ctx: HttpContext) {
     return this.save(ctx, Number(ctx.params.id))
   }
@@ -66,12 +82,20 @@ export default class CatalogProductsController {
     const input = await ctx.request.validateUsing(productValidator, {
       messagesProvider: validationMessages(ctx.locale),
     })
+    const previousImages = id
+      ? await ProductImage.query().where('productId', id).select('storageKey')
+      : []
+    const previousKeys = previousImages.map((image) => image.storageKey)
     let product
     try {
       product = id
         ? await new UpdateProduct().execute(id, input, ctx.locale)
         : await new CreateProduct().execute(input, ctx.store.currency, ctx.locale)
     } catch (error) {
+      const kept = new Set(previousKeys)
+      await releaseUnusedUploads(
+        input.images.map((image) => image.storageKey).filter((key) => !kept.has(key))
+      )
       const failure = error as { code?: string; constraint?: string }
       if (failure.code === '23505') {
         rejectCatalog(
@@ -82,6 +106,7 @@ export default class CatalogProductsController {
       }
       throw error
     }
+    await releaseUnusedUploads(previousKeys)
     ctx.session.flash('notice', 'catalog.saved')
     return ctx.response.redirect().toPath('/admin/products/' + product.id + '/edit')
   }

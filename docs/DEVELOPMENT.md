@@ -65,9 +65,11 @@ Replace it with your normal Linux Node 24 installation when convenient. Typechec
 
 ## Catalog development
 
-Run node ace migration:run and node ace db:seed after updating this slice. Development seeding adds four mixed-category examples only when their slugs are absent. It never resets merchant data or seeds credentials. Product illustrations are local SVGs in public/media/catalog. New media can be placed in public/media and referenced by a safe relative key; uploads are not implemented yet.
+Run node ace migration:run and node ace db:seed after updating this slice. Development seeding adds four mixed-category examples only when their slugs are absent. It never resets merchant data or seeds credentials. Product illustrations are local SVGs in public/media/catalog. Staff can upload a replacement image or keep one of those relative keys.
 
 Browse /products. Owners/staff edit /admin/products and /admin/categories. Products start as drafts; simple products require one default variant. Add generic option values and explicitly define sellable combinations. Prices use decimal text in the displayed currency (whole values for VND). Store currency changes apply only to new products.
+
+Product images accept a JPEG, PNG, WebP, or AVIF upload up to 5 MB, or an existing relative key. Uploads are stored as `uploads/<uuid>.<ext>` through Drive. SVG uploads are rejected; the seeded SVG keys remain valid. The default disk is local `public/media`, served at `/media`. Set `DRIVE_DISK=s3` only when the S3 variables in `.env.example` point at a real bucket. An upload that is never saved can remain on disk; there is no sweeper.
 
 ## Inventory development
 

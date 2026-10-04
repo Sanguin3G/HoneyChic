@@ -16,17 +16,27 @@ const props = defineProps<{
   categories: { id: number; name: string }[]
 }>()
 const { t } = useI18n()
+const initialUrls = (props.product?.images ?? []).map((image) => image.url ?? '')
 const form = useForm<ProductFormData>(
-  props.product ?? {
-    name: '',
-    slug: '',
-    description: '',
-    categoryId: null,
-    status: 'draft',
-    options: [],
-    variants: [{ sku: '', price: '0', selections: [] }],
-    images: [],
-  }
+  props.product
+    ? {
+        ...props.product,
+        images: props.product.images.map(({ storageKey, altText, isPrimary }) => ({
+          storageKey,
+          altText,
+          isPrimary,
+        })),
+      }
+    : {
+        name: '',
+        slug: '',
+        description: '',
+        categoryId: null,
+        status: 'draft',
+        options: [],
+        variants: [{ sku: '', price: '0', selections: [] }],
+        images: [],
+      }
 )
 const definition = computed({
   get: () => form,
@@ -90,7 +100,7 @@ function submit() {
     />
     <OptionEditor v-model:form="definition" :errors="form.errors" />
     <VariantEditor v-model:form="definition" :currency="currency" :errors="form.errors" />
-    <ImageEditor v-model:form="definition" :errors="form.errors" />
+    <ImageEditor v-model:form="definition" :errors="form.errors" :initial-urls="initialUrls" />
     <div class="form-actions">
       <HcButton type="submit" :disabled="form.processing">{{ t('catalog', 'save') }}</HcButton
       ><Link href="/admin/products">{{ t('catalog', 'back') }}</Link>

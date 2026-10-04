@@ -22,5 +22,8 @@
   "slug.regex": "Dùng chữ thường không dấu, số và dấu gạch nối đơn.",
   "variants.*.sku.regex": "SKU chỉ dùng chữ không dấu, số, dấu chấm, gạch dưới hoặc gạch nối.",
   "images.*.storageKey.regex": "Dùng khóa ảnh tương đối, không dùng URL hoặc đường dẫn thư mục cha.",
+  "image.file": "Hãy chọn một tệp ảnh.",
+  "image.file.extname": "Tải ảnh JPEG, PNG, WebP hoặc AVIF.",
+  "image.file.size": "Ảnh phải từ 5 MB trở xuống.",
   "uuid": "Trường {{ field }} phải là mã hợp lệ."
 }

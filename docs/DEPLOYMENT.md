@@ -6,7 +6,7 @@ Use Node 24 and PostgreSQL 17. The multi-stage Dockerfile builds browser/server/
 
 Copy .env.production.example to a private .env.production, fill credentials and generate a separate APP_KEY with node ace generate:key --show. APP_URL must be the public HTTP(S) origin without a path, credentials or query. Do not reuse the build placeholder or local key.
 
-Required: APP_KEY, APP_URL, NODE_ENV, HOST, PORT, LOG_LEVEL, SESSION_DRIVER=cookie, LIMITER_STORE=database, DB_HOST/PORT/USER/PASSWORD/DATABASE, STORE_NAME/DEFAULT_LOCALE/CURRENCY/TIMEZONE. DB_SSL=true uses verified TLS for a hosted database. No AI/payment-provider/object-storage credentials are required.
+Required: APP_KEY, APP_URL, NODE_ENV, HOST, PORT, LOG_LEVEL, SESSION_DRIVER=cookie, LIMITER_STORE=database, DB_HOST/PORT/USER/PASSWORD/DATABASE, STORE_NAME/DEFAULT_LOCALE/CURRENCY/TIMEZONE. DB_SSL=true uses verified TLS for a hosted database. `DRIVE_DISK` defaults to `fs`. No AI or payment-provider credentials are required. S3 variables are required only when `DRIVE_DISK=s3`.
 
 For a VPS, compose.production.yaml supplies a private PostgreSQL service and a loopback-only application port. Place HTTPS termination in front. The production project/volume are separate from development.
 
@@ -36,9 +36,9 @@ Structured logs redact request bodies and credentials. Do not add full payload l
 
 ## Mail and storage strategy
 
-Mailpit is local infrastructure only; SMTP variables are currently reserved, not consumed. Order confirmation/shipped mail and password recovery/verification are not implemented. Before a merchant launch, add framework SMTP delivery after committed business events, verified sender credentials and retry handling. A mail failure must not undo a committed order or produce a duplicate checkout. Do not promise emailed guest receipts today.
+Order confirmation, shipped, and cancellation mail go out after the order transaction commits. Password reset and guest recovery links are sent the same way. Delivery is skipped when `SMTP_HOST` is empty or no sender address is configured. A mail failure does not undo a committed order. Mailpit is the local SMTP catcher, not a production server. There is no queue, so a crash after commit and before SMTP accepts the message can drop that email.
 
-Product records store relative media keys; current assets are bundled local files. There is no upload endpoint. For merchant uploads, add validated type/size limits, safe generated keys and a persistent volume; object storage can later map the same keys through an S3-compatible adapter. Never store deployment-specific absolute URLs in records. Do not mount an empty volume over bundled demo assets.
+Product records store relative media keys. Staff uploads accept JPEG, PNG, WebP, and AVIF up to 5 MB and are stored as `uploads/<uuid>.<ext>`. SVG uploads are rejected. Seeded `catalog/` illustrations stay in the image. The default `fs` disk writes to `public/media` inside the container; that disk disappears with the container and is not hosted-production storage. Set `DRIVE_DISK=s3` with an S3-compatible bucket and `S3_PUBLIC_URL` before accepting merchant uploads on a host. The bucket policy must allow public reads because ACL updates are disabled. Never store deployment-specific absolute URLs in records. Do not mount an empty volume over the bundled `catalog/` files. Back up the bucket, or a persistent volume if you deliberately keep `fs`, on the same schedule as the database.
 
 ## Backups and restoration
 
@@ -52,6 +52,6 @@ docker compose --env-file .env.production -f compose.production.yaml exec -T pos
 
 Restore into a new isolated database first using pg_restore --no-owner --no-acl. Verify schema/migration versions, order totals, inventory balances/movements and payment/coupon references before switching traffic. Do not blindly restore over a live merchant database. Preserve APP_KEY for session continuity or deliberately expire sessions after a recovery.
 
-Bundled media can be recovered from the release image. Future uploads require volume/object-store backups/versioning and a media restore point compatible with database references. Schedule periodic restore drills and record recovery time. A clean container boot is not a backup test.
+Bundled `catalog/` media can be recovered from the release image. Merchant `uploads/` keys need the same bucket or volume restored to match the database. Schedule periodic restore drills and record recovery time. A clean container boot is not a backup test.
 
 No hosting provider or public deployment has been selected. Local production-container verification is separate from a hosted staging launch.

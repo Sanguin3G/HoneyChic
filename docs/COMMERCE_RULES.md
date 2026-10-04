@@ -24,7 +24,7 @@ Read this document before changing important commerce workflows. Catalog, invent
 - Prices accept nonnegative exact decimal strings with currency-supported precision, stored as integer minor units up to Number.MAX_SAFE_INTEGER. VND rejects fractional input.
 - Updates retain submitted variant IDs belonging to the product; omitted variants are retired rather than deleted. Their SKUs remain reserved. Inventory builds on these identities; remaining stock must reach zero through a recorded movement before a variant is retired.
 - Published products are public only with an active variant and an active category (or no category). Draft/archived products are unavailable through direct public URLs too.
-- Images retain relative keys, nonblank alt text and order; exactly one image is primary when images exist. No absolute environment URLs are stored.
+- Images retain relative keys, nonblank alt text and order; exactly one image is primary when images exist. No absolute environment URLs are stored. Merchant uploads use generated `uploads/<uuid>` keys. A previous upload is deleted only after the product transaction commits and only when no image row still references it. Seeded `catalog/` files are never deleted.
 
 ## Current inventory decisions
 

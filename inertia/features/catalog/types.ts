@@ -6,7 +6,7 @@ export interface ProductFormData {
   status: 'draft' | 'published' | 'archived'
   options: { name: string; values: string[] }[]
   variants: { id?: number; sku: string; price: string; selections: string[] }[]
-  images: { storageKey: string; altText: string; isPrimary: boolean }[]
+  images: { storageKey: string; altText: string; isPrimary: boolean; url?: string }[]
 }
 export interface ProductSummary {
   id: number

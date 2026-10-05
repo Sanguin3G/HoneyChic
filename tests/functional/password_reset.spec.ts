@@ -18,6 +18,15 @@ function mailText(message: Message) {
   return text
 }
 
+/** The reset mail is sent after the response, so wait for it instead of reading the mailbox at once. */
+async function sentCount(fake: ReturnType<typeof mail.fake>, count: number) {
+  for (let attempt = 0; attempt < 100; attempt++) {
+    if (fake.messages.sent().length >= count) return
+    await new Promise((resolve) => setTimeout(resolve, 20))
+  }
+  throw new Error(`Expected ${count} reset email(s)`)
+}
+
 function resetLink(text: string) {
   const match = text.match(/\/password\/reset\/([0-9a-f-]{36})\/([A-Za-z0-9_-]{43})/)
   if (!match) throw new Error('Expected a password reset link')
@@ -59,7 +68,7 @@ test.group('Password reset', (group) => {
         .json({ email: 'RESET@example.test' })
       sent.assertStatus(200)
       assert.include(sent.text(), 'If an account exists for that email')
-      fake.messages.assertSentCount(1)
+      await sentCount(fake, 1)
       const link = resetLink(mailText(fake.messages.sent()[0]))
       const token = await PasswordResetToken.findOrFail(link.id)
       assert.equal(token.userId, user.id)
@@ -99,6 +108,7 @@ test.group('Password reset', (group) => {
       again.assertStatus(302)
       await token.refresh()
       assert.isNotNull(token.usedAt)
+      await sentCount(fake, 2)
       const current = resetLink(mailText(fake.messages.sent()[1]))
       const updated = await client
         .post(current.path)

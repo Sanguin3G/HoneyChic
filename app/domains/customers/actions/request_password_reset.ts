@@ -37,7 +37,8 @@ export default class RequestPasswordReset {
         { client: trx }
       )
     })
-    await this.send(user.id, email, link, locale)
+    // Not awaited: SMTP latency must not reveal whether the account exists. send() never throws.
+    void this.send(user.id, email, link, locale)
   }
 
   private async send(

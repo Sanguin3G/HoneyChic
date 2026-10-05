@@ -4,7 +4,8 @@ Updated: 2026-10-05. **Core commerce and optional modules are implemented; produ
 
 ## What exists and works
 
-- Laravel v1 stays on `main` at the pushed `larastore-v1-final` tag (`3cad9fd`). The rewrite remains at `rewrite/honeychic-v2`. Stabilization continues on `stabilize/honeychic-mvp` and is not merged. The existing remote redirects to `Sanguin3G/HoneyChic`; that repository move predated this push. No repository rename was performed during this review.
+- `main` carries the HoneyChic rewrite. Laravel v1 is archived at the `larastore-v1-final` tag (`3cad9fd`) and its GitHub release, and remains in history. The remote redirects to `Sanguin3G/HoneyChic`; no repository rename was performed.
+- HoneyChic is a base any small or medium shop sets up for itself. Hosting, SMTP or SMS provider, and object storage are the owner's choice, configured by environment variables; nothing is deployed on the project's behalf.
 - AdonisJS 7, Vue 3, Inertia SSR, PostgreSQL, Tailwind 4, Phosphor, VineJS and Japa. One monolith. No Redis, search engine, or AI provider.
 - Accounts, store settings, catalog, inventory, session cart, guest/account checkout, historical orders and shared cancellation are in place. Low stock counts active variants with stock greater than zero and at or below the merchant threshold. Zero stock is out of stock, on both the dashboard and the inventory filter.
 - The header language control is a globe button with an English / Tiếng Việt menu. It keeps the existing locale session and saved preference.
@@ -36,4 +37,4 @@ Store profiles, a setup wizard, imports/exports, and other deferred items remain
 
 The braces advisory `GHSA-vfj7-8cjw-p6xm` still has no patched release. Drive joins that chain. Nodemailer 9.1.1, pulled in by mail, has separate high advisories whose fixes are not in the declared 9.x range. Do not call the dependency tree clean. See [SECURITY](SECURITY.md).
 
-No hosted staging deploy yet. A local production-container dump and restore into a second database was verified; that is not a hosted backup test. The rewrite stays on its dedicated branch; `main` and the v1 tag are untouched.
+No hosted deploy was made. A local production-container dump and restore into a second database was verified; each owner should repeat the restore drill on their own host. `TRUSTED_PROXIES` has not been exercised behind a real proxy. The password-reset request no longer waits for SMTP, so response time does not reveal whether an account exists.

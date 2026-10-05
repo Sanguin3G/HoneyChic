@@ -26,6 +26,15 @@ Managed container platforms may use the same image/environment with hosted Postg
 
 Keep SEO_INDEXABLE=false for staging. Enable it only on the public production origin after launch review. Robots/sitemaps and SSR metadata honor that flag; filtered/paginated catalogs stay noindex. Private pages remain noindex and no-store.
 
+## What the owner chooses
+
+Nothing here assumes a host. Pick your own and set these:
+
+- **Host and HTTPS:** any Node 24 or Docker host with PostgreSQL 17. Set `APP_URL` to the public origin and `TRUSTED_PROXIES` to your proxy's address or CIDR.
+- **Mail:** any SMTP provider through `SMTP_*` and `MAIL_FROM_*`. There is no SMS channel; add one when you have a provider.
+- **Media:** `DRIVE_DISK=fs` on a persistent volume, or `DRIVE_DISK=s3` with any S3-compatible bucket (`S3_*`). The container's own disk is lost on redeploy.
+- **Backups:** the database dump and the media bucket or volume, restored together. Rehearse a restore on your host before launch.
+
 ## Process, sessions and security
 
 /health is liveness; /health/ready checks PostgreSQL, returns 503 on failure and exposes no environment values. Docker has a liveness healthcheck. Use readiness in platform routing checks.

@@ -213,7 +213,7 @@ test.group('Product image uploads', (group) => {
     removeSecond.assertStatus(302)
     assert.isFalse(await stored(shared))
 
-    const seeded = 'catalog/keyboard.svg'
+    const seeded = 'catalog/keyboard.jpg'
     assert.isTrue(await stored(seeded))
     const demo = await new CreateProduct().execute(
       definition('seeded-image', 'SEED-1', seeded),
@@ -415,6 +415,29 @@ test.group('Store branding', (group) => {
     assert.equal(unchanged.logoKey, logo)
     assert.isTrue(await stored(logo))
     assert.isTrue(await stored(replacement))
+
+    const lowContrast = await client
+      .put('/admin/settings')
+      .loginAs(owner)
+      .withCsrfToken()
+      .header('Accept', 'application/json')
+      .header('Accept-Language', 'en')
+      .json(storeBody({ primaryColor: '#ffffff' }))
+    lowContrast.assertStatus(422)
+    assert.include(lowContrast.text(), '4.5:1')
+    await unchanged.refresh()
+    assert.equal(unchanged.primaryColor, '#112233')
+
+    const formRejected = await client
+      .put('/admin/settings')
+      .loginAs(owner)
+      .withCsrfToken()
+      .redirects(1)
+      .header('Accept', 'text/html')
+      .header('Accept-Language', 'en')
+      .json(storeBody({ primaryColor: '#ffffff' }))
+    formRejected.assertStatus(200)
+    assert.include(pageProps(formRejected.text()).errors.primaryColor, '4.5:1')
 
     const product = await new CreateProduct().execute(
       definition('brand-shared', 'BRAND-1', logo),

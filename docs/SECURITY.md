@@ -1,6 +1,6 @@
 # Security review
 
-Reviewed 2026-10-04.
+Reviewed 2026-10-05.
 
 ## Protections and boundaries
 
@@ -12,7 +12,7 @@ Fake settlement is blocked by both central capability configuration and the prov
 
 ## Dependency finding
 
-Re-checked 2026-10-04 with `npm audit --omit=dev` after adding mail and Drive: 23 high findings and no critical findings.
+Re-checked 2026-10-05 with `npm audit --omit=dev` after adding mail and Drive: 23 high findings and no critical findings.
 
 Twenty-two are [GHSA-vfj7-8cjw-p6xm](https://github.com/advisories/GHSA-vfj7-8cjw-p6xm), braces through 3.0.3, reached through fast-glob and `@adonisjs/assembler`, including `@adonisjs/mail` and `@adonisjs/drive`. The advisory lists no patched release. `npm audit fix --force` would install `@adonisjs/assembler@5.9.6`, which downgrades the Adonis 7 stack. No override is applied. The application does not accept user-supplied glob/brace patterns. Catalog search is bounded text used in parameterized PostgreSQL queries. This reduces the direct application attack surface; it does not establish that every framework path is unreachable. `@aws-sdk/client-s3` did not add a separate finding.
 
@@ -22,8 +22,8 @@ Track both upstream patches and rerun `npm audit --omit=dev` before public launc
 
 ## Remaining launch work
 
-Password reset tokens are random, stored as scrypt hashes, expire after one hour, and are single-use. A new request invalidates older unused tokens. An unknown email receives the same response and no mail. Guest order recovery links are random, stored as scrypt hashes, expire after 7 days, and stay valid until expiry. The public order id, email, or order number is not a recovery credential. Reset and recovery secrets are not written to logs. Mail is sent after the order transaction commits; a delivery failure does not undo the order.
+Password reset tokens are random, stored as scrypt hashes, expire after one hour, and are single-use. A new request invalidates older unused tokens. An unknown email receives the same response and no mail. Both paths hash a random secret; known accounts also persist a token. Reset requests do not await SMTP, verified with a blocked-delivery regression. Database work can still differ; constant response timing is not guaranteed. Guest order recovery links are random, stored as scrypt hashes, expire after 7 days, and stay valid until expiry. The public order id, email, or order number is not a recovery credential. Reset and recovery secrets are not written to logs. Mail is sent after the order transaction commits; a delivery failure does not undo the order.
 
-Choose/configure HTTPS proxy trust and a host, verify database TLS/backups on that host, perform a restore drill, and resolve or explicitly assess the upstream dependency risk before a real merchant launch. Cookie sessions lack central revocation. The guest session still expires after two hours; the emailed recovery link is the later way back in. Email verification, refunds/returns, and unpaid-order expiry are not implemented.
+Comma-separated TRUSTED_PROXIES entries compile individually; blank trusts none. Tests cover IPv4, IPv6, CIDRs and rejection of untrusted addresses. A real host/proxy still needs validation. Choose/configure HTTPS proxy trust and a host, verify database TLS/backups on that host, perform a restore drill, and resolve or explicitly assess the upstream dependency risk before a real merchant launch. Cookie sessions lack central revocation. The guest session still expires after two hours; the emailed recovery link is the later way back in. Email verification, refunds/returns, and unpaid-order expiry are not implemented.
 
 No secrets belong in Git, screenshots or logs. No external error tracker or observability infrastructure is required.

@@ -3,6 +3,9 @@
   border-bottom: 4px solid var(--brand-accent);
   box-shadow: var(--elevation-panel);
 }
+.store-header :where(a, summary, .hc-button):focus-visible {
+  outline-color: var(--text-on-brand);
+}
 .store-nav {
   max-width: 1200px;
   margin: auto;

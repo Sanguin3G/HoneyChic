@@ -22,3 +22,7 @@ public/media/uploads
 coverage
 
 public/assets
+public/storage
+
+# Private recovery archive: contains legacy credentials and database.
+.legacy-backup/

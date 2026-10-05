@@ -4,14 +4,14 @@
 
 `main` carries the HoneyChic rewrite; Laravel v1 is archived at the `larastore-v1-final` tag and release. Core commerce, the first-party optional modules, mail, uploads, merchant branding and production container foundations exist. HoneyChic is a base a shop sets up for itself, so the work now is making that setup easy and honest, not hosting it.
 
-- Keep the owner's setup path short: environment file, migrations, owner creation, then the admin. Hosting, mail or SMS delivery and object storage stay the owner's choice behind environment configuration.
+- Keep the owner's setup path short: environment file, migrations, owner creation, then the admin. Hosting, SMTP delivery and object storage stay the owner's choice behind environment configuration.
 - Keep documentation consistent with actual behavior and the README illustrated with real screenshots.
 - Do a human UI pass in a real browser (contrast, focus states, Vietnamese text length) whenever screens change.
 
 ## Next
 
 - Store profiles (Simple seller / Standard store / Catalog only / Custom) that initialize settings and capabilities, then a setup wizard over the same implementation. Not a prerequisite for development.
-- A documented extension point for additional mail or SMS channels, added when an owner has a concrete provider. SMTP is the only built-in channel.
+- Additional mail or SMS channels when an owner selects a concrete provider. SMTP is built in; extension boundaries are documented in DEVELOPMENT.
 - Email verification, if an owner needs it.
 - Revisit dependency advisories when the upstream `braces` and `nodemailer` fixes land inside the declared Adonis ranges.
 

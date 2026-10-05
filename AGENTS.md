@@ -17,6 +17,7 @@ AdonisJS 7 + Lucid/PostgreSQL, Vue 3 + Inertia SSR, TypeScript, Tailwind 4, Phos
 
 ## Rules
 
+- Commit with plain messages; do not add AI attribution trailers or Co-Authored-By lines.
 - Do not introduce infrastructure without demonstrated need.
 - Do not create giant generic service classes or repositories around Lucid. Prefer specific actions.
 - Do not put core business workflows in controllers.

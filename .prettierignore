@@ -8,3 +8,4 @@ storage
 bootstrap
 
 public/assets
+.legacy-backup

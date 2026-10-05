@@ -8,7 +8,7 @@
   "products": "Products",
   "lowStock": "Low-stock variants",
   "orderValue": "Placed order value",
-  "valueHelp": "Non-cancelled orders, grouped by currency. This is order value, not received revenue; payment providers are not implemented.",
+  "valueHelp": "Non-cancelled orders, grouped by currency. This is order value, not received revenue.",
   "recent": "Recent orders",
   "search": "Search",
   "allStatuses": "All statuses",

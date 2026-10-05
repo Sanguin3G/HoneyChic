@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+- Fixed comma-separated trusted proxy configuration and covered explicit trust boundaries.
+- Restored field validation messages after Inertia form redirects.
+- Enforced readable merchant primary colors; improved focus contrast on dark storefront navigation.
+- Protected asynchronous password reset against waiting on SMTP.
+- Replaced new demo illustrations with locally served, licensed photos and refreshed Edge screenshots.
+- Removed obsolete Laravel runtime files and stale setup/provider documentation.
+
 - Reviewed rewrite completion claims and restored deferred work to the Now/Next/Later roadmap.
 - Reorganized the README with an overview, collapsible screenshot gallery and documentation index.
 - Corrected stale admin/design/UI documentation and recorded the checkout module-disablement gap.

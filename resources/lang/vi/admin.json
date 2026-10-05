@@ -8,7 +8,7 @@
   "products": "Sản phẩm",
   "lowStock": "Biến thể sắp hết hàng",
   "orderValue": "Giá trị đơn đã đặt",
-  "valueHelp": "Đơn chưa hủy, chia theo tiền tệ. Đây là giá trị đơn hàng, chưa phải doanh thu đã thu; nhà cung cấp thanh toán chưa được triển khai.",
+  "valueHelp": "Đơn chưa hủy, chia theo tiền tệ. Đây là giá trị đơn hàng, chưa phải doanh thu đã thu.",
   "recent": "Đơn gần đây",
   "search": "Tìm kiếm",
   "allStatuses": "Tất cả trạng thái",

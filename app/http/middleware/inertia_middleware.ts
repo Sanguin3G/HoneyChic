@@ -14,6 +14,7 @@ export default class InertiaMiddleware extends BaseInertiaMiddleware {
     const locale = ctx.locale ?? resolveLocale({ storeDefault: storeConfig.defaultLocale })
     ctx.view.share({ locale })
     return {
+      errors: this.getValidationErrors(ctx),
       locale,
       seo: { origin: publicOrigin, indexable: indexingEnabled },
       messages: messagesFor(locale),

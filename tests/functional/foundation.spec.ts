@@ -1,4 +1,5 @@
 import { test } from '@japa/runner'
+import { trustedProxies } from '#core/support/trusted_proxies'
 
 function pageVersion(html: string): string {
   // Inertia 3 embeds page data in a JSON script, separate from SSR markup.
@@ -8,6 +9,19 @@ function pageVersion(html: string): string {
 }
 
 test.group('Foundation smoke', () => {
+  test('proxy trust defaults closed and supports explicit comma-separated ranges', ({ assert }) => {
+    assert.isFalse(trustedProxies())
+    assert.isFalse(trustedProxies(' , '))
+    const trust = trustedProxies('127.0.0.1, 10.0.0.0/24, ::1')
+    if (!trust) throw new Error('Expected configured trust predicate')
+    assert.isTrue(trust('127.0.0.1', 0))
+    assert.isTrue(trust('10.0.0.42', 0))
+    assert.isTrue(trust('::1', 0))
+    assert.isFalse(trust('10.0.1.42', 0))
+    assert.isFalse(trust('203.0.113.42', 0))
+    assert.throws(() => trustedProxies('true'))
+  })
+
   test('serves health and connects to PostgreSQL', async ({ client }) => {
     const live = await client.get('/health')
     live.assertStatus(200)

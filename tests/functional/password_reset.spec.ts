@@ -8,6 +8,7 @@ import type { Message } from '@adonisjs/mail'
 import StoreSetting from '#core/store/store_setting'
 import User from '#domains/customers/models/user'
 import PasswordResetToken from '#domains/customers/models/password_reset_token'
+import RequestPasswordReset from '#domains/customers/actions/request_password_reset'
 
 const password = 'test-password-123456'
 const replacement = 'replacement-password-12'
@@ -36,6 +37,47 @@ function resetLink(text: string) {
 test.group('Password reset', (group) => {
   group.each.setup(() => testUtils.db().withGlobalTransaction())
   group.each.setup(() => limiter.clear(['memory']))
+
+  test('request completes while mail delivery is still blocked', async ({ assert }) => {
+    const fake = mail.fake()
+    const originalSend = mail.send
+    let release!: () => void
+    let started!: () => void
+    const gate = new Promise<void>((resolve) => {
+      release = resolve
+    })
+    const deliveryStarted = new Promise<void>((resolve) => {
+      started = resolve
+    })
+    let delivery: Promise<unknown> | undefined
+    mail.send = ((...args: Parameters<typeof mail.send>) => {
+      started()
+      delivery = gate.then(() => originalSend.apply(mail, args))
+      return delivery
+    }) as typeof mail.send
+    try {
+      await StoreSetting.query().where('id', 1).update({ email: 'shop@example.test' })
+      const user = await User.create({
+        fullName: 'Delayed reset',
+        email: 'delayed-reset@example.test',
+        password,
+        role: 'customer',
+      })
+      const request = new RequestPasswordReset().execute(user.email, 'en')
+      await deliveryStarted
+      const completed = await Promise.race([
+        request.then(() => true),
+        new Promise<boolean>((resolve) => setTimeout(() => resolve(false), 500)),
+      ])
+      assert.isTrue(completed, 'Reset request must not await SMTP')
+      fake.messages.assertNoneSent()
+    } finally {
+      release()
+      await delivery
+      mail.send = originalSend
+      mail.restore()
+    }
+  })
 
   test('unknown and known emails get the same response, and only a hashed single-use token works', async ({
     client,

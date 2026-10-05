@@ -40,7 +40,7 @@ export default class CatalogSeeder extends BaseSeeder {
           })),
           images: demo.images.map((image, position) => ({
             storageKey: 'catalog/' + image,
-            altText: demo.name + ' — demo illustration',
+            altText: demo.name + ' — placeholder photo',
             isPrimary: position === 0,
           })),
         },

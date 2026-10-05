@@ -32,11 +32,11 @@ Inventory depends on Catalog variant identity and Customers actor identity; it h
 
 ## Store and locale
 
-The singleton store-settings row uses explicit typed columns. Environment `STORE_*` values initialize it through an idempotent seeder; subsequent merchant edits come from PostgreSQL, not environment variables. Public shared props omit contact/internal settings.
+The singleton store-settings row uses explicit typed columns. Environment `STORE_*` values initialize it through an idempotent seeder; subsequent merchant edits come from PostgreSQL, not environment variables. Public shared props include merchant public contact and omit internal settings.
 
 Locale priority: explicit session selection → authenticated user preference → weighted supported Accept-Language → store default → English. Selection is persisted to the authenticated user and session. Redirect destinations are restricted to known local route shapes, including catalog/product editors.
 
-Feature JSON dictionaries live under `resources/lang/en|vi`. Selected dictionaries are shared per request; SSR has no mutable global user/locale state. Merchant content is never translated automatically.
+Feature JSON dictionaries live under `resources/lang/en|vi`. Selected dictionaries are shared per request; SSR has no mutable global user/locale state. Inertia shares the framework validation error bag so rejected form submissions display field messages. Merchant content is never translated automatically.
 
 ## Frontend
 
@@ -78,4 +78,4 @@ Admin uses the same Vue architecture and existing catalog/inventory editors. Das
 
 Reviews, Wishlist, Coupons, Shipping and Payments live under app/modules with feature UI under inertia/modules. HTTP adapters compose them; domains import no module. CheckoutParticipation has only quote and created hooks within the existing transaction. Product/variant locks precede shipping reads/coupon locks; coupon redemption and payment creation roll back with stock/order. Payment settlement locks order then payment, matching cancellation.
 
-Public metadata uses an environment-owned origin, never Host/request input. Product/Breadcrumb JSON-LD uses exact currency prices and escapes raw script delimiters. Sitemaps share catalog visibility and use bounded batches. Indexing requires production plus SEO_INDEXABLE. No mail worker, scheduler, upload endpoint or provider infrastructure was introduced.
+Public metadata uses an environment-owned origin, never Host/request input. Product/Breadcrumb JSON-LD uses exact currency prices and escapes raw script delimiters. Sitemaps share catalog visibility and use bounded batches. Indexing requires production plus SEO_INDEXABLE. Mail and image upload endpoints use the configured SMTP and Drive services. No mail worker or scheduler is required.

@@ -24,7 +24,7 @@ Inventory uses compact tables, text-labelled stock states, signed adjustments an
 
 ## Storefront
 
-Merchant home uses actual categories/products and merchant identity. A saved logo replaces the header icon. The footer shows the description, email, phone, address, and https social links when those values exist. Optional primary and accent colors override only those two tokens; blank colors keep navy and orange. Desktop catalog has left filters; mobile uses a native modal drawer with shared draft state and explicit Apply/Reset. Header search and locale switching preserve useful catalog context. Mobile navigation uses a labelled disclosure.
+Merchant home uses actual categories/products and merchant identity. A saved logo replaces the header icon. The footer shows the description, email, phone, address, and https social links when those values exist. Optional primary and accent colors override only those two tokens; blank colors keep navy and orange. Primary colors must provide at least 4.5:1 contrast with white text; validation explains this in EN/VI. Accent colors decorate borders and do not replace body text. Desktop catalog has left filters; mobile uses a native modal drawer with shared draft state and explicit Apply/Reset. Header search and locale switching preserve useful catalog context. Mobile navigation uses a labelled disclosure.
 
 Product pages compose image thumbnails and generic options. Selection always resolves to an offered variant and announces its price/availability. Public balances remain private. No fake discounts, ratings, delivery promises or inactive cart/wishlist buttons are shown. Public indexing requires the explicit production SEO setting.
 

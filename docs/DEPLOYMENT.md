@@ -20,6 +20,8 @@ docker compose --env-file .env.production -f compose.production.yaml run --rm ap
 docker compose --env-file .env.production -f compose.production.yaml up -d app
 ```
 
+`owner:create` uses interactive prompts and needs a TTY. Do not pipe the name or password; a closed stdin fails the command. Keep `docker compose run` attached for that step.
+
 Managed container platforms may use the same image/environment with hosted PostgreSQL; omit the Compose database. Run migrations once as a release job, not in every replica's startup command. Never use migration:fresh, reset or down -v in production. Take a backup before data-affecting releases; prefer additive changes and forward fixes. Optional-module migrations are unconditional.
 
 Keep SEO_INDEXABLE=false for staging. Enable it only on the public production origin after launch review. Robots/sitemaps and SSR metadata honor that flag; filtered/paginated catalogs stay noindex. Private pages remain noindex and no-store.
@@ -52,6 +54,6 @@ docker compose --env-file .env.production -f compose.production.yaml exec -T pos
 
 Restore into a new isolated database first using pg_restore --no-owner --no-acl. Verify schema/migration versions, order totals, inventory balances/movements and payment/coupon references before switching traffic. Do not blindly restore over a live merchant database. Preserve APP_KEY for session continuity or deliberately expire sessions after a recovery.
 
-Bundled `catalog/` media can be recovered from the release image. Merchant `uploads/` keys need the same bucket or volume restored to match the database. Schedule periodic restore drills and record recovery time. A clean container boot is not a backup test.
+Bundled `catalog/` media can be recovered from the release image. Merchant `uploads/` keys need the same bucket or volume restored to match the database. Schedule periodic restore drills and record recovery time. A clean container boot is not a backup test. The default `fs` disk inside the application container is ephemeral: a dump restores database keys, not files that lived only on that container filesystem.
 
-No hosting provider or public deployment has been selected. Local production-container verification is separate from a hosted staging launch.
+On 2026-10-05 a local production-container drill used an isolated Compose project, a throwaway database, and loopback port 3340. `/health` and `/health/ready` returned 200. An owner signed in, published a product, set opening stock, enabled coupons and cash on delivery, and a guest placed a COD order with a fixed coupon. Inventory then had initial stock, a sale, and a restock. `pg_dump -Fc` restored into a second database on the same PostgreSQL. Snapshots matched for users, store settings, products, variant stock, inventory movements, the order and item, the pending COD payment, and the coupon redemption. A second application container booted against the restored database; the storefront showed the product, owner login worked, and the admin order showed the guest, coupon, and COD payment. That drill is not a hosted backup test. No hosting provider or public deployment has been selected.

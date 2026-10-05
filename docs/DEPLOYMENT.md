@@ -30,7 +30,7 @@ Keep SEO_INDEXABLE=false for staging. Enable it only on the public production or
 
 /health is liveness; /health/ready checks PostgreSQL, returns 503 on failure and exposes no environment values. Docker has a liveness healthcheck. Use readiness in platform routing checks.
 
-No queue worker/scheduler exists. Do not deploy one. Secure/HttpOnly/SameSite=Lax cookies expire after two hours. Cookie sessions have no central revocation. Configure trusted proxy addresses for the chosen provider rather than trusting every forwarded header.
+No queue worker/scheduler exists. Do not deploy one. Secure/HttpOnly/SameSite=Lax cookies expire after two hours. Cookie sessions have no central revocation. Behind a TLS-terminating proxy, set `TRUSTED_PROXIES` to the proxy address(es) or CIDRs (comma-separated); unset trusts none. Never trust every forwarded header.
 
 Shield enforces CSRF, frame denial, nosniff, HSTS and production CSP. Scripts are restricted to self/nonce; style attributes remain allowed for Vue controls. Checkout and authentication have database-backed throttling. Fake payments are always blocked in production. COD settlement requires authorized staff/owner and an eligible order; it never invents a provider webhook.
 

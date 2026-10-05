@@ -1,5 +1,6 @@
 import app from '@adonisjs/core/services/app'
 import { defineConfig } from '@adonisjs/core/http'
+import env from '#start/env'
 
 /**
  * The configuration settings used by the HTTP server
@@ -10,6 +11,12 @@ export const http = defineConfig({
    * Useful to correlate logs and debug a request flow.
    */
   generateRequestId: true,
+
+  /**
+   * Forwarded headers are trusted only from these proxy addresses/CIDRs (comma-separated).
+   * Unset trusts no proxy; never set a blanket true.
+   */
+  trustProxy: env.get('TRUSTED_PROXIES') ?? false,
 
   /**
    * Allow HTTP method spoofing via the "_method" form/query parameter.

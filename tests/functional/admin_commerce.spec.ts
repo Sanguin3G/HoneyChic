@@ -403,7 +403,9 @@ test.group('Commerce administration and account boundaries', (group) => {
     page.assertStatus(200)
     const dashboard = inertiaPage(page.text()).props.dashboard
     assert.equal(dashboard.counts.orders, 1)
-    assert.deepEqual(dashboard.totals, [{ currency: 'USD', count: 1, amountMinor: '1000' }])
+    assert.deepEqual(dashboard.totals, [
+      { currency: 'USD', count: 1, amountMinor: '1000', averageMinor: '1000' },
+    ])
     await order.merge({ status: 'cancelled' }).save()
     const refreshed = await client.get('/admin').loginAs(staff).header('Accept', 'text/html')
     assert.lengthOf(inertiaPage(refreshed.text()).props.dashboard.totals, 0)

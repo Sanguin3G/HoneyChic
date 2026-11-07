@@ -14,6 +14,8 @@ export default class User extends compose(BaseModel, withAuthFinder(hash)) {
   @column({ serializeAs: null }) declare password: string
   @column() declare role: UserRole
   @column() declare preferredLocale: Locale | null
+  @column() declare requiresEmailVerification: boolean
+  @column.dateTime() declare emailVerifiedAt: DateTime | null
   @column.dateTime({ autoCreate: true }) declare createdAt: DateTime
   @column.dateTime({ autoCreate: true, autoUpdate: true }) declare updatedAt: DateTime | null
 }

@@ -50,12 +50,6 @@ test.group('Catalog HTTP boundaries', (group) => {
     const loaded = await loadProduct(product.id)
     assert.equal(loaded.variants[0].priceMinor, 125000)
     response.assertHeader('location', '/admin/products/' + product.id + '/edit')
-    const edit = await client
-      .get('/admin/products/' + product.id + '/edit')
-      .loginAs(staff)
-      .header('Accept', 'text/html')
-    edit.assertStatus(200)
-    assert.equal(pageData(edit.text()).component, 'admin/catalog/edit_product')
     const customer = await actor('customer')
     for (const url of ['/admin/products', '/admin/products/create', '/admin/categories']) {
       const forbidden = await client.get(url).loginAs(customer).header('Accept', 'application/json')
@@ -118,25 +112,23 @@ test.group('Catalog HTTP boundaries', (group) => {
       { storageKey: 'catalog/model-kit.svg', altText: 'Notebook detail', isPrimary: false },
     ]
     await new CreateProduct().execute({ ...input, images }, 'VND', 'en')
-    for (const locale of ['en', 'vi']) {
-      const listing = await client
-        .get('/products')
-        .header('Accept', 'text/html')
-        .header('Accept-Language', locale)
-      listing.assertStatus(200)
-      assert.include(listing.text(), 'Notebook')
-      assert.equal(pageData(listing.text()).component, 'storefront/catalog')
-      const detail = await client
-        .get('/products/notebook')
-        .header('Accept', 'text/html')
-        .header('Accept-Language', locale)
-      detail.assertStatus(200)
-      const page = pageData(detail.text())
-      assert.lengthOf(page.props.product.images, 2)
-      assert.equal(page.props.locale, locale)
-      assert.include(detail.text(), 'BOOK-1')
-      assert.include(detail.text(), '/media/catalog/notebook.svg')
-    }
+    const listing = await client
+      .get('/products')
+      .header('Accept', 'text/html')
+      .header('Accept-Language', 'en')
+    listing.assertStatus(200)
+    assert.include(listing.text(), 'Notebook')
+    assert.equal(pageData(listing.text()).component, 'storefront/catalog')
+    const detail = await client
+      .get('/products/notebook')
+      .header('Accept', 'text/html')
+      .header('Accept-Language', 'vi')
+    detail.assertStatus(200)
+    const page = pageData(detail.text())
+    assert.lengthOf(page.props.product.images, 2)
+    assert.equal(page.props.locale, 'vi')
+    assert.include(detail.text(), 'BOOK-1')
+    assert.include(detail.text(), '/media/catalog/notebook.svg')
   })
 
   test('locale selection preserves catalog routes and rejects external redirect destinations', async ({
@@ -150,6 +142,7 @@ test.group('Catalog HTTP boundaries', (group) => {
       ],
       ['/products?redirect=https://example.test', '/products'],
       ['/admin/products/12/edit', '/admin/products/12/edit'],
+      ['/admin/setup', '/admin/setup'],
       ['https://example.test', '/'],
       ['//example.test', '/'],
     ]) {

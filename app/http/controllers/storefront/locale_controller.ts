@@ -6,7 +6,7 @@ const validator = vine.create({
   destination: vine.string().maxLength(1000).optional(),
 })
 const allowed =
-  /^(?:\/(?:account|admin(?:\/inventory(?:\/\d+)?|\/settings|\/categories|\/products(?:\/create|\/\d+\/edit)?)?|login|register|cart|products(?:\/[a-z0-9]+(?:-[a-z0-9]+)*)?)?)$/
+  /^(?:\/(?:account|admin(?:\/inventory(?:\/\d+)?|\/settings|\/setup|\/categories|\/products(?:\/create|\/\d+\/edit)?)?|login|register|cart|products(?:\/[a-z0-9]+(?:-[a-z0-9]+)*)?)?)$/
 const commercePaths =
   /^(?:\/checkout|\/orders\/[0-9a-f-]{36}|\/account\/(?:orders|addresses|wishlist)|\/admin\/(?:modules|module-configuration|orders(?:\/[0-9a-f-]{36})?|customers(?:\/\d+)?))$/
 function destinationPath(destination: string) {

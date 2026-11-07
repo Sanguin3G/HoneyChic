@@ -3,6 +3,8 @@ import { usePage } from '@inertiajs/vue3'
 import type { SharedProps } from '~/app/shared/i18n'
 import type { OrderDetail } from './types'
 import HcPanel from '~/app/design/HcPanel.vue'
+import StatusMark from '~/app/design/StatusMark.vue'
+import { statusTone } from '~/app/design/status_tone'
 import { useI18n } from '~/app/shared/i18n'
 import { formatMoney } from '~/app/shared/money'
 defineProps<{ order: OrderDetail }>()
@@ -15,11 +17,17 @@ const { t, locale } = useI18n()
     <dl class="order-facts">
       <div>
         <dt>{{ t('orders', 'status') }}</dt>
-        <dd>{{ t('orders', order.status) }}</dd>
+        <dd>
+          <StatusMark :tone="statusTone(order.status)">{{ t('orders', order.status) }}</StatusMark>
+        </dd>
       </div>
       <div>
         <dt>{{ t('orders', 'payment') }}</dt>
-        <dd>{{ t('orders', order.paymentStatus) }}</dd>
+        <dd>
+          <StatusMark :tone="statusTone(order.paymentStatus)">{{
+            t('orders', order.paymentStatus)
+          }}</StatusMark>
+        </dd>
       </div>
       <div>
         <dt>{{ t('orders', 'date') }}</dt>

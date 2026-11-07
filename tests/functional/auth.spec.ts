@@ -1,8 +1,13 @@
 import { test } from '@japa/runner'
+import { DateTime } from 'luxon'
 import testUtils from '@adonisjs/core/services/test_utils'
+import mail from '@adonisjs/mail/services/main'
+import hash from '@adonisjs/core/services/hash'
 import CreateInitialOwner from '#domains/customers/actions/create_initial_owner'
 import User from '#domains/customers/models/user'
 import StoreSetting from '#core/store/store_setting'
+import EmailVerificationToken from '#domains/customers/models/email_verification_token'
+import { mailFrom } from '#core/support/mail_sender'
 import limiter from '@adonisjs/limiter/services/main'
 
 const password = 'test-password-123456'
@@ -42,14 +47,130 @@ test.group('Account access', (group) => {
       .header('Accept-Language', 'vi')
       .json({ ...customerInput, role: 'owner', id: 99 })
     response.assertStatus(302)
-    response.assertHeader('location', '/account')
     const user = await User.findByOrFail('email', customerInput.email)
     assert.equal(user.role, 'customer')
     assert.notEqual(user.id, 99)
     assert.equal(user.preferredLocale, 'vi')
     assert.notEqual(user.password, password)
     assert.isTrue(await user.verifyPassword(password))
-    response.assertSession('auth_web', user.id)
+    const store = await StoreSetting.findOrFail(1)
+    if (mailFrom(store)) {
+      response.assertHeader('location', '/login')
+      response.assertSessionMissing('auth_web')
+      assert.isTrue(user.requiresEmailVerification)
+      assert.isNull(user.emailVerifiedAt)
+    } else {
+      response.assertHeader('location', '/account')
+      response.assertSession('auth_web', user.id)
+      assert.isFalse(user.requiresEmailVerification)
+    }
+  })
+
+  test('the login page renders', async ({ client }) => {
+    const page = await client.get('/login').header('Accept', 'text/html')
+    page.assertStatus(200)
+  })
+
+  test('a new customer confirms email with one hashed link when mail can be sent', async ({
+    client,
+    assert,
+  }) => {
+    const store = await StoreSetting.findOrFail(1)
+    if (!mailFrom(store)) return
+    const fake = mail.fake()
+    try {
+      const created = await client
+        .post('/register')
+        .withCsrfToken()
+        .redirects(0)
+        .header('Accept-Language', 'vi')
+        .json({ ...customerInput, email: 'confirm@example.test' })
+      created.assertStatus(302)
+      created.assertHeader('location', '/login')
+      const user = await User.findByOrFail('email', 'confirm@example.test')
+      for (let attempt = 0; attempt < 100 && fake.messages.sent().length < 1; attempt++) {
+        await new Promise((resolve) => setTimeout(resolve, 20))
+      }
+      const text = fake.messages.sent()[0].nodeMailerMessage.text
+      if (typeof text !== 'string') throw new Error('Expected a confirmation email')
+      const match = text.match(/\/email\/verify\/([0-9a-f-]{36})\/([A-Za-z0-9_-]{43})/)
+      if (!match) throw new Error('Expected a confirmation link')
+      const link = { id: match[1], secret: match[2], path: match[0] }
+      const token = await EmailVerificationToken.findOrFail(link.id)
+      assert.notEqual(token.tokenHash, link.secret)
+      assert.isTrue(await hash.verify(token.tokenHash, link.secret))
+      assert.notInclude(text, token.tokenHash)
+      const blocked = await client
+        .post('/login')
+        .withCsrfToken()
+        .header('Accept', 'application/json')
+        .header('Accept-Language', 'vi')
+        .json({ email: user.email, password })
+      blocked.assertStatus(422)
+      assert.include(blocked.text(), 'Hãy xác nhận email này trước khi đăng nhập.')
+      await user.refresh()
+      assert.isNull(user.emailVerifiedAt)
+      const wrongSecret =
+        link.secret[0] === 'a' ? 'b' + link.secret.slice(1) : 'a' + link.secret.slice(1)
+      const wrong = await client
+        .post(`/email/verify/${link.id}/${wrongSecret}`)
+        .withCsrfToken()
+        .redirects(1)
+        .header('Accept', 'text/html')
+        .header('Accept-Language', 'vi')
+      wrong.assertStatus(200)
+      assert.include(wrong.text(), 'không hợp lệ hoặc đã hết hạn')
+      await user.refresh()
+      assert.isNull(user.emailVerifiedAt)
+      await token.merge({ expiresAt: DateTime.utc().minus({ minutes: 1 }) }).save()
+      const expired = await client
+        .post(link.path)
+        .withCsrfToken()
+        .redirects(1)
+        .header('Accept', 'text/html')
+        .header('Accept-Language', 'vi')
+      expired.assertStatus(200)
+      assert.include(expired.text(), 'không hợp lệ hoặc đã hết hạn')
+      const again = await client
+        .post('/email/verify')
+        .withCsrfToken()
+        .redirects(0)
+        .json({ email: 'missing@example.test' })
+      again.assertStatus(302)
+      assert.lengthOf(await EmailVerificationToken.query().whereNull('usedAt'), 1)
+      const resent = await client
+        .post('/email/verify')
+        .withCsrfToken()
+        .redirects(0)
+        .header('Accept-Language', 'en')
+        .json({ email: user.email })
+      resent.assertStatus(302)
+      for (let attempt = 0; attempt < 100 && fake.messages.sent().length < 2; attempt++) {
+        await new Promise((resolve) => setTimeout(resolve, 20))
+      }
+      const latest = fake.messages.sent()[1].nodeMailerMessage.text
+      if (typeof latest !== 'string') throw new Error('Expected a second confirmation email')
+      const current = latest.match(/\/email\/verify\/([0-9a-f-]{36})\/([A-Za-z0-9_-]{43})/)
+      if (!current) throw new Error('Expected a fresh confirmation link')
+      const confirmed = await client
+        .post(current[0])
+        .withCsrfToken()
+        .redirects(0)
+        .header('Accept', 'text/html')
+      confirmed.assertStatus(302)
+      confirmed.assertHeader('location', '/login')
+      await user.refresh()
+      assert.isNotNull(user.emailVerifiedAt)
+      const signedIn = await client
+        .post('/login')
+        .withCsrfToken()
+        .redirects(0)
+        .json({ email: user.email, password })
+      signedIn.assertStatus(302)
+      signedIn.assertSession('auth_web', user.id)
+    } finally {
+      mail.restore()
+    }
   })
 
   test('duplicate normalized email is rejected with Vietnamese validation', async ({

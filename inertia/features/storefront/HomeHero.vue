@@ -2,10 +2,11 @@
 import { Link, usePage } from '@inertiajs/vue3'
 import { PhArrowRight } from '@phosphor-icons/vue'
 import { useI18n, type SharedProps } from '~/app/shared/i18n'
+import { formatMoney } from '~/app/shared/money'
 import type { ProductSummary } from '~/features/catalog/types'
 defineProps<{ product?: ProductSummary }>()
 const page = usePage<SharedProps>()
-const { t } = useI18n()
+const { t, locale } = useI18n()
 </script>
 <template>
   <section class="shop-hero">
@@ -17,9 +18,22 @@ const { t } = useI18n()
         >{{ t('storefront', 'browse') }}<PhArrowRight :size="20" aria-hidden="true"
       /></Link>
     </div>
-    <Link v-if="product?.image" class="shop-hero-product" :href="'/products/' + product.slug"
-      ><img :src="product.image.url" :alt="product.image.altText" width="480" height="340" /><span
-        >{{ product.name }}<PhArrowRight :size="20" aria-hidden="true" /></span
-    ></Link>
+    <Link v-if="product" class="shop-hero-product" :href="'/products/' + product.slug">
+      <img
+        v-if="product.image"
+        :src="product.image.url"
+        :alt="product.image.altText"
+        width="480"
+        height="340"
+        fetchpriority="high"
+      />
+      <span class="shop-hero-caption">
+        <strong>{{ product.name }}</strong>
+        <span v-if="product.priceMinor !== null && product.currency" class="shop-hero-price">
+          <template v-if="product.hasVariants">{{ t('catalog', 'from') + '\u00a0' }}</template
+          >{{ formatMoney(product.priceMinor, product.currency, locale) }}
+        </span>
+      </span>
+    </Link>
   </section>
 </template>

@@ -10,4 +10,4 @@ Stock, snapshots and movements must commit together. Retried requests must not s
 
 ## Alternatives rejected
 
-Frontend totals, separate stock commits and reconstructing history from live records violate commerce invariants. Public UUID-only receipts expose customer details. Email recovery, cart synchronization and payment/refund flows are deferred until their workflows exist.
+Frontend totals, separate stock commits and reconstructing history from live records violate commerce invariants. Public UUID-only receipts expose customer details. Guest email recovery uses a hashed link. Cart synchronization, payment-provider callbacks, and refunds remain deferred.

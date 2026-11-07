@@ -1,43 +1,19 @@
 # UI direction
 
-HoneyChic uses navy and warm orange, strong contrast, visible borders, restrained depth, subtle gradients, and tactile controls. Inspiration comes from clear desktop software hierarchy, not a literal Windows XP recreation.
+Navy and warm orange, visible borders, short radii, and tactile controls. Tokens are in `inertia/app/design/tokens.css`. Do not introduce glassmorphism, purple gradients, or generic SaaS cards.
 
-Tokens live in `inertia/app/design/tokens.css`: surfaces, borders, brand colors, text, success/warning/danger/focus. Elevations, controls, and motion are separate small stylesheets.
+Controls are about 6–8px radius. Panels are 8–12px. Mobile controls are at least 44px tall. Honor reduced motion. Focus is visible. Storefront navigation on a dark bar uses a white focus outline.
 
-Controls use about 6–8px radii; panels 8–12px. Hover, pressed, selected, disabled, and focus states must be deliberate. Mobile controls remain at least 44px high. Respect reduced motion.
+Primitives are Button, Panel, Input, Textarea, Notice, and Dialog. Add another only when a real screen needs it. Status labels reuse the bordered stock-label treatment.
 
-Storefront: top navigation and comfortable density. Catalog: left desktop filters, mobile drawer. Customer account: contextual sidebar. Admin: persistent/collapsible left navigation, compact panels, toolbars/tables, clear status and keyboard access.
+Interface copy exists in English and Vietnamese. Merchant product text stays as entered. Store branding is separate from the HoneyChic attribution. Optional brand colors replace only the primary and accent tokens, and a primary color must keep 4.5:1 contrast with white text.
 
-Pages primarily compose feature components. Start with strong reusable primitives; add the rest when real workflows require them. No giant dashboard files, generic SaaS cards, excessive rounded panels/whitespace, purple gradients, glassmorphism, or AI-first interfaces.
+## Screens
 
-Use semantic HTML, labels, proper buttons, alt text, visible focus, keyboard access, and accessible dialogs. Storefront remains conventional on mobile.
+The storefront header is one row on desktop: brand, search, shop links, account. Below 800px, search stays on a second row and the account links stay in the labelled menu. Do not replace that menu with a swipe drawer.
 
-All interface text exists in both English and Vietnamese. Merchant product content remains exactly as entered. Store branding is distinct from HoneyChic platform attribution.
+Catalog filters sit on the left on desktop. On mobile they use the native dialog, with Apply and Reset. Product options stay native selects. The hero image is the priority image. Catalog and hero photos crop with `object-fit: cover`. The product gallery stays `contain`.
 
-Current primitives are Button, Panel, Input, Textarea, Notice and Dialog. Add other primitives only when real workflows require them.
+Cart and checkout show the name, SKU, price, and warnings. They do not repeat the full product description. Empty carts and empty admin metrics say what to do next.
 
-Account forms, a small account sidebar, and admin settings/capability tables use those primitives. Desktop admin navigation remains persistent; mobile uses a compact navigation grid with comfortable targets. UI and validation dictionaries exist in both languages. Dashboard metrics come from real orders and inventory.
-
-Catalog has cohesive option/variant/image editors and compact admin tables. Staff upload JPEG, PNG, WebP, and AVIF product images; the editor keeps the generated key, alt text, and order. Storefront components compose desktop filters and a mobile drawer. Prices follow the product currency and locale; merchant text remains unchanged.
-
-Inventory uses compact tables, text-labelled stock states, signed adjustments and paginated movement history. Owner/staff see balances; public product/catalog pages show availability only. Low stock means active stock greater than zero and at or below the merchant threshold. Zero stock is out of stock. History timestamps use the merchant timezone. Stock controls stay separate from catalog pricing/options so catalog edits cannot reset balances.
-
-## Storefront
-
-Merchant home uses actual categories/products and merchant identity. A saved logo replaces the header icon. The footer shows the description, email, phone, address, and https social links when those values exist. Optional primary and accent colors override only those two tokens; blank colors keep navy and orange. Primary colors must provide at least 4.5:1 contrast with white text; validation explains this in EN/VI. Accent colors decorate borders and do not replace body text. Desktop catalog has left filters; mobile uses a native modal drawer with shared draft state and explicit Apply/Reset. Header search and locale switching preserve useful catalog context. Mobile navigation uses a labelled disclosure.
-
-Product pages compose image thumbnails and generic options. Selection always resolves to an offered variant and announces its price/availability. Public balances remain private. No fake discounts, ratings, delivery promises or inactive cart/wishlist buttons are shown. Public indexing requires the explicit production SEO setting.
-
-## Cart and checkout
-
-The top navigation has a cart count, including mobile. Product pages have labelled quantity/add controls tied to the selected variant; sold-out variants disable addition. The cart composes variant rows with current/original prices, stock warnings, quantity controls, remove/clear and a subtotal panel. Mobile stacks the rows and summary without tiny controls.
-
-Unavailable lines remain removable, and invalid carts omit a subtotal. The interface states that stock is not reserved. Valid carts lead to checkout. All controls/notices exist in EN/VI.
-
-Checkout composes customer/contact/address fields with a current-price review and explicit unpaid-order terms. Order detail uses historical line data and separate fulfillment/payment indicators. Native confirmation protects cancellation/status changes. Admin uses compact metric panels, strong tables and toolbars; mobile navigation collapses with an accessible toggle. Totals remain grouped by currency and labelled as placed order value. All labels/errors have EN/VI keys.
-
-Mobile checkout repeats the current total beside its submit button. Admin grid tracks use minmax(0,1fr); wide tables scroll within their panels rather than widening the page.
-
-## Locale, modules and payment controls
-
-Locale selection uses a globe button and dropdown menu of language names, with a selected check, outside-click closing, Escape focus restoration and arrow-key movement. Product reviews/wishlist and checkout shipping/coupon/payment controls appear only when capabilities allow them. Checkout requires an explicit authoritative total review after option selection. Admin configures rates/coupons through the same tactile Vue primitives. Payment controls state when cash is being recorded or a non-charging development simulation is used. SEO metadata never changes merchant content.
+Admin navigation is persistent on desktop and collapses on mobile. Account navigation is a short list with a current marker. Missing pages and server errors use the same panel and a link home.

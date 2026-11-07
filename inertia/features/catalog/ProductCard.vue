@@ -28,7 +28,7 @@ const { t, locale } = useI18n()
         <p class="product-card-category">{{ product.category?.name }}</p>
         <h2>{{ product.name }}</h2>
         <strong v-if="product.priceMinor !== null && product.currency"
-          ><span v-if="product.hasVariants">{{ t('catalog', 'from') }} </span
+          ><template v-if="product.hasVariants">{{ t('catalog', 'from') + '\u00a0' }}</template
           >{{ formatMoney(product.priceMinor, product.currency, locale) }}</strong
         >
         <p class="product-availability" :data-available="product.available">

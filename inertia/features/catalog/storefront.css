@@ -132,7 +132,7 @@
   width: 100%;
   height: auto;
   aspect-ratio: 480 / 340;
-  object-fit: contain;
+  object-fit: cover;
 }
 .product-card-arrow {
   position: absolute;

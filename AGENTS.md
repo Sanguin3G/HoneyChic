@@ -38,6 +38,10 @@ Before tests, create honeychic_test; test boot refuses database names without _t
 
 Use the smallest relevant checks while iterating. `npm run typecheck`, `npm run lint`, `npm run build`, `npm test` before meaningful milestones. Test commerce correctness/authorization when implemented; no test for every getter, component, or CSS edit.
 
+HTTP tests check authorization, the locale of an error, and that a rejected request left the row unchanged. Domain tests own money, stock, and rollback. Do not raise the 30s functional suite timeout to hide a cold Vite start.
+
+Screenshots in `docs/screenshots` must match the running demo shop. Retake them in Edge when the storefront or admin layout changes. Do not reset the dev database to take them.
+
 Use navy/orange semantic tokens, restrained radii, tactile states, visible focus, semantic HTML, and comfortable mobile targets. Storefront top navigation; catalog filters on desktop/drawer on mobile; admin persistent sidebar.
 
 Update STATUS for meaningful implementation changes and relevant architecture, commerce, module, development, deployment, or UI docs. ROADMAP has exactly Now/Next/Later. Keep docs short and truthful.

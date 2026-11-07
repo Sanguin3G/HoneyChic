@@ -22,7 +22,7 @@ const { t } = useI18n()
     <section class="shop-collection">
       <div class="section-heading">
         <h2>{{ t('storefront', 'collection') }}</h2>
-        <Link href="/products">{{ t('storefront', 'viewAll') }} →</Link>
+        <Link href="/products">{{ t('storefront', 'viewAll') }}</Link>
       </div>
       <div v-if="products.length" class="product-grid">
         <ProductCard v-for="product in products" :key="product.id" :product="product" />

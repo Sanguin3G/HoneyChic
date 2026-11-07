@@ -54,7 +54,6 @@ const { t, locale } = useI18n()
         <ul class="order-lines">
           <li v-for="item in cart.items" :key="item.variantId">
             <strong>{{ item.product?.name ?? t('cart', 'unavailable') }}</strong>
-            <p>{{ item.product?.description }}</p>
             <p>{{ t('orders', 'quantity') }}: {{ item.quantity }}</p>
             <p v-if="item.lineTotalMinor !== null">
               {{ formatMoney(item.lineTotalMinor, cart.currency, locale) }}

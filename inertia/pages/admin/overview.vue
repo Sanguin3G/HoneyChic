@@ -9,7 +9,8 @@ import { formatMoney } from '~/app/shared/money'
 defineProps<{
   dashboard: {
     counts: Record<string, number>
-    totals: { currency: string; count: number; amountMinor: string }[]
+    totals: { currency: string; count: number; amountMinor: string; averageMinor: string }[]
+    topProducts: { name: string; currency: string; quantity: number; amountMinor: string }[]
     recent: OrderSummary[]
   }
 }>()
@@ -27,7 +28,11 @@ const metrics = [
   <AdminLayout
     ><h1>{{ t('admin', 'dashboard') }}</h1>
     <div class="admin-metrics">
-      <HcPanel v-for="metric in metrics" :key="metric.key"
+      <HcPanel
+        v-for="metric in metrics"
+        :key="metric.key"
+        class="admin-metric"
+        :data-attention="metric.key === 'low_stock' && dashboard.counts[metric.key] > 0"
         ><Link :href="metric.href">{{ t('admin', metric.label) }}</Link
         ><strong>{{ dashboard.counts[metric.key] }}</strong></HcPanel
       >
@@ -35,10 +40,23 @@ const metrics = [
     <HcPanel
       ><h2>{{ t('admin', 'orderValue') }}</h2>
       <p class="hc-help">{{ t('admin', 'valueHelp') }}</p>
-      <ul class="order-lines">
+      <p v-if="!dashboard.totals.length">{{ t('admin', 'noOrderValue') }}</p>
+      <ul v-else class="order-lines">
         <li v-for="total in dashboard.totals" :key="total.currency">
           <strong>{{ formatMoney(BigInt(total.amountMinor), total.currency, locale) }}</strong> ·
-          {{ total.count }} {{ t('admin', 'count') }}
+          {{ total.count }} {{ t('admin', 'count') }} · {{ t('admin', 'average') }}
+          {{ formatMoney(BigInt(total.averageMinor), total.currency, locale) }}
+        </li>
+      </ul>
+    </HcPanel>
+    <HcPanel
+      ><h2>{{ t('admin', 'topProducts') }}</h2>
+      <p class="hc-help">{{ t('admin', 'topHelp') }}</p>
+      <p v-if="!dashboard.topProducts.length">{{ t('admin', 'noTopProducts') }}</p>
+      <ul v-else class="order-lines">
+        <li v-for="product in dashboard.topProducts" :key="product.currency + product.name">
+          {{ product.name }} · {{ product.quantity }} ·
+          <strong>{{ formatMoney(BigInt(product.amountMinor), product.currency, locale) }}</strong>
         </li>
       </ul>
     </HcPanel>
@@ -49,7 +67,7 @@ const metrics = [
         :pagination="{ page: 1, lastPage: 1, total: dashboard.recent.length }"
         base="/admin/orders"
         admin
-      /><Link href="/admin/orders">{{ t('admin', 'orders') }}</Link></HcPanel
+      /><Link class="admin-more" href="/admin/orders">{{ t('admin', 'orders') }}</Link></HcPanel
     >
   </AdminLayout>
 </template>

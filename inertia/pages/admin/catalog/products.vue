@@ -6,6 +6,8 @@ import HcPanel from '~/app/design/HcPanel.vue'
 import HcInput from '~/app/design/HcInput.vue'
 import HcButton from '~/app/design/HcButton.vue'
 import CatalogPagination from '~/features/catalog/CatalogPagination.vue'
+import StatusMark from '~/app/design/StatusMark.vue'
+import { statusTone } from '~/app/design/status_tone'
 import { useI18n } from '~/app/shared/i18n'
 import { formatMoney } from '~/app/shared/money'
 import type { ProductSummary, Pagination } from '~/features/catalog/types'
@@ -50,7 +52,11 @@ function search() {
                 <Link :href="'/admin/products/' + product.id + '/edit'">{{ product.name }}</Link>
               </td>
               <td>{{ product.category?.name ?? t('catalog', 'uncategorized') }}</td>
-              <td>{{ t('catalog', product.status) }}</td>
+              <td>
+                <StatusMark :tone="statusTone(product.status)">{{
+                  t('catalog', product.status)
+                }}</StatusMark>
+              </td>
               <td>
                 {{
                   product.priceMinor !== null && product.currency

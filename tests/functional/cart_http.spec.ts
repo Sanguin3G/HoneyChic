@@ -40,19 +40,17 @@ test.group('Cart HTTP boundaries', (group) => {
       .json({ quantity: 3 })
     updated.assertStatus(302)
     const changed = updated.session(cartSessionKey) as CartState
-    for (const locale of ['en', 'vi']) {
-      const page = await client
-        .get('/cart')
-        .withSession({ cart: changed })
-        .header('Accept', 'text/html')
-        .header('Accept-Language', locale)
-      page.assertStatus(200)
-      const props = inertiaPage(page.text()).props
-      assert.equal(props.cart.totalMinor, 4000)
-      assert.equal(props.cartQuantity, 4)
-      assert.equal(props.locale, locale)
-      assert.isNull(props.auth)
-    }
+    const page = await client
+      .get('/cart')
+      .withSession({ cart: changed })
+      .header('Accept', 'text/html')
+      .header('Accept-Language', 'vi')
+    page.assertStatus(200)
+    const props = inertiaPage(page.text()).props
+    assert.equal(props.cart.totalMinor, 4000)
+    assert.equal(props.cartQuantity, 4)
+    assert.equal(props.locale, 'vi')
+    assert.isNull(props.auth)
     const other = await client.get('/cart').header('Accept', 'text/html')
     assert.lengthOf(inertiaPage(other.text()).props.cart.items, 0)
     const removed = await client

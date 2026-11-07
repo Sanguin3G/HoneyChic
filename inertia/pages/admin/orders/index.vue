@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import { Head, useForm } from '@inertiajs/vue3'
 import AdminLayout from '~/app/layouts/AdminLayout.vue'
 import HcPanel from '~/app/design/HcPanel.vue'
@@ -18,6 +19,13 @@ const statuses = ['pending', 'processing', 'shipped', 'completed', 'cancelled']
 const base =
   '/admin/orders?' +
   new URLSearchParams(Object.entries(props.filters).filter(([, v]) => v)).toString()
+const exportHref = computed(() => {
+  const params = new URLSearchParams()
+  if (props.filters.q) params.set('q', props.filters.q)
+  if (props.filters.status) params.set('status', props.filters.status)
+  const query = params.toString()
+  return '/admin/orders/export' + (query ? '?' + query : '')
+})
 function search() {
   form
     .transform((data) => Object.fromEntries(Object.entries(data).filter(([, v]) => v)))
@@ -42,6 +50,8 @@ function search() {
         >
         <HcButton type="submit" :disabled="form.processing">{{ t('admin', 'filter') }}</HcButton>
       </form>
+      <p class="hc-help">{{ t('admin', 'exportHelp') }}</p>
+      <a :href="exportHref">{{ t('admin', 'exportOrders') }}</a>
       <OrderList :orders="orders" :pagination="pagination" :base="base" admin /> </HcPanel
   ></AdminLayout>
 </template>

@@ -4,8 +4,10 @@ PostgreSQL 17 is the local/CI database. Lucid uses PostgreSQL with no SQLite fal
 
 ## Current schema
 
-- users: normalized unique email, hashed password, name, owner/staff/customer role and nullable en/vi preference.
-- store_settings: singleton business/contact information, logo and favicon keys, https social links, optional primary/accent colors, currency, locale, timezone, order prefix, stock threshold and explicit account/registration/guest-checkout plus optional-module enablement booleans. Brand files use the same generated upload keys as product images.
+- users: normalized unique email, hashed password, name, owner/staff/customer role and nullable en/vi preference. `requires_email_verification` defaults false. `email_verified_at` is set only after a new customer confirms.
+- password_reset_tokens and email_verification_tokens: user link, scrypt secret hash, expiry and used-at. Reset lasts one hour. Confirmation lasts 24 hours and is sent only when SMTP can send.
+- order_recovery_tokens: hashed guest-order links that last 7 days.
+- store_settings: singleton business/contact information, logo and favicon keys, https social links, optional primary/accent colors, currency, locale, timezone, order prefix, stock threshold, account/registration/guest-checkout and optional-module flags, and `store_profile` (`simple_seller`, `standard_store`, `catalog_only`, or `custom`). Brand files use the same generated upload keys as product images.
 - rate_limits: authentication throttle state.
 - categories: unique slug, merchant name/description and active state. Categories are flat.
 - products: nullable category, unique slug, merchant text and draft/published/archived state. A generated simple-language tsvector has a GIN index.
@@ -23,7 +25,7 @@ Product/category relationships restrict deletion. No catalog delete endpoint exi
 
 ## Seeds
 
-node ace db:seed initializes store settings without overwriting merchant changes or creating credentials. In development only, it also inserts four mixed-category demo products with locally owned SVG illustrations. Re-running seeds skips existing product slugs. Catalog seeding explicitly initializes store settings first, so a fresh database does not depend on alphabetical seed order.
+node ace db:seed initializes store settings without overwriting merchant changes or creating credentials. In development only, it also inserts four mixed-category demo products with local photos. Re-running seeds skips existing product slugs. Catalog seeding explicitly initializes store settings first, so a fresh database does not depend on alphabetical seed order.
 
 Demo amounts are illustrative in the configured currency, not converted exchange rates. Existing products retain their creation currency. New/migrated variants start at zero stock; seeding does not create stock movements or reset balances.
 
@@ -31,7 +33,7 @@ Demo amounts are illustrative in the configured currency, not converted exchange
 
 The inventory migration adds zero stock without changing catalog identities/prices. Rolling it back drops inventory balances and history: back up and prefer forward fixes in production.
 
-First-party migrations are unconditional. Development reset: node ace migration:fresh --seed. Production: node ace migration:run --force; never fresh/reset.
+First-party migrations are unconditional. On a new empty database, `node ace migration:fresh --seed` rebuilds it. Do not run that against this checkout's `honeychic` database: it deletes the owner and order HC-000001. Production uses `node ace migration:run --force` and never fresh or reset.
 
 Create the separate local test database once:
 

@@ -80,6 +80,17 @@ legend {
   height: 20px;
   accent-color: var(--brand-primary);
 }
+.hc-choice {
+  align-items: flex-start;
+}
+.hc-choice input {
+  margin-top: 0.65rem;
+}
+.hc-choice-copy {
+  display: grid;
+  gap: 0.15rem;
+  padding-block: 0.55rem;
+}
 .hc-form fieldset {
   border: 1px solid var(--border);
   border-radius: var(--radius-panel);
@@ -111,12 +122,18 @@ legend {
   gap: 0.5rem;
 }
 .account-nav a {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
   padding: 0.75rem;
   border: 1px solid var(--border);
+  border-inline-start: 3px solid transparent;
   border-radius: var(--radius-control);
 }
 .account-nav a[aria-current] {
   background: var(--brand-accent-soft);
+  border-color: var(--brand-accent);
+  border-inline-start-color: var(--brand-primary);
   font-weight: 650;
 }
 .store-nav-actions {

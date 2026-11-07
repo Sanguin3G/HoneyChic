@@ -183,6 +183,163 @@ test.group('Commerce administration and account boundaries', (group) => {
     blocked.assertStatus(422)
     assert.lengthOf(await Order.all(), 0)
   })
+  test('store profiles apply owner presets and leave custom flags unchanged', async ({
+    client,
+    assert,
+  }) => {
+    const staff = await customer('profile-staff@example.test', 'staff')
+    const owner = await customer('profile-owner@example.test', 'owner')
+    const buyer = await customer('profile-buyer@example.test')
+    const denied = await client
+      .post('/admin/modules/profile')
+      .loginAs(staff)
+      .withCsrfToken()
+      .json({ storeProfile: 'catalog_only' })
+    denied.assertStatus(403)
+    const store = await StoreSetting.findOrFail(1)
+    await store
+      .merge({
+        guestCheckoutEnabled: true,
+        customerAccountsEnabled: true,
+        registrationEnabled: true,
+        reviewsEnabled: false,
+        wishlistEnabled: true,
+        couponsEnabled: false,
+        shippingEnabled: false,
+        codEnabled: false,
+        fakePaymentEnabled: true,
+        storeProfile: 'custom',
+      })
+      .save()
+    const custom = await client
+      .post('/admin/modules/profile')
+      .loginAs(owner)
+      .withCsrfToken()
+      .redirects(0)
+      .json({ storeProfile: 'custom' })
+    custom.assertStatus(302)
+    await store.refresh()
+    assert.isTrue(store.wishlistEnabled)
+    assert.isTrue(store.fakePaymentEnabled)
+    assert.equal(store.storeProfile, 'custom')
+    const presets = {
+      simple_seller: {
+        guestCheckoutEnabled: true,
+        customerAccountsEnabled: true,
+        registrationEnabled: true,
+        reviewsEnabled: false,
+        wishlistEnabled: false,
+        couponsEnabled: false,
+        shippingEnabled: false,
+        codEnabled: false,
+        fakePaymentEnabled: false,
+      },
+      standard_store: {
+        guestCheckoutEnabled: true,
+        customerAccountsEnabled: true,
+        registrationEnabled: true,
+        reviewsEnabled: true,
+        wishlistEnabled: true,
+        couponsEnabled: true,
+        shippingEnabled: true,
+        codEnabled: false,
+        fakePaymentEnabled: false,
+      },
+      catalog_only: {
+        guestCheckoutEnabled: false,
+        customerAccountsEnabled: false,
+        registrationEnabled: false,
+        reviewsEnabled: false,
+        wishlistEnabled: false,
+        couponsEnabled: false,
+        shippingEnabled: false,
+        codEnabled: false,
+        fakePaymentEnabled: false,
+      },
+    }
+    for (const name of Object.keys(presets) as (keyof typeof presets)[]) {
+      const saved = await client
+        .post('/admin/modules/profile')
+        .loginAs(owner)
+        .withCsrfToken()
+        .redirects(0)
+        .json({ storeProfile: name })
+      saved.assertStatus(302)
+      await store.refresh()
+      assert.equal(store.storeProfile, name)
+      for (const [flag, value] of Object.entries(presets[name])) {
+        assert.equal(store[flag as keyof typeof store], value)
+      }
+    }
+    const { variants } = await cartFixture()
+    const token = randomUUID()
+    const blockedCheckout = await client
+      .post('/checkout')
+      .withCsrfToken()
+      .withSession({
+        checkoutToken: token,
+        cart: { currency: 'USD', lines: [[variants[0].id, 1, 1000]] },
+      })
+      .header('Accept', 'application/json')
+      .json({
+        token,
+        customerName: 'Guest',
+        customerEmail: 'guest-profile@example.test',
+        customerPhone: '123',
+        deliveryAddress: 'Example',
+        expectedTotalMinor: 1000,
+      })
+    blockedCheckout.assertStatus(422)
+    assert.include(JSON.stringify(blockedCheckout.body()), 'checkoutDisabled')
+    const accountToken = randomUUID()
+    const accountBlocked = await client
+      .post('/checkout')
+      .loginAs(buyer)
+      .withCsrfToken()
+      .withSession({
+        checkoutToken: accountToken,
+        cart: { currency: 'USD', lines: [[variants[0].id, 1, 1000]] },
+      })
+      .header('Accept', 'application/json')
+      .json({
+        token: accountToken,
+        customerName: 'Buyer',
+        customerEmail: 'profile-buyer@example.test',
+        customerPhone: '123',
+        deliveryAddress: 'Example',
+        expectedTotalMinor: 1000,
+      })
+    accountBlocked.assertStatus(422)
+    assert.include(JSON.stringify(accountBlocked.body()), 'checkoutDisabled')
+    const invalid = await client
+      .post('/admin/modules/profile')
+      .loginAs(owner)
+      .withCsrfToken()
+      .header('Accept', 'application/json')
+      .json({ storeProfile: 'stripe' })
+    invalid.assertStatus(422)
+    const manual = await client
+      .put('/admin/modules')
+      .loginAs(owner)
+      .withCsrfToken()
+      .redirects(0)
+      .json({
+        guestCheckoutEnabled: true,
+        customerAccountsEnabled: true,
+        registrationEnabled: true,
+        reviewsEnabled: false,
+        wishlistEnabled: false,
+        couponsEnabled: false,
+        shippingEnabled: false,
+        codEnabled: false,
+        fakePaymentEnabled: false,
+      })
+    manual.assertStatus(302)
+    await store.refresh()
+    assert.equal(store.storeProfile, 'custom')
+    assert.isTrue(store.guestCheckoutEnabled)
+    assert.isFalse(store.reviewsEnabled)
+  })
   test('saved addresses are scoped to the customer and checkout takes an independent copy', async ({
     client,
     assert,
@@ -272,5 +429,145 @@ test.group('Commerce administration and account boundaries', (group) => {
       .header('Accept', 'text/html')
     assert.lengthOf(inertiaPage(low.text()).props.variants, 1)
     assert.lengthOf(inertiaPage(out.text()).props.variants, 1)
+  })
+})
+
+test.group('Store profile pages', (group) => {
+  group.each.setup(() => testUtils.db().withGlobalTransaction())
+  test('catalog only keeps administrators signed in and the existing order readable', async ({
+    client,
+    assert,
+  }) => {
+    const staff = await customer('profile-page-staff@example.test', 'staff')
+    const owner = await customer('profile-page-owner@example.test', 'owner')
+    const buyer = await customer('profile-page-buyer@example.test')
+    const order = await orderFor(buyer.id)
+    const catalog = await client
+      .post('/admin/modules/profile')
+      .loginAs(owner)
+      .withCsrfToken()
+      .redirects(0)
+      .json({ storeProfile: 'catalog_only' })
+    catalog.assertStatus(302)
+    const admin = await client.get('/admin/modules').loginAs(owner).header('Accept', 'text/html')
+    admin.assertStatus(200)
+    assert.equal(inertiaPage(admin.text()).props.settings.storeProfile, 'catalog_only')
+    const staffPage = await client
+      .get('/admin/modules')
+      .loginAs(staff)
+      .header('Accept', 'text/html')
+    staffPage.assertStatus(200)
+    const readable = await client
+      .get('/admin/orders/' + order.publicId)
+      .loginAs(owner)
+      .header('Accept', 'text/html')
+    readable.assertStatus(200)
+    assert.equal(inertiaPage(readable.text()).props.order.publicId, order.publicId)
+  })
+})
+
+test.group('Setup wizard', (group) => {
+  group.each.setup(() => testUtils.db().withGlobalTransaction())
+  test('the wizard applies a profile and shop record without rewriting an order', async ({
+    client,
+    assert,
+  }) => {
+    const staff = await customer('wizard-staff@example.test', 'staff')
+    const owner = await customer('wizard-owner@example.test', 'owner')
+    const order = await orderFor(owner.id)
+    const number = order.number
+    const denied = await client
+      .get('/admin/setup')
+      .loginAs(staff)
+      .header('Accept', 'application/json')
+    denied.assertStatus(403)
+    const deniedSave = await client
+      .post('/admin/setup')
+      .loginAs(staff)
+      .withCsrfToken()
+      .header('Accept', 'application/json')
+      .json({
+        storeProfile: 'simple_seller',
+        name: 'Nope',
+        currency: 'USD',
+        defaultLocale: 'en',
+        timezone: 'UTC',
+        orderPrefix: 'NO',
+      })
+    deniedSave.assertStatus(403)
+    const invalid = await client
+      .post('/admin/setup')
+      .loginAs(owner)
+      .withCsrfToken()
+      .header('Accept', 'application/json')
+      .json({
+        storeProfile: 'simple_seller',
+        name: 'Wizard Shop',
+        currency: 'XXX',
+        defaultLocale: 'en',
+        timezone: 'UTC',
+        orderPrefix: 'WZ',
+      })
+    invalid.assertStatus(422)
+    const store = await StoreSetting.findOrFail(1)
+    assert.notEqual(store.name, 'Wizard Shop')
+    const saved = await client
+      .post('/admin/setup')
+      .loginAs(owner)
+      .withCsrfToken()
+      .redirects(0)
+      .json({
+        storeProfile: 'simple_seller',
+        name: 'Wizard Shop',
+        currency: 'EUR',
+        defaultLocale: 'vi',
+        timezone: 'UTC',
+        orderPrefix: 'WZ',
+      })
+    saved.assertStatus(302)
+    await store.refresh()
+    assert.equal(store.storeProfile, 'simple_seller')
+    assert.equal(store.name, 'Wizard Shop')
+    assert.equal(store.currency, 'EUR')
+    assert.equal(store.defaultLocale, 'vi')
+    assert.equal(store.timezone, 'UTC')
+    assert.equal(store.orderPrefix, 'WZ')
+    assert.isTrue(store.guestCheckoutEnabled)
+    assert.isTrue(store.customerAccountsEnabled)
+    assert.isTrue(store.registrationEnabled)
+    assert.isFalse(store.reviewsEnabled)
+    assert.isFalse(store.wishlistEnabled)
+    assert.isFalse(store.couponsEnabled)
+    assert.isFalse(store.shippingEnabled)
+    assert.isFalse(store.codEnabled)
+    assert.isFalse(store.fakePaymentEnabled)
+    await order.refresh()
+    assert.equal(order.currency, 'USD')
+    assert.equal(order.number, number)
+    assert.equal(order.customerName, 'Original customer')
+    await store.merge({ wishlistEnabled: true, fakePaymentEnabled: true }).save()
+    const custom = await client
+      .post('/admin/setup')
+      .loginAs(owner)
+      .withCsrfToken()
+      .redirects(0)
+      .json({
+        storeProfile: 'custom',
+        name: 'Custom Shop',
+        currency: 'EUR',
+        defaultLocale: 'vi',
+        timezone: 'UTC',
+        orderPrefix: 'WZ',
+      })
+    custom.assertStatus(302)
+    await store.refresh()
+    assert.equal(store.storeProfile, 'custom')
+    assert.equal(store.name, 'Custom Shop')
+    assert.isTrue(store.wishlistEnabled)
+    assert.isTrue(store.fakePaymentEnabled)
+    const page = await client.get('/admin/setup').loginAs(owner).header('Accept', 'text/html')
+    page.assertStatus(200)
+    assert.equal(inertiaPage(page.text()).component, 'admin/setup')
+    assert.equal(inertiaPage(page.text()).props.setup.name, 'Custom Shop')
   })
 })

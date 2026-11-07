@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3'
 import type { OrderSummary, Pagination } from './types'
+import StatusMark from '~/app/design/StatusMark.vue'
+import { statusTone } from '~/app/design/status_tone'
 import { useI18n } from '~/app/shared/i18n'
 import { formatMoney } from '~/app/shared/money'
 defineProps<{ orders: OrderSummary[]; pagination: Pagination; base: string; admin?: boolean }>()
@@ -26,8 +28,16 @@ const { t, locale } = useI18n()
             }}</Link>
           </td>
           <td>{{ order.customerName }}</td>
-          <td>{{ t('orders', order.status) }}</td>
-          <td>{{ t('orders', order.paymentStatus) }}</td>
+          <td>
+            <StatusMark :tone="statusTone(order.status)">{{
+              t('orders', order.status)
+            }}</StatusMark>
+          </td>
+          <td>
+            <StatusMark :tone="statusTone(order.paymentStatus)">{{
+              t('orders', order.paymentStatus)
+            }}</StatusMark>
+          </td>
           <td>{{ formatMoney(order.totalMinor, order.currency, locale) }}</td>
         </tr>
       </tbody>

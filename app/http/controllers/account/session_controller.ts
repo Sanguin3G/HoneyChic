@@ -38,6 +38,15 @@ export default class SessionController {
         },
       ])
     }
+    if (user.role === 'customer' && user.requiresEmailVerification && !user.emailVerifiedAt) {
+      throw new errors.E_VALIDATION_ERROR([
+        {
+          field: 'email',
+          rule: 'unverified',
+          message: messagesFor(ctx.locale).auth.unverified,
+        },
+      ])
+    }
     await ctx.auth.use('web').login(user)
     return ctx.response.redirect().toPath(user.role === 'customer' ? '/account' : '/admin')
   }

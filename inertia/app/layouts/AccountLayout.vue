@@ -22,9 +22,12 @@ const { t } = useI18n()
           :aria-current="page.url.startsWith('/account/addresses') ? 'page' : undefined"
           >{{ t('orders', 'addresses') }}</Link
         >
-        <Link v-if="page.props.capabilities.wishlist.available" href="/account/wishlist">{{
-          t('modules', 'wishlist')
-        }}</Link>
+        <Link
+          v-if="page.props.capabilities.wishlist.available"
+          href="/account/wishlist"
+          :aria-current="page.url.startsWith('/account/wishlist') ? 'page' : undefined"
+          >{{ t('modules', 'wishlist') }}</Link
+        >
         <Link v-if="page.props.permissions.admin" href="/admin">{{
           t('navigation', 'admin')
         }}</Link>

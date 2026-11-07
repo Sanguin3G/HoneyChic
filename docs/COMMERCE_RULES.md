@@ -1,6 +1,6 @@
 # Commerce rules
 
-Read this document before changing important commerce workflows. Catalog, inventory, cart, order, cancellation and optional-module checkout rules are implemented. Real provider webhooks, refunds and returns remain later work.
+Read this document before changing important commerce workflows. Catalog, inventory, cart, order, cancellation and optional-module checkout rules are implemented. Refund, return, and unpaid-expiry rules are written below and are not implemented. Real provider webhooks remain later work.
 
 - Inventory belongs to variants; stock cannot become negative. Checkout and stock adjustments use transactions and appropriate database locks.
 - Meaningful stock changes record delta, reason, reference, actor, and timestamp.
@@ -60,7 +60,7 @@ Record any intended change here, alongside the action and meaningful regression 
 - Items preserve product name, variant description, SKU, unit price, quantity, discount and tax. Customer contact/address/note, currency and order prefix/number are snapshots. Later catalog/account/settings changes cannot reconstruct or rewrite them.
 - Customer/product/variant references are nullable with SET NULL. Order items restrict order deletion. Catalog deletion is still not exposed; inventory history may independently restrict variant deletion.
 - Fulfillment: pending → processing → shipped → completed; processing may complete directly for pickup/local fulfillment. Pending/processing may cancel. No backwards transitions. Payment starts unpaid and is unaffected by fulfillment changes.
-- Customers/guests may cancel only their pending unpaid order. Admins may cancel pending/processing unpaid orders. Paid, shipped or completed orders need a future refund/return workflow.
+- Customers/guests may cancel only their pending unpaid order. Admins may cancel pending/processing unpaid orders. Paid, shipped or completed orders follow the refund and return rules below. Those actions are not implemented.
 - CancelOrder locks the order, returns an already-cancelled order unchanged, restores each variant once and marks cancelled in the same transaction. A variant retired after sale still receives its historical restoration; admins may remove its restored balance with a recorded negative correction.
 - The order stores the checkout locale. Confirmation, shipped, and cancellation emails use that snapshot and are sent only after the order transaction commits. A mail failure does not roll back the order or stock, and retrying checkout does not send another confirmation.
 - Guest access uses the most recent guest order in the encrypted two-hour session, or a hashed recovery link from the order email. The link lasts 7 days and can be opened again until it expires. A public UUID, email address, or order number alone never authorizes access. Accounts can access only their own orders. Private cart/checkout/order responses are no-store.
@@ -78,3 +78,33 @@ Record any intended change here, alongside the action and meaningful regression 
 - Settlement locks order then payment, verifies amount/currency/reference, authorizes the actor and accepts each event once. Cancelled orders cannot become paid; paid orders cannot use stock-restoring cancellation. Payment changes never advance fulfillment.
 - Reviews require a completed order owned by the current customer containing the product. One editable review per customer/product; guest orders are not automatically attached. Reviews display escaped text, not HTML.
 - Wishlist is account-scoped, at most 100 products, idempotent per product. Public visibility is reapplied when reading it.
+
+## Refunds, returns, and unpaid expiry
+
+These rules are not implemented. Do not add an endpoint until the actions below exist. A manual refund or return does not need a payment-provider account.
+
+### Refunds
+
+- A refund records payment only. It does not restore stock and it does not change fulfillment.
+- Only a paid order can be refunded. An unpaid order uses CancelOrder. A cancelled order cannot be refunded.
+- The amount is an integer in the order currency, from 1 minor unit through the order total minus refunds already recorded. There is no conversion and no float.
+- Payment status becomes `refunded` only when the refunded sum equals the order total. A smaller refund leaves the order paid.
+- Each refund has a merchant reference. The same reference on the same order is returned unchanged and does not move the sum twice.
+- Only an owner or a staff member can record a refund. The customer cannot.
+- A manual refund records cash or another off-platform repayment. It does not call Stripe, VNPay, or any other provider. A provider refund waits until that provider exists, and it still has to pass these checks before it changes the order.
+
+### Returns
+
+- A return records inventory only. It is not a refund and it is not CancelOrder.
+- The returned quantity for a line cannot exceed the sold quantity minus quantities already returned for that line.
+- Stock comes back through one recorded positive movement with reason `return`, in the same transaction as the return. A second request for the same return does not move stock again.
+- The variant is locked in the same order used by cancellation. A variant retired after the sale can still take the returned units. A positive manual adjustment of a retired variant stays blocked.
+- A return may exist without a refund, and a refund may exist without a return.
+
+### Unpaid expiry
+
+- Only a pending unpaid order can expire. Paid, processing, shipped, completed, and cancelled orders do not.
+- Expiry calls CancelOrder, so stock is restored once. It does not use a second cancellation path.
+- The merchant chooses the lifetime. An empty lifetime means orders do not expire. No lifetime is active until this is implemented.
+- The decision runs on a schedule, not inside checkout. Add that schedule only when this workload exists, and record why it exists.
+- Guest and account orders use the same rule. Cancellation mail is sent after the transaction commits. A mail failure does not restore the order.

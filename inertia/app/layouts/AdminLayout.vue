@@ -1,7 +1,19 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { Link, router, usePage } from '@inertiajs/vue3'
-import { PhStorefront, PhGear, PhHouse } from '@phosphor-icons/vue'
+import {
+  PhFlag,
+  PhGear,
+  PhHouse,
+  PhPackage,
+  PhPuzzlePiece,
+  PhReceipt,
+  PhSquaresFour,
+  PhStorefront,
+  PhUserCircle,
+  PhUsers,
+  PhWarehouse,
+} from '@phosphor-icons/vue'
 import LocaleSwitcher from '~/app/navigation/LocaleSwitcher.vue'
 import HcButton from '~/app/design/HcButton.vue'
 import BrandHead from '~/app/shared/BrandHead.vue'
@@ -37,44 +49,61 @@ const { t } = useI18n()
           <PhHouse :size="20" aria-hidden="true" />{{ t('settings', 'overview') }}
         </Link>
         <Link
+          href="/admin/products"
+          :aria-current="page.url.startsWith('/admin/products') ? 'page' : undefined"
+        >
+          <PhPackage :size="20" aria-hidden="true" />{{ t('catalog', 'products') }}
+        </Link>
+        <Link
+          href="/admin/categories"
+          :aria-current="page.url.startsWith('/admin/categories') ? 'page' : undefined"
+        >
+          <PhSquaresFour :size="20" aria-hidden="true" />{{ t('catalog', 'categories') }}
+        </Link>
+        <Link
+          href="/admin/inventory"
+          :aria-current="page.url.startsWith('/admin/inventory') ? 'page' : undefined"
+        >
+          <PhWarehouse :size="20" aria-hidden="true" />{{ t('inventory', 'title') }}
+        </Link>
+        <Link
+          href="/admin/orders"
+          :aria-current="page.url.startsWith('/admin/orders') ? 'page' : undefined"
+        >
+          <PhReceipt :size="20" aria-hidden="true" />{{ t('admin', 'orders') }}
+        </Link>
+        <Link
+          href="/admin/customers"
+          :aria-current="page.url.startsWith('/admin/customers') ? 'page' : undefined"
+        >
+          <PhUsers :size="20" aria-hidden="true" />{{ t('admin', 'customers') }}
+        </Link>
+        <Link
+          href="/admin/modules"
+          :aria-current="page.url.startsWith('/admin/modules') ? 'page' : undefined"
+        >
+          <PhPuzzlePiece :size="20" aria-hidden="true" />{{ t('admin', 'modules') }}
+        </Link>
+        <Link
+          v-if="page.props.permissions.manageStore"
+          href="/admin/setup"
+          :aria-current="page.url.startsWith('/admin/setup') ? 'page' : undefined"
+        >
+          <PhFlag :size="20" aria-hidden="true" />{{ t('admin', 'setup') }}
+        </Link>
+        <Link
           v-if="page.props.permissions.manageStore"
           href="/admin/settings"
           :aria-current="page.url === '/admin/settings' ? 'page' : undefined"
         >
           <PhGear :size="20" aria-hidden="true" />{{ t('settings', 'title') }}
         </Link>
-        <Link
-          href="/admin/products"
-          :aria-current="page.url.startsWith('/admin/products') ? 'page' : undefined"
-          >{{ t('catalog', 'products') }}</Link
-        >
-        <Link
-          href="/admin/inventory"
-          :aria-current="page.url.startsWith('/admin/inventory') ? 'page' : undefined"
-          >{{ t('inventory', 'title') }}</Link
-        >
-        <Link
-          href="/admin/orders"
-          :aria-current="page.url.startsWith('/admin/orders') ? 'page' : undefined"
-          >{{ t('admin', 'orders') }}</Link
-        >
-        <Link
-          href="/admin/customers"
-          :aria-current="page.url.startsWith('/admin/customers') ? 'page' : undefined"
-          >{{ t('admin', 'customers') }}</Link
-        >
-        <Link
-          href="/admin/modules"
-          :aria-current="page.url.startsWith('/admin/modules') ? 'page' : undefined"
-          >{{ t('admin', 'modules') }}</Link
-        >
-        <Link
-          href="/admin/categories"
-          :aria-current="page.url.startsWith('/admin/categories') ? 'page' : undefined"
-          >{{ t('catalog', 'categories') }}</Link
-        >
-        <Link href="/">{{ t('navigation', 'storefront') }}</Link>
-        <Link href="/account">{{ t('navigation', 'account') }}</Link>
+        <Link class="admin-nav-exit" href="/">
+          <PhStorefront :size="20" aria-hidden="true" />{{ t('navigation', 'storefront') }}
+        </Link>
+        <Link href="/account">
+          <PhUserCircle :size="20" aria-hidden="true" />{{ t('navigation', 'account') }}
+        </Link>
       </nav>
     </aside>
     <div class="admin-workspace">

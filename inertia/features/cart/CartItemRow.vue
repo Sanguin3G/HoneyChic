@@ -36,7 +36,6 @@ function remove() {
         <h2>
           <Link :href="'/products/' + item.product.slug">{{ item.product.name }}</Link>
         </h2>
-        <p v-if="item.product.description">{{ item.product.description }}</p>
         <p class="cart-sku">{{ t('catalog', 'sku') }}: {{ item.product.sku }}</p>
       </template>
       <h2 v-else>{{ t('cart', 'unavailable') }}</h2>

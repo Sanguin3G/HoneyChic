@@ -10,11 +10,10 @@ export default class HttpExceptionHandler extends ExceptionHandler {
   protected debug = !app.inProduction
 
   /**
-   * Status pages are used to display a custom HTML pages for certain error
-   * codes. You might want to enable them in production only, but feel
-   * free to enable them in development as well.
+   * Missing pages and server errors use the storefront status pages.
+   * The development stack view stays available for errors outside those ranges.
    */
-  protected renderStatusPages = app.inProduction
+  protected renderStatusPages = true
 
   /**
    * Status pages is a collection of error code range and a callback

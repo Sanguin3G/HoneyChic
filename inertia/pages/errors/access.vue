@@ -14,7 +14,13 @@ const key = props.status === 403 ? 'forbidden' : 'throttled'
     <HcPanel class="account-panel">
       <h1>{{ t('errors', key + 'Title') }}</h1>
       <p>{{ t('errors', key + 'Description') }}</p>
-      <Link href="/">{{ t('common', 'home') }}</Link>
+      <Link class="hc-button hc-button--primary" href="/">{{ t('common', 'home') }}</Link>
     </HcPanel>
   </StorefrontLayout>
 </template>
+
+<style scoped>
+.account-panel .hc-button {
+  margin-top: 1rem;
+}
+</style>

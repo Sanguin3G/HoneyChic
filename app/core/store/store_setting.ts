@@ -1,5 +1,6 @@
 import { DateTime } from 'luxon'
 import { BaseModel, column } from '@adonisjs/lucid/orm'
+import type { StoreProfile } from '#core/capabilities/store_profiles'
 import type { Locale } from '#core/support/locale'
 
 export default class StoreSetting extends BaseModel {
@@ -32,6 +33,7 @@ export default class StoreSetting extends BaseModel {
   @column() declare shippingEnabled: boolean
   @column() declare codEnabled: boolean
   @column() declare fakePaymentEnabled: boolean
+  @column() declare storeProfile: StoreProfile
   @column.dateTime({ autoCreate: true }) declare createdAt: DateTime
   @column.dateTime({ autoCreate: true, autoUpdate: true }) declare updatedAt: DateTime | null
 }

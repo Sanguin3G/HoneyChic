@@ -2,7 +2,11 @@ import User from '#domains/customers/models/user'
 import type { Locale } from '#core/support/locale'
 
 export default class RegisterCustomer {
-  async execute(input: { fullName: string; email: string; password: string }, locale: Locale) {
+  async execute(
+    input: { fullName: string; email: string; password: string },
+    locale: Locale,
+    requiresEmailVerification: boolean
+  ) {
     // Never accept a client-selected role or mass-assign the request payload.
     return User.create({
       fullName: input.fullName,
@@ -10,6 +14,7 @@ export default class RegisterCustomer {
       password: input.password,
       role: 'customer',
       preferredLocale: locale,
+      requiresEmailVerification,
     })
   }
 }

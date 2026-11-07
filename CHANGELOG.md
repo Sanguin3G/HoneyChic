@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Added store profiles, an optional setup page, order CSV download, and overview average and top products from non-cancelled snapshots.
+- A new customer confirms email with one hashed link when SMTP can send. Existing accounts, the owner, and staff are not asked.
+- Wrote refund, return, and unpaid-order expiry rules. Those actions are not built.
 - Fixed comma-separated trusted proxy configuration and covered explicit trust boundaries.
 - Restored field validation messages after Inertia form redirects.
 - Enforced readable merchant primary colors; improved focus contrast on dark storefront navigation.

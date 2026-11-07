@@ -17,11 +17,24 @@ const props = defineProps<{
     shippingEnabled: boolean
     codEnabled: boolean
     fakePaymentEnabled: boolean
+    storeProfile: 'simple_seller' | 'standard_store' | 'catalog_only' | 'custom'
   }
 }>()
 const page = usePage<SharedProps>()
 const { t } = useI18n()
-const form = useForm({ ...props.settings })
+const profiles = ['simple_seller', 'standard_store', 'catalog_only', 'custom'] as const
+const profileForm = useForm({ storeProfile: props.settings.storeProfile })
+const form = useForm({
+  guestCheckoutEnabled: props.settings.guestCheckoutEnabled,
+  customerAccountsEnabled: props.settings.customerAccountsEnabled,
+  registrationEnabled: props.settings.registrationEnabled,
+  reviewsEnabled: props.settings.reviewsEnabled,
+  wishlistEnabled: props.settings.wishlistEnabled,
+  couponsEnabled: props.settings.couponsEnabled,
+  shippingEnabled: props.settings.shippingEnabled,
+  codEnabled: props.settings.codEnabled,
+  fakePaymentEnabled: props.settings.fakePaymentEnabled,
+})
 </script>
 <template>
   <Head :title="t('admin', 'modules')"><meta name="robots" content="noindex,nofollow" /></Head>
@@ -31,6 +44,50 @@ const form = useForm({ ...props.settings })
       <HcNotice />
       <p>{{ t('admin', 'moduleHelp') }}</p>
       <Link href="/admin/module-configuration">{{ t('modules', 'configuration') }}</Link>
+      <form
+        class="hc-form"
+        @submit.prevent="
+          profileForm.post('/admin/modules/profile', { preserveState: false, preserveScroll: true })
+        "
+      >
+        <fieldset
+          :disabled="!page.props.permissions.manageStore"
+          aria-describedby="store-profile-help"
+        >
+          <legend>{{ t('admin', 'profiles') }}</legend>
+          <p id="store-profile-help" class="hc-help">{{ t('admin', 'profileHelp') }}</p>
+          <label
+            v-for="profile in profiles"
+            :key="profile"
+            class="hc-check hc-choice"
+            :for="'store-profile-' + profile"
+          >
+            <input
+              :id="'store-profile-' + profile"
+              v-model="profileForm.storeProfile"
+              type="radio"
+              name="storeProfile"
+              :value="profile"
+              :aria-describedby="'store-profile-' + profile + '-help'"
+            />
+            <span class="hc-choice-copy">
+              <span>{{ t('admin', profile) }}</span>
+              <span :id="'store-profile-' + profile + '-help'" class="hc-help">{{
+                t('admin', profile + 'Help')
+              }}</span>
+            </span>
+          </label>
+          <p v-for="(error, key) in profileForm.errors" :key="key" class="hc-error" role="alert">
+            {{ error }}
+          </p>
+          <HcButton
+            v-if="page.props.permissions.manageStore"
+            type="submit"
+            :disabled="profileForm.processing"
+            >{{ t('admin', 'profileApply') }}</HcButton
+          >
+        </fieldset>
+      </form>
       <form
         v-if="page.props.permissions.manageStore"
         class="hc-form"

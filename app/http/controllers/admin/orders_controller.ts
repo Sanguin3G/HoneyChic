@@ -9,9 +9,13 @@ import {
   orderListValidator,
   orderStatusValidator,
   orderIdValidator,
+  orderRefundValidator,
+  orderReturnValidator,
 } from '#domains/orders/validators/orders'
 import { orderTransitions } from '#domains/orders/data/order_states'
 import ChangeOrderStatus from '#domains/orders/actions/change_order_status'
+import RecordRefund from '#domains/orders/actions/record_refund'
+import RecordReturn from '#domains/orders/actions/record_return'
 import DeliverOrderMail from '#domains/orders/actions/deliver_order_mail'
 import { validationMessages } from '#core/support/validation_messages'
 export default class OrdersController {
@@ -49,12 +53,15 @@ export default class OrdersController {
     const order = await Order.query()
       .where('publicId', id)
       .preload('items', (items) => items.orderBy('id'))
+      .preload('refunds', (refunds) => refunds.orderBy('id'))
+      .preload('returns', (returns) => returns.orderBy('id'))
       .firstOrFail()
     return ctx.inertia.render('admin/orders/show', {
       order: orderDetail(order),
       payment: await orderPayment(order.id),
       transitions: orderTransitions[order.status].filter(
-        (status) => status !== 'cancelled' || order.paymentStatus === 'unpaid'
+        (status) =>
+          status !== 'cancelled' || (order.paymentStatus === 'unpaid' && !order.returns?.length)
       ),
     })
   }
@@ -83,5 +90,41 @@ export default class OrdersController {
     }
     ctx.session.flash('notice', 'admin.orderSaved')
     return ctx.response.redirect().toPath('/admin/orders/' + ctx.params.id)
+  }
+
+  async refund(ctx: HttpContext) {
+    await ctx.bouncer.authorize(accessAdmin)
+    const { id } = await orderIdValidator.validate(ctx.params, {
+      messagesProvider: validationMessages(ctx.locale),
+    })
+    const input = await ctx.request.validateUsing(orderRefundValidator, {
+      messagesProvider: validationMessages(ctx.locale),
+    })
+    await new RecordRefund().execute(
+      id,
+      input,
+      { id: ctx.auth.getUserOrFail().id, admin: true },
+      ctx.locale
+    )
+    ctx.session.flash('notice', 'orders.refundSaved')
+    return ctx.response.redirect().toPath('/admin/orders/' + id)
+  }
+
+  async returnItem(ctx: HttpContext) {
+    await ctx.bouncer.authorize(accessAdmin)
+    const { id } = await orderIdValidator.validate(ctx.params, {
+      messagesProvider: validationMessages(ctx.locale),
+    })
+    const input = await ctx.request.validateUsing(orderReturnValidator, {
+      messagesProvider: validationMessages(ctx.locale),
+    })
+    await new RecordReturn().execute(
+      id,
+      input,
+      { id: ctx.auth.getUserOrFail().id, admin: true },
+      ctx.locale
+    )
+    ctx.session.flash('notice', 'orders.returnSaved')
+    return ctx.response.redirect().toPath('/admin/orders/' + id)
   }
 }

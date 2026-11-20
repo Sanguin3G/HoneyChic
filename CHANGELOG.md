@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Fixed Setup Wizard footer link separators, synced `storeProfile` when account/checkout flags diverge on `/admin/settings`, wrapped `SetupController.store` in a single transaction, and added active shipping-rate guidance on Setup, Modules, and Checkout.
+- Formatted money and percentage previews/listings in `/admin/module-configuration` (`ShippingRates` and `CouponSettings`).
+- Added manual refunds (`RecordRefund`) and product returns (`RecordReturn`) with migration, domain actions, idempotent per-order references, retired-variant return restoration, bilingual EN/VI copy, and admin order forms.
 - Added store profiles, an optional setup page, order CSV download, and overview average and top products from non-cancelled snapshots.
 - A new customer confirms email with one hashed link when SMTP can send. Existing accounts, the owner, and staff are not asked.
 - Wrote refund, return, and unpaid-order expiry rules. Those actions are not built.
@@ -79,8 +82,6 @@
 - Central installed/enabled/configured/available capabilities; account disablement enforced on existing sessions.
 - Responsive account/admin shells and input/notice primitives.
 - Isolated PostgreSQL tests, CI database separation and updated development/deployment documentation.
-
-
 
 ## 0.1.0 — Foundation
 

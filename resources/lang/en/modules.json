@@ -68,5 +68,6 @@
   "startsAt": "Starts at (UTC, optional)",
   "endsAt": "Ends at (UTC, optional)",
   "usageLimit": "Usage limit (optional)",
-  "discount": "Discount"
+  "discount": "Discount",
+  "shippingRateHint": "Shipping is enabled. Configure at least one active shipping rate matching your store currency before customers check out:"
 }

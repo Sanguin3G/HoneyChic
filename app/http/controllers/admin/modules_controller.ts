@@ -5,6 +5,7 @@ import type { HttpContext } from '@adonisjs/core/http'
 import { accessAdmin, manageStore } from '#policies/admin'
 import StoreSetting from '#core/store/store_setting'
 import UpdateCapabilities from '#core/capabilities/update_capabilities'
+import ShippingRate from '#modules/shipping/models/shipping_rate'
 import { validationMessages } from '#core/support/validation_messages'
 const validator = vine.create({
   guestCheckoutEnabled: vine.boolean(),
@@ -23,6 +24,12 @@ const profileValidator = vine.create({
 export default class ModulesController {
   async index(ctx: HttpContext) {
     await ctx.bouncer.authorize(accessAdmin)
+    const hasShippingRates = Boolean(
+      await ShippingRate.query()
+        .where('isActive', true)
+        .where('currency', ctx.store.currency)
+        .first()
+    )
     return ctx.inertia.render('admin/modules', {
       settings: {
         ...Object.fromEntries(Object.values(moduleFlags).map((flag) => [flag, ctx.store[flag]])),
@@ -30,6 +37,7 @@ export default class ModulesController {
         customerAccountsEnabled: ctx.store.customerAccountsEnabled,
         registrationEnabled: ctx.store.registrationEnabled,
         storeProfile: ctx.store.storeProfile,
+        hasShippingRates,
       },
     })
   }

@@ -22,6 +22,6 @@ Twenty-two findings are braces through `@adonisjs/assembler` ([GHSA-vfj7-8cjw-p6
 
 Password reset tokens are random, stored as scrypt hashes, last one hour, and work once. An unknown email gets the same response and no mail. Guest recovery links are hashed, last 7 days, and are not the public order id or email. Secrets are not logged. Mail goes out after the order commits. A delivery failure does not undo the order. Response timing is not constant.
 
-`TRUSTED_PROXIES` is a comma-separated list. Blank trusts nobody. Cookie sessions cannot be revoked from one place and expire after two hours. A new customer confirms their email only when SMTP can send mail. Existing accounts, the owner, and staff are not asked. Refunds and unpaid-order expiry are specified and not implemented. Confirm proxy trust, database TLS, and a restore on the real host before launch.
+`TRUSTED_PROXIES` is a comma-separated list. Blank trusts nobody. Cookie sessions cannot be revoked from one place and expire after two hours. A new customer confirms their email only when SMTP can send mail. Existing accounts, the owner, and staff are not asked. Unpaid-order expiry is specified and not implemented. Confirm proxy trust, database TLS, and a restore on the real host before launch.
 
 No secrets belong in Git, screenshots, or logs.

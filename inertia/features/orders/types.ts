@@ -8,6 +8,21 @@ export interface OrderSummary {
   customerName: string
   createdAt: string
 }
+export interface OrderRefundRecord {
+  id: number
+  amountMinor: number
+  reference: string
+  note: string
+  createdAt: string | null
+}
+export interface OrderReturnRecord {
+  id: number
+  orderItemId: number
+  quantity: number
+  reference: string
+  note: string
+  createdAt: string | null
+}
 export interface OrderDetail extends OrderSummary {
   discountMinor: number
   shippingMinor: number
@@ -17,6 +32,9 @@ export interface OrderDetail extends OrderSummary {
   customerPhone: string
   deliveryAddress: string
   note: string
+  refundedMinor?: number
+  refunds?: OrderRefundRecord[]
+  returns?: OrderReturnRecord[]
   items: {
     id: number
     productName: string
@@ -24,6 +42,7 @@ export interface OrderDetail extends OrderSummary {
     sku: string
     unitPriceMinor: number
     quantity: number
+    returnedQuantity?: number
     discountMinor: number
     taxMinor: number
   }[]

@@ -47,3 +47,11 @@ export const profileFlags = {
     ...closed,
   },
 } as const satisfies Record<Exclude<StoreProfile, 'custom'>, ProfileFlags>
+
+export function matchesProfile(store: ProfileFlags, profile: StoreProfile): boolean {
+  if (profile === 'custom') return true
+  const expected = profileFlags[profile]
+  return (Object.keys(expected) as (keyof ProfileFlags)[]).every(
+    (key) => store[key] === expected[key]
+  )
+}

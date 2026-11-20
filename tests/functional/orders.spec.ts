@@ -11,6 +11,10 @@ import PlaceOrder from '#domains/orders/actions/place_order'
 import AdjustInventory from '#domains/inventory/actions/adjust_inventory'
 import CancelOrder from '#domains/orders/actions/cancel_order'
 import ChangeOrderStatus from '#domains/orders/actions/change_order_status'
+import RecordRefund from '#domains/orders/actions/record_refund'
+import RecordReturn from '#domains/orders/actions/record_return'
+import OrderRefund from '#domains/orders/models/order_refund'
+import OrderReturn from '#domains/orders/models/order_return'
 import { orderDetail } from '#domains/orders/data/order_data'
 import { cartFixture, repriceCartProduct, inertiaPage } from '../support/cart_fixture.js'
 const details = (total = 1000) => ({
@@ -292,5 +296,132 @@ test.group('Checkout and historical orders', (group) => {
       .header('Accept', 'application/json')
       .json(input)
     bad.assertStatus(422)
+  })
+  test('manual refunds and product returns follow commerce invariants and idempotency', async ({
+    assert,
+  }) => {
+    const { variants } = await cartFixture('refund-return-item', 'USD', '10', 3)
+    const admin = await User.create({
+      fullName: 'Admin',
+      email: 'refund-admin@example.test',
+      password: 'test-password-123456',
+      role: 'staff',
+    })
+    const customer = await User.create({
+      fullName: 'Buyer',
+      email: 'refund-buyer@example.test',
+      password: 'test-password-123456',
+      role: 'customer',
+    })
+    const unpaid = await new PlaceOrder().execute(
+      { currency: 'USD', lines: [[variants[0].id, 2, 1000]] },
+      details(2000),
+      customer.id,
+      'en'
+    )
+    const refundAction = new RecordRefund()
+    const returnAction = new RecordReturn()
+    await assert.rejects(() =>
+      refundAction.execute(
+        unpaid.publicId,
+        { amountMinor: 500, reference: 'unpaid-ref' },
+        { id: admin.id, admin: true },
+        'en'
+      )
+    )
+    const paid = await new PlaceOrder().execute(
+      { currency: 'USD', lines: [[variants[0].id, 1, 1000]] },
+      details(1000),
+      customer.id,
+      'en'
+    )
+    await paid.merge({ paymentStatus: 'paid', status: 'processing' }).save()
+    await assert.rejects(() =>
+      refundAction.execute(
+        paid.publicId,
+        { amountMinor: 500, reference: 'customer-ref' },
+        { id: customer.id, admin: false },
+        'en'
+      )
+    )
+    await assert.rejects(() =>
+      refundAction.execute(
+        paid.publicId,
+        { amountMinor: 1001, reference: 'over-ref' },
+        { id: admin.id, admin: true },
+        'en'
+      )
+    )
+    const partial = await refundAction.execute(
+      paid.publicId,
+      { amountMinor: 400, reference: 'ref-1', note: 'Partial cash refund' },
+      { id: admin.id, admin: true },
+      'en'
+    )
+    const partialRetry = await refundAction.execute(
+      paid.publicId,
+      { amountMinor: 400, reference: 'ref-1' },
+      { id: admin.id, admin: true },
+      'en'
+    )
+    assert.equal(partial.id, partialRetry.id)
+    await paid.refresh()
+    assert.equal(paid.paymentStatus, 'paid')
+    assert.equal(paid.status, 'processing')
+    const remainder = await refundAction.execute(
+      paid.publicId,
+      { amountMinor: 600, reference: 'ref-2' },
+      { id: admin.id, admin: true },
+      'en'
+    )
+    assert.notEqual(remainder.id, partial.id)
+    await paid.refresh()
+    assert.equal(paid.paymentStatus, 'refunded')
+    const paidVariant = await ProductVariant.findOrFail(variants[0].id)
+    assert.equal(paidVariant.stock, 0)
+    await paid.load('items')
+    await variants[0].merge({ isActive: false }).save()
+    const itemId = paid.items[0].id
+    await assert.rejects(() =>
+      returnAction.execute(
+        paid.publicId,
+        { orderItemId: itemId, quantity: 2, reference: 'ret-over' },
+        { id: admin.id, admin: true },
+        'en'
+      )
+    )
+    const ret = await returnAction.execute(
+      paid.publicId,
+      { orderItemId: itemId, quantity: 1, reference: 'ret-1', note: 'Returned retired variant' },
+      { id: admin.id, admin: true },
+      'en'
+    )
+    const retRetry = await returnAction.execute(
+      paid.publicId,
+      { orderItemId: itemId, quantity: 1, reference: 'ret-1' },
+      { id: admin.id, admin: true },
+      'en'
+    )
+    assert.equal(ret.id, retRetry.id)
+    const returnedVariant = await ProductVariant.findOrFail(variants[0].id)
+    assert.equal(returnedVariant.stock, 1)
+    assert.lengthOf(await InventoryMovement.query().where('reason', 'return'), 1)
+    assert.lengthOf(await OrderRefund.query().where('orderId', paid.id), 2)
+    assert.lengthOf(await OrderReturn.query().where('orderId', paid.id), 1)
+    await unpaid.load('items')
+    await returnAction.execute(
+      unpaid.publicId,
+      { orderItemId: unpaid.items[0].id, quantity: 1, reference: 'ret-unpaid' },
+      { id: admin.id, admin: true },
+      'en'
+    )
+    await assert.rejects(() =>
+      new CancelOrder().execute(unpaid.publicId, { id: admin.id, admin: true }, 'en')
+    )
+    await assert.rejects(() =>
+      new CancelOrder().execute(unpaid.publicId, { id: customer.id, admin: false }, 'en')
+    )
+    await unpaid.refresh()
+    assert.equal(unpaid.status, 'pending')
   })
 })

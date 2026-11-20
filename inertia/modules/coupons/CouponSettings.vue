@@ -4,6 +4,7 @@ import HcPanel from '~/app/design/HcPanel.vue'
 import HcButton from '~/app/design/HcButton.vue'
 import HcInput from '~/app/design/HcInput.vue'
 import { useI18n, type SharedProps } from '~/app/shared/i18n'
+import { formatMoney } from '~/app/shared/money'
 interface Coupon {
   id: number
   code: string
@@ -19,7 +20,7 @@ interface Coupon {
 }
 defineProps<{ coupons: Coupon[] }>()
 const page = usePage<SharedProps>()
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const defaults = () => ({
   id: undefined as number | undefined,
   code: '',
@@ -34,6 +35,31 @@ const defaults = () => ({
   module: '',
 })
 const form = useForm(defaults())
+function previewMoney(minor: string | number | null | undefined, currency: string) {
+  if (minor === null || minor === undefined || String(minor).trim() === '') return ''
+  const num = Number(minor)
+  const code = currency.trim().toUpperCase()
+  if (!Number.isSafeInteger(num) || num < 0 || code.length !== 3) return ''
+  try {
+    return formatMoney(num, code, locale.value)
+  } catch {
+    return `${code} ${num}`
+  }
+}
+function formatCouponDiscount(
+  kind: 'fixed' | 'percentage',
+  value: string | number | null | undefined,
+  currency: string
+) {
+  if (value === null || value === undefined || String(value).trim() === '') return ''
+  const num = Number(value)
+  const code = currency.trim().toUpperCase()
+  if (!Number.isSafeInteger(num) || num < 0 || code.length !== 3) return ''
+  if (kind === 'percentage') {
+    return `${(num / 100).toFixed(num % 100 === 0 ? 0 : 2)}% (${code})`
+  }
+  return previewMoney(num, code)
+}
 function edit(coupon: Coupon) {
   Object.assign(form, {
     ...coupon,
@@ -59,7 +85,8 @@ function save() {
     <p class="hc-help">{{ t('modules', 'couponValueHelp') }}</p>
     <ul>
       <li v-for="coupon in coupons" :key="coupon.id">
-        {{ coupon.code }} · {{ coupon.uses }}/{{ coupon.usageLimit ?? '∞' }} ·
+        {{ coupon.code }} · {{ formatCouponDiscount(coupon.kind, coupon.value, coupon.currency) }} ·
+        {{ coupon.uses }}/{{ coupon.usageLimit ?? '∞' }} ·
         {{ t('modules', coupon.isActive ? 'active' : 'inactive') }}
         <HcButton v-if="page.props.permissions.manageStore" variant="quiet" @click="edit(coupon)">{{
           t('admin', 'edit')
@@ -97,6 +124,9 @@ function save() {
         step="1"
         required
       />
+      <p v-if="formatCouponDiscount(form.kind, form.value, form.currency)" class="hc-help">
+        {{ formatCouponDiscount(form.kind, form.value, form.currency) }}
+      </p>
       <HcInput
         id="coupon-minimum"
         v-model="form.minimumMinor"
@@ -106,6 +136,9 @@ function save() {
         step="1"
         required
       />
+      <p v-if="previewMoney(form.minimumMinor, form.currency)" class="hc-help">
+        {{ previewMoney(form.minimumMinor, form.currency) }}
+      </p>
       <HcInput
         id="coupon-start"
         v-model="form.startsAt"

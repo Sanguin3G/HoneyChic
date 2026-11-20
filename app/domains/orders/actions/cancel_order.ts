@@ -2,6 +2,7 @@ import { DateTime } from 'luxon'
 import db from '@adonisjs/lucid/services/db'
 import Order from '#domains/orders/models/order'
 import OrderItem from '#domains/orders/models/order_item'
+import OrderReturn from '#domains/orders/models/order_return'
 import AdjustInventory from '#domains/inventory/actions/adjust_inventory'
 import { rejectOrder } from '#domains/orders/errors/reject_order'
 import type { Locale } from '#core/support/locale'
@@ -26,6 +27,8 @@ export default class CancelOrder {
       if (order.status === 'cancelled') return order
       const allowed = actor.admin ? ['pending', 'processing'] : ['pending']
       if (!allowed.includes(order.status) || order.paymentStatus !== 'unpaid')
+        rejectOrder('cannotCancel', locale)
+      if (await OrderReturn.query({ client: trx }).where('orderId', order.id).first())
         rejectOrder('cannotCancel', locale)
       const items = await OrderItem.query({ client: trx })
         .where('orderId', order.id)

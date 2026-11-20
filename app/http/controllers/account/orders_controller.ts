@@ -31,7 +31,8 @@ export default class OrdersController {
     return ctx.inertia.render('account/order', {
       order: orderDetail(order),
       payment: await orderPayment(order.id),
-      canCancel: order.status === 'pending' && order.paymentStatus === 'unpaid',
+      canCancel:
+        order.status === 'pending' && order.paymentStatus === 'unpaid' && !order.returns?.length,
     })
   }
   async cancel(ctx: HttpContext) {

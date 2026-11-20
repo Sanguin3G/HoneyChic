@@ -15,6 +15,7 @@ const props = defineProps<{
     defaultLocale: 'en' | 'vi'
     timezone: string
     orderPrefix: string
+    hasShippingRates?: boolean
   }
 }>()
 const { t } = useI18n()
@@ -64,6 +65,13 @@ const form = useForm({
               }}</span>
             </span>
           </label>
+          <p
+            v-if="form.storeProfile === 'standard_store' && setup.hasShippingRates === false"
+            class="hc-help"
+          >
+            {{ t('modules', 'shippingRateHint') }}
+            <Link href="/admin/module-configuration">{{ t('modules', 'configuration') }}</Link>
+          </p>
           <p v-if="form.errors.storeProfile" class="hc-error" role="alert">
             {{ form.errors.storeProfile }}
           </p>
@@ -150,9 +158,9 @@ const form = useForm({
       </form>
       <p>
         <Link href="/admin/modules">{{ t('admin', 'modules') }}</Link>
-        ?
+        ·
         <Link href="/admin/settings">{{ t('settings', 'title') }}</Link>
-        ?
+        ·
         <Link href="/">{{ t('navigation', 'storefront') }}</Link>
       </p>
     </HcPanel>

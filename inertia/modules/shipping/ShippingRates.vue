@@ -4,6 +4,7 @@ import HcPanel from '~/app/design/HcPanel.vue'
 import HcButton from '~/app/design/HcButton.vue'
 import HcInput from '~/app/design/HcInput.vue'
 import { useI18n, type SharedProps } from '~/app/shared/i18n'
+import { formatMoney } from '~/app/shared/money'
 interface Rate {
   id: number
   name: string
@@ -16,7 +17,7 @@ interface Rate {
 }
 defineProps<{ rates: Rate[] }>()
 const page = usePage<SharedProps>()
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const defaults = () => ({
   id: undefined as number | undefined,
   name: '',
@@ -29,6 +30,17 @@ const defaults = () => ({
   module: '',
 })
 const form = useForm(defaults())
+function previewMoney(minor: string | number | null | undefined, currency: string) {
+  if (minor === null || minor === undefined || String(minor).trim() === '') return ''
+  const num = Number(minor)
+  const code = currency.trim().toUpperCase()
+  if (!Number.isSafeInteger(num) || num < 0 || code.length !== 3) return ''
+  try {
+    return formatMoney(num, code, locale.value)
+  } catch {
+    return `${code} ${num}`
+  }
+}
 function edit(rate: Rate) {
   Object.assign(form, { ...rate, countries: rate.countries.join(', ') })
 }
@@ -54,7 +66,9 @@ function save() {
     <p class="hc-help">{{ t('modules', 'minorUnitsHelp') }}</p>
     <ul>
       <li v-for="rate in rates" :key="rate.id">
-        {{ rate.name }} · {{ rate.currency }} · {{ rate.amountMinor }} ·
+        {{ rate.name }} · {{ t('modules', rate.kind) }} ·
+        {{ previewMoney(rate.amountMinor, rate.currency)
+        }}{{ rate.countries.length ? ' · ' + rate.countries.join(', ') : '' }} ·
         {{ t('modules', rate.isActive ? 'active' : 'inactive') }}
         <HcButton v-if="page.props.permissions.manageStore" variant="quiet" @click="edit(rate)">{{
           t('admin', 'edit')
@@ -92,6 +106,9 @@ function save() {
         step="1"
         required
       />
+      <p v-if="previewMoney(form.amountMinor, form.currency)" class="hc-help">
+        {{ previewMoney(form.amountMinor, form.currency) }}
+      </p>
       <HcInput
         id="rate-free"
         v-model="form.freeAboveMinor"
@@ -100,6 +117,9 @@ function save() {
         min="0"
         step="1"
       />
+      <p v-if="previewMoney(form.freeAboveMinor, form.currency)" class="hc-help">
+        {{ previewMoney(form.freeAboveMinor, form.currency) }}
+      </p>
       <HcInput id="rate-countries" v-model="form.countries" :label="t('modules', 'countries')" />
       <p class="hc-help">{{ t('modules', 'zonesHelp') }}</p>
       <label class="hc-check"

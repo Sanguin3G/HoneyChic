@@ -42,6 +42,9 @@ function submit() {
   >
     <h2>{{ t('modules', 'checkoutOptions') }}</h2>
     <template v-if="page.props.capabilities.shipping.available">
+      <p v-if="!rates.length" class="hc-error" role="alert">
+        {{ t('modules', 'shippingUnavailable') }}
+      </p>
       <label class="hc-field"
         >{{ t('modules', 'shipping') }}
         <select v-model="form.shippingRateId" class="hc-input" required>

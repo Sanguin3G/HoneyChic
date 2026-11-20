@@ -21,5 +21,7 @@ export async function scopedOrder(
         scope.orWhere((guest) => guest.whereNull('customerId').where('publicId', id))
     })
     .preload('items', (items) => items.orderBy('id'))
+    .preload('refunds', (refunds) => refunds.orderBy('id'))
+    .preload('returns', (returns) => returns.orderBy('id'))
     .firstOrFail()
 }

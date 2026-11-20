@@ -2,6 +2,8 @@ import { DateTime } from 'luxon'
 import { BaseModel, column, hasMany } from '@adonisjs/lucid/orm'
 import type { HasMany } from '@adonisjs/lucid/types/relations'
 import OrderItem from './order_item.js'
+import OrderRefund from './order_refund.js'
+import OrderReturn from './order_return.js'
 import type { OrderStatus } from '#domains/orders/data/order_states'
 import type { Locale } from '#core/support/locale'
 export default class Order extends BaseModel {
@@ -28,4 +30,6 @@ export default class Order extends BaseModel {
   @column.dateTime({ autoCreate: true, autoUpdate: true }) declare updatedAt: DateTime | null
   @column.dateTime() declare cancelledAt: DateTime | null
   @hasMany(() => OrderItem) declare items: HasMany<typeof OrderItem>
+  @hasMany(() => OrderRefund) declare refunds: HasMany<typeof OrderRefund>
+  @hasMany(() => OrderReturn) declare returns: HasMany<typeof OrderReturn>
 }

@@ -12,6 +12,13 @@ export function orderSummary(order: Order) {
   }
 }
 export function orderDetail(order: Order) {
+  const refunds = order.refunds ?? []
+  const returns = order.returns ?? []
+  const returnedByItem = new Map<number, number>()
+  for (const row of returns) {
+    returnedByItem.set(row.orderItemId, (returnedByItem.get(row.orderItemId) ?? 0) + row.quantity)
+  }
+  const refundedMinor = refunds.reduce((sum, row) => sum + row.amountMinor, 0)
   return {
     ...orderSummary(order),
     discountMinor: order.discountMinor,
@@ -22,6 +29,22 @@ export function orderDetail(order: Order) {
     customerPhone: order.customerPhone,
     deliveryAddress: order.deliveryAddress,
     note: order.note,
+    refundedMinor,
+    refunds: refunds.map((row) => ({
+      id: row.id,
+      amountMinor: row.amountMinor,
+      reference: row.reference,
+      note: row.note,
+      createdAt: row.createdAt.toISO(),
+    })),
+    returns: returns.map((row) => ({
+      id: row.id,
+      orderItemId: row.orderItemId,
+      quantity: row.quantity,
+      reference: row.reference,
+      note: row.note,
+      createdAt: row.createdAt.toISO(),
+    })),
     items: order.items.map((item) => ({
       id: item.id,
       productName: item.productName,
@@ -29,6 +52,7 @@ export function orderDetail(order: Order) {
       sku: item.sku,
       unitPriceMinor: item.unitPriceMinor,
       quantity: item.quantity,
+      returnedQuantity: returnedByItem.get(item.id) ?? 0,
       discountMinor: item.discountMinor,
       taxMinor: item.taxMinor,
     })),

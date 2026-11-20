@@ -17,3 +17,16 @@ export const orderListValidator = vine.create({
 export const orderStatusValidator = vine.create({ status: vine.enum(orderStatuses) })
 
 export const orderIdValidator = vine.create({ id: vine.string().uuid() })
+
+export const orderRefundValidator = vine.create({
+  amountMinor: vine.number().withoutDecimals().min(1).max(Number.MAX_SAFE_INTEGER),
+  reference: vine.string().trim().minLength(1).maxLength(100),
+  note: vine.string().trim().maxLength(1000).nullable().optional(),
+})
+
+export const orderReturnValidator = vine.create({
+  orderItemId: vine.number().withoutDecimals().positive().max(2147483647),
+  quantity: vine.number().withoutDecimals().min(1).max(2147483647),
+  reference: vine.string().trim().minLength(1).maxLength(100),
+  note: vine.string().trim().maxLength(1000).nullable().optional(),
+})

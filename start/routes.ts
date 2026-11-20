@@ -102,6 +102,8 @@ router
     router.get('/admin/orders/export', [AdminOrders, 'export'])
     router.get('/admin/orders/:id', [AdminOrders, 'show'])
     router.post('/admin/orders/:id/payment', [Payments, 'collect'])
+    router.post('/admin/orders/:id/refunds', [AdminOrders, 'refund'])
+    router.post('/admin/orders/:id/returns', [AdminOrders, 'returnItem'])
     router.patch('/admin/orders/:id', [AdminOrders, 'update'])
     router.get('/admin/customers', [Customers, 'index'])
     router.get('/admin/customers/:id', [Customers, 'show'])

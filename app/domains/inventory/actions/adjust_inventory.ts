@@ -47,7 +47,12 @@ export default class AdjustInventory {
         .forUpdate()
         .firstOrFail()
       const retiredCorrection = input.reason === 'correction' && input.quantityDelta < 0
-      if (!variant.isActive && input.reason !== 'cancellation' && !retiredCorrection)
+      if (
+        !variant.isActive &&
+        input.reason !== 'cancellation' &&
+        input.reason !== 'return' &&
+        !retiredCorrection
+      )
         rejectInventory('quantityDelta', 'retiredError', locale)
       if (
         input.reason === 'initial_stock' &&

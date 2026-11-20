@@ -8,6 +8,8 @@ import PlaceOrder from '#domains/orders/actions/place_order'
 import CustomerAddress from '#domains/customers/models/customer_address'
 import ProductVariant from '#domains/catalog/models/product_variant'
 import AdjustInventory from '#domains/inventory/actions/adjust_inventory'
+import OrderRefund from '#domains/orders/models/order_refund'
+import OrderReturn from '#domains/orders/models/order_return'
 import { cartFixture, inertiaPage } from '../support/cart_fixture.js'
 async function customer(email: string, role: 'customer' | 'staff' | 'owner' = 'customer') {
   return User.create({ fullName: 'Account ' + role, email, password: 'test-password-123456', role })
@@ -571,5 +573,119 @@ test.group('Setup wizard', (group) => {
     page.assertStatus(200)
     assert.equal(inertiaPage(page.text()).component, 'admin/setup')
     assert.equal(inertiaPage(page.text()).props.setup.name, 'Custom Shop')
+  })
+
+  test('updating store settings marks diverging presets as custom while preserving matching presets', async ({
+    client,
+    assert,
+  }) => {
+    const owner = await customer('settings-profile-owner@example.test', 'owner')
+    const preset = await client
+      .post('/admin/modules/profile')
+      .loginAs(owner)
+      .withCsrfToken()
+      .redirects(0)
+      .json({ storeProfile: 'simple_seller' })
+    preset.assertStatus(302)
+    const basePayload = {
+      name: 'Renamed Simple Shop',
+      description: '',
+      email: null,
+      phone: null,
+      address: '',
+      currency: 'USD',
+      defaultLocale: 'en',
+      timezone: 'UTC',
+      orderPrefix: 'HC',
+      lowStockThreshold: 5,
+      customerAccountsEnabled: true,
+      registrationEnabled: true,
+      guestCheckoutEnabled: true,
+    }
+    const unchangedProfile = await client
+      .put('/admin/settings')
+      .loginAs(owner)
+      .withCsrfToken()
+      .redirects(0)
+      .json(basePayload)
+    unchangedProfile.assertStatus(302)
+    const store = await StoreSetting.findOrFail(1)
+    assert.equal(store.name, 'Renamed Simple Shop')
+    assert.equal(store.storeProfile, 'simple_seller')
+    const diverged = await client
+      .put('/admin/settings')
+      .loginAs(owner)
+      .withCsrfToken()
+      .redirects(0)
+      .json({ ...basePayload, registrationEnabled: false })
+    diverged.assertStatus(302)
+    await store.refresh()
+    assert.equal(store.storeProfile, 'custom')
+  })
+
+  test('staff can record refunds and returns while customers are forbidden and invalid inputs reject cleanly', async ({
+    client,
+    assert,
+  }) => {
+    const staff = await customer('refund-http-staff@example.test', 'staff')
+    const buyer = await customer('refund-http-buyer@example.test')
+    const order = await orderFor(buyer.id)
+    await order.merge({ paymentStatus: 'paid', status: 'completed' }).save()
+    await order.load('items')
+    const item = order.items[0]
+    const deniedRefund = await client
+      .post('/admin/orders/' + order.publicId + '/refunds')
+      .loginAs(buyer)
+      .withCsrfToken()
+      .header('Accept', 'application/json')
+      .json({ amountMinor: 500, reference: 'buyer-nope' })
+    deniedRefund.assertStatus(403)
+    const deniedReturn = await client
+      .post('/admin/orders/' + order.publicId + '/returns')
+      .loginAs(buyer)
+      .withCsrfToken()
+      .header('Accept', 'application/json')
+      .json({ orderItemId: item.id, quantity: 1, reference: 'buyer-ret-nope' })
+    deniedReturn.assertStatus(403)
+    const badRefund = await client
+      .post('/admin/orders/' + order.publicId + '/refunds')
+      .loginAs(staff)
+      .withCsrfToken()
+      .header('Accept', 'application/json')
+      .header('Accept-Language', 'vi')
+      .json({ amountMinor: 5000, reference: 'too-much' })
+    badRefund.assertStatus(422)
+    assert.include(badRefund.text(), 'Nhập số tiền hoàn và mã tham chiếu hợp lệ.')
+    assert.lengthOf(await OrderRefund.query().where('orderId', order.id), 0)
+    const okRefund = await client
+      .post('/admin/orders/' + order.publicId + '/refunds')
+      .loginAs(staff)
+      .withCsrfToken()
+      .redirects(0)
+      .json({ amountMinor: 1000, reference: 'staff-refund-1', note: 'Cash returned' })
+    okRefund.assertStatus(302)
+    await order.refresh()
+    assert.equal(order.paymentStatus, 'refunded')
+    const badReturn = await client
+      .post('/admin/orders/' + order.publicId + '/returns')
+      .loginAs(staff)
+      .withCsrfToken()
+      .header('Accept', 'application/json')
+      .header('Accept-Language', 'vi')
+      .json({ orderItemId: item.id, quantity: 9, reference: 'too-many' })
+    badReturn.assertStatus(422)
+    assert.include(badReturn.text(), 'Nhập số lượng trả hàng và mã tham chiếu hợp lệ.')
+    assert.lengthOf(await OrderReturn.query().where('orderId', order.id), 0)
+    const variantBefore = await ProductVariant.findOrFail(item.productVariantId!)
+    const okReturn = await client
+      .post('/admin/orders/' + order.publicId + '/returns')
+      .loginAs(staff)
+      .withCsrfToken()
+      .redirects(0)
+      .json({ orderItemId: item.id, quantity: 1, reference: 'staff-return-1' })
+    okReturn.assertStatus(302)
+    const variantAfter = await ProductVariant.findOrFail(item.productVariantId!)
+    assert.equal(variantAfter.stock, variantBefore.stock + 1)
+    assert.lengthOf(await OrderReturn.query().where('orderId', order.id), 1)
   })
 })

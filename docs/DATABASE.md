@@ -16,6 +16,7 @@ PostgreSQL 17 is the local/CI database. Lucid uses PostgreSQL with no SQLite fal
 - inventory_movements: variant, signed delta, resulting stock, constrained reason, optional reference/actor, note and timestamp. Variant deletion is restricted; actor deletion sets null.
 - orders: unique public UUID/submission key/number, nullable customer, fulfillment/payment status, safe integer total/currency and customer/contact/address snapshots.
 - order_items: restrictive order link, nullable catalog links and historical name/options/SKU/price/quantity/discount/tax.
+- order_refunds and order_returns: idempotent per-order reference records for manual refunds (`amount_minor`) and line-level product returns (`order_item_id`, `quantity`), restricting order/item deletion and setting null on actor deletion.
 - customer_addresses: customer-scoped editable address book; order snapshots are independent.
 - product_images: relative storage key, alt text, sort order and primary state. Generated uploads use an `uploads/<uuid>.<ext>` key. Seeded illustrations use `catalog/`. The file is not part of the database transaction.
 

@@ -68,5 +68,6 @@
   "startsAt": "Bắt đầu (UTC, tùy chọn)",
   "endsAt": "Kết thúc (UTC, tùy chọn)",
   "usageLimit": "Giới hạn sử dụng (tùy chọn)",
-  "discount": "Giảm giá"
+  "discount": "Giảm giá",
+  "shippingRateHint": "Đã bật giao hàng. Hãy cấu hình ít nhất một mức phí giao hàng đang hoạt động khớp tiền tệ cửa hàng trước khi khách thanh toán:"
 }

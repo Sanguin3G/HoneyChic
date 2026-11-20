@@ -17,7 +17,7 @@ HoneyChic is a base a shop sets up for itself. Core commerce, the optional modul
 
 - CSV product import and export after the product model stabilizes. Order CSV download is already on the admin orders page.
 - Stripe/VNPay when a real provider is selected: signed, idempotent callbacks, explicit payment states and targeted tests. Carrier integrations only after simple shipping proves insufficient.
-- Refunds, returns and unpaid-order expiry follow the rules in COMMERCE_RULES. They are not built.
+- Unpaid-order expiry follows the rules in COMMERCE_RULES and is not built. Manual refunds and returns are implemented on the admin order screen; provider-triggered refunds wait until a real payment provider exists.
 - Further account review/address/wishlist improvements as merchant workflows require them, richer staff permissions only for demonstrated workflows, and audit history for inventory, order status, refunds and publication.
 - Collected revenue stays inside the current admin. The overview already shows non-cancelled order value, its average, top products by the saved line name and value, and low stock. Do not call those figures collected revenue.
 - Queues for mail, image cleanup, and imports, and scheduled processes only when concrete workloads require them. Document why each process exists.

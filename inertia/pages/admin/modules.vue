@@ -18,6 +18,7 @@ const props = defineProps<{
     codEnabled: boolean
     fakePaymentEnabled: boolean
     storeProfile: 'simple_seller' | 'standard_store' | 'catalog_only' | 'custom'
+    hasShippingRates?: boolean
   }
 }>()
 const page = usePage<SharedProps>()
@@ -44,6 +45,15 @@ const form = useForm({
       <HcNotice />
       <p>{{ t('admin', 'moduleHelp') }}</p>
       <Link href="/admin/module-configuration">{{ t('modules', 'configuration') }}</Link>
+      <p
+        v-if="
+          (form.shippingEnabled || profileForm.storeProfile === 'standard_store') &&
+          settings.hasShippingRates === false
+        "
+        class="hc-help"
+      >
+        {{ t('modules', 'shippingRateHint') }}
+      </p>
       <form
         class="hc-form"
         @submit.prevent="

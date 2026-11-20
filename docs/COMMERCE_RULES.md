@@ -1,6 +1,6 @@
 # Commerce rules
 
-Read this document before changing important commerce workflows. Catalog, inventory, cart, order, cancellation and optional-module checkout rules are implemented. Refund, return, and unpaid-expiry rules are written below and are not implemented. Real provider webhooks remain later work.
+Read this document before changing important commerce workflows. Catalog, inventory, cart, order, cancellation, manual refunds, returns and optional-module checkout rules are implemented. Unpaid-expiry rules are written below and are not implemented. Real provider webhooks remain later work.
 
 - Inventory belongs to variants; stock cannot become negative. Checkout and stock adjustments use transactions and appropriate database locks.
 - Meaningful stock changes record delta, reason, reference, actor, and timestamp.
@@ -34,7 +34,7 @@ Read this document before changing important commerce workflows. Catalog, invent
 - Initial stock is positive and allowed only before the first movement. Restock/return/cancellation are positive; sale is negative; manual adjustment/correction are signed. PlaceOrder and CancelOrder supply order idempotency/authorization. Payment settlement never writes inventory.
 - Only owner/staff can read/adjust inventory. Manual endpoints allow initial_stock, manual_adjustment, restock and correction; actor comes from the session, never submitted input.
 - Movement history has no mutation endpoint. Variant deletion is restricted; deleting an actor nulls the actor relationship while retaining the movement.
-- Retired variants permit cancellation restoration and negative corrections only; manual positive additions remain blocked. Out of stock means stock at or below zero. Low stock means active stock greater than zero and at or below the merchant threshold. Dashboard counts and the inventory filter use that same split.
+- Retired variants permit cancellation restoration, return restoration and negative corrections only; manual positive additions remain blocked. Out of stock means stock at or below zero. Low stock means active stock greater than zero and at or below the merchant threshold. Dashboard counts and the inventory filter use that same split.
 - Public availability is informational; checkout rechecks stock under locks. Multi-variant transactions must lock IDs consistently to avoid deadlocks.
 
 Record any intended change here, alongside the action and meaningful regression protection.
@@ -60,7 +60,7 @@ Record any intended change here, alongside the action and meaningful regression 
 - Items preserve product name, variant description, SKU, unit price, quantity, discount and tax. Customer contact/address/note, currency and order prefix/number are snapshots. Later catalog/account/settings changes cannot reconstruct or rewrite them.
 - Customer/product/variant references are nullable with SET NULL. Order items restrict order deletion. Catalog deletion is still not exposed; inventory history may independently restrict variant deletion.
 - Fulfillment: pending → processing → shipped → completed; processing may complete directly for pickup/local fulfillment. Pending/processing may cancel. No backwards transitions. Payment starts unpaid and is unaffected by fulfillment changes.
-- Customers/guests may cancel only their pending unpaid order. Admins may cancel pending/processing unpaid orders. Paid, shipped or completed orders follow the refund and return rules below. Those actions are not implemented.
+- Customers/guests may cancel only their pending unpaid order. Admins may cancel pending/processing unpaid orders. Orders with recorded returns, or paid, shipped or completed orders, cannot use stock-restoring cancellation and follow the refund and return rules below.
 - CancelOrder locks the order, returns an already-cancelled order unchanged, restores each variant once and marks cancelled in the same transaction. A variant retired after sale still receives its historical restoration; admins may remove its restored balance with a recorded negative correction.
 - The order stores the checkout locale. Confirmation, shipped, and cancellation emails use that snapshot and are sent only after the order transaction commits. A mail failure does not roll back the order or stock, and retrying checkout does not send another confirmation.
 - Guest access uses the most recent guest order in the encrypted two-hour session, or a hashed recovery link from the order email. The link lasts 7 days and can be opened again until it expires. A public UUID, email address, or order number alone never authorizes access. Accounts can access only their own orders. Private cart/checkout/order responses are no-store.
@@ -81,7 +81,7 @@ Record any intended change here, alongside the action and meaningful regression 
 
 ## Refunds, returns, and unpaid expiry
 
-These rules are not implemented. Do not add an endpoint until the actions below exist. A manual refund or return does not need a payment-provider account.
+Manual refunds and product returns (`RecordRefund`, `RecordReturn`) are implemented. Unpaid-order expiry rules below are not implemented; do not add an expiry endpoint or scheduler until those actions exist. A manual refund or return does not need a payment-provider account.
 
 ### Refunds
 

@@ -1,5 +1,5 @@
 import Order from '#domains/orders/models/order'
-import { orderIdValidator } from '#domains/orders/validators/orders'
+import { orderIdValidator } from '#domains/orders/validators'
 import type { Locale } from '#core/support/locale'
 import { validationMessages } from '#core/support/validation_messages'
 export async function scopedOrder(

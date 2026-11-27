@@ -2,18 +2,19 @@
 
 HoneyChic is a general-purpose commerce learning project for independent sellers and small to medium stores. Merchant identity is separate from platform identity. AI assists development; it is not the product.
 
-Before meaningful work: inspect branch/status, read [STATUS](docs/STATUS.md), [ARCHITECTURE](docs/ARCHITECTURE.md), and relevant docs. Read [COMMERCE_RULES](docs/COMMERCE_RULES.md) before touching commerce; read [UI](docs/UI.md) before visual changes. Make a concise plan, then implement a bounded, runnable slice.
+Before meaningful work: inspect branch/status, read [ROADMAP](docs/ROADMAP.md), [ARCHITECTURE](docs/ARCHITECTURE.md), and relevant docs. Read [COMMERCE_RULES](docs/COMMERCE_RULES.md) before touching commerce; read [UI](docs/UI.md) before visual changes. Make a concise plan, then implement a bounded, runnable slice.
 
 ## Architecture
 
-AdonisJS 7 + Lucid/PostgreSQL, Vue 3 + Inertia SSR, TypeScript, Tailwind 4, Phosphor, VineJS, Japa. npm. One monolith; no Nuxt or Filament.
+AdonisJS 7 + Lucid/PostgreSQL, Vue 3 + Inertia SSR, TypeScript, plain CSS with design tokens (no Tailwind), Phosphor, VineJS, Japa. npm. One monolith; no Nuxt or Filament.
 
 - HTTP adapters: `app/http/controllers`, `app/http/middleware`.
 - Core configuration/support: `app/core`.
-- Business code grows into `app/domains/<domain>` as needed.
+- Business code grows into `app/domains/<domain>` as needed. Keep small domains flat; add `actions/`, `models/` or `queries/` only once a domain has several of them.
 - Optional code grows into `app/modules/<module>`. Modules depend on core domains; never the reverse.
 - Frontend shell/design: `inertia/app`; features/modules in feature folders; thin pages in `inertia/pages`.
 - Do not create empty architecture folders.
+- Admin routes are guarded as a group (`auth` + `admin`); owner-only actions still authorize `manageStore`. Request validation messages are global; do not pass a messages provider per call.
 
 ## Rules
 
@@ -32,7 +33,7 @@ AdonisJS 7 + Lucid/PostgreSQL, Vue 3 + Inertia SSR, TypeScript, Tailwind 4, Phos
 
 ## Commands and verification
 
-WSL Linux Node 24/npm 11+: `docker compose up -d`, `npm install`, `node ace migration:run`, `node ace db:seed`, `node ace owner:create`, `npm run dev`.
+WSL Linux Node 24/npm 11+: `docker compose up -d`, `npm install`, `node ace migration:run`, `node ace db:seed`, `npm run dev`, then create the owner at `/welcome` (or `node ace owner:create`). Use a separate `DB_DATABASE` for throwaway previews.
 
 Before tests, create honeychic_test; test boot refuses database names without _test. Never override tests to use merchant data. Registration cannot select roles. Owner/staff manage catalog; owner alone manages store settings; capability disablement must not lock out administration.
 
@@ -40,10 +41,10 @@ Use the smallest relevant checks while iterating. `npm run typecheck`, `npm run 
 
 HTTP tests check authorization, the locale of an error, and that a rejected request left the row unchanged. Domain tests own money, stock, and rollback. Do not raise the 30s functional suite timeout to hide a cold Vite start.
 
-Screenshots in `docs/screenshots` must match the running demo shop. Retake them in Edge when the storefront or admin layout changes. Do not reset the dev database to take them.
+Screenshots in `docs/screenshots` must match the current UI and the demo catalog. Retake them in Edge when the storefront or admin layout changes, using a separate preview database; never reset the dev database to take them.
 
-Use navy/orange semantic tokens, restrained radii, tactile states, visible focus, semantic HTML, and comfortable mobile targets. Storefront top navigation; catalog filters on desktop/drawer on mobile; admin persistent sidebar.
+Follow [UI](docs/UI.md): ink/paper/honey tokens, a modern base with sparing nostalgic accents (soft gel buttons, titled windows), depth without flat Material or retro gloss, visible focus, semantic HTML, comfortable mobile targets. Storefront top navigation; catalog filters on desktop/drawer on mobile; admin persistent sidebar.
 
-Update STATUS for meaningful implementation changes and relevant architecture, commerce, module, development, deployment, or UI docs. ROADMAP has exactly Now/Next/Later. Keep docs short and truthful.
+Docs are README, ARCHITECTURE, COMMERCE_RULES, OPERATIONS, UI, ROADMAP and MEDIA. Update the relevant one with meaningful changes; ROADMAP has exactly Now/Next/Later and its Now section is the current status. Say each fact once. Keep docs short and truthful.
 
-Optional-module checkout work must preserve the transaction participant and order-first payment/cancellation locking. Read docs/MODULES.md and docs/SECURITY.md when modifying module enablement or deployment. Fake payments must never be enabled by production runtime configuration.
+Optional-module checkout work must preserve the transaction participant and order-first payment/cancellation locking. Read docs/ARCHITECTURE.md (optional features) and docs/OPERATIONS.md (security, deployment) when modifying module enablement or deployment. New payment methods register in `app/modules/payments/providers/index.ts`. Unpaid-order expiry always goes through CancelOrder. Fake payments must never be enabled by production runtime configuration.

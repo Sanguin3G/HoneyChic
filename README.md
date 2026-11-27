@@ -1,57 +1,21 @@
 # HoneyChic
 
-Configurable commerce for independent sellers and small shops. Built with **AdonisJS 7, Vue 3, Inertia SSR and PostgreSQL**.
+A self-hosted shop for independent sellers and small stores. **AdonisJS 7, Vue 3 + Inertia SSR, PostgreSQL.** English and Vietnamese throughout.
 
-HoneyChic is a self-hosted base for a shop: the owner chooses hosting, PostgreSQL, SMTP and media storage, then manages their own store name, currency and catalog. English and Vietnamese are supported throughout the interface. SMTP is built in; SMS is a future integration.
+![HoneyChic storefront for the Demo Supply shop](docs/screenshots/home.png)
 
-![HoneyChic storefront using the configurable Demo Supply store identity](docs/screenshots/home.png)
+## What you get
 
-## What works today
+- Products with options and variants, recorded stock, search and category filters.
+- Session cart, guest and account checkout, order history that survives catalog changes.
+- Admin: orders, refunds and returns, customers, inventory, CSV product import/export, order CSV.
+- Optional features you switch on: reviews, wishlist, coupons, shipping rates, cash on delivery.
+- Unpaid orders can expire after a lifetime you choose; their stock comes back.
+- Your brand: name, logo, favicon, colors, contact details and social links.
 
-Generic products and variants, recorded inventory movements, search, session cart, guest/account checkout, historical orders and a custom Vue admin. Reviews, wishlist, coupons, shipping and cash on delivery are optional. Store profiles on `/admin/modules` apply Simple seller, Standard store, or Catalog only. Custom keeps the current flags. A fake payment gateway is available in development only. An optional setup wizard is at `/admin/setup`. The admin orders page can download a CSV of the current filter. A new customer confirms their email when SMTP is configured.
+## Run it locally
 
-**Merchant setup required:** production container foundations exist, but merchant launch work remains. Order mail, password reset, guest order recovery, and local image uploads are implemented. Hosted object storage is not provisioned. See [current status](docs/STATUS.md) and the [roadmap](docs/ROADMAP.md) before deploying.
-
-<details>
-<summary>More screenshots: products, administration and Vietnamese on mobile</summary>
-
-### Product variants
-
-![Product page with generic variant selection and currency-aware pricing](docs/screenshots/product.png)
-
-### Administration
-
-![Custom Vue admin with order metrics and persistent navigation](docs/screenshots/admin.png)
-
-### Vietnamese on mobile
-
-<img src="docs/screenshots/mobile-vi.png" width="390" alt="Vietnamese storefront in Microsoft Edge at a mobile width" />
-
-### English / Tiếng Việt
-
-The header globe opens the language menu. Merchant product content stays exactly as entered.
-
-![Globe dropdown showing English and Vietnamese choices](docs/screenshots/language.png)
-
-</details>
-
-## Set up the shop
-
-Sign in as the owner and open Setup at `/admin/setup`. Staff do not see this page.
-
-Pick a profile, then confirm the shop name, currency, default language, timezone, and order prefix. Save. You can open Setup again later. Products and existing orders stay as they are. A currency change applies to new products only.
-
-Simple seller turns on accounts and guest checkout. Standard store also turns on reviews, wishlist, coupons, and shipping. Catalog only turns checkout off. Custom changes no switches. Cash on delivery stays off.
-
-The globe switches the interface between English and Tiếng Việt and stays on this page. Product text stays as entered. The default language in the form is the shop's language for new visitors, separate from the globe.
-
-![Setup page for the Demo Supply shop in English](docs/screenshots/setup.png)
-
-![Same setup page in Vietnamese](docs/screenshots/setup-vi.png)
-
-## Run locally
-
-Inside WSL Debian, with Linux Node 24, npm 11+ and Docker:
+Inside WSL (Linux Node 24, npm 11+, Docker):
 
 ```bash
 cp .env.example .env
@@ -59,28 +23,45 @@ docker compose up -d --wait
 npm install
 node ace generate:key
 node ace migration:run
-node ace db:seed
-node ace owner:create
+node ace db:seed        # optional demo catalog (development only)
 npm run dev
 ```
 
+Open <http://localhost:3333/welcome> to create the owner account. In development the setup code is shown on the page; in production it is in the server log, or run `node ace owner:code`. Then finish the shop basics at `/admin/setup`.
+
 [Storefront](http://localhost:3333) · [Admin](http://localhost:3333/admin) · [Mailpit](http://localhost:8025)
 
-The seeder adds a mixed demo catalog and no passwords. Demo products start at zero stock. After `owner:create`, add stock from `/admin/inventory`.
+## Deploy it
 
-## Project notes
+One container plus PostgreSQL. `compose.production.yaml` runs migrations on start, keeps uploads on a volume and expires unpaid orders in-process. Hosting, SMTP and storage are your choice. See [Operations](docs/OPERATIONS.md).
 
-| Guide | Contents |
-| --- | --- |
-| [Status](docs/STATUS.md) / [Roadmap](docs/ROADMAP.md) | Implemented behavior, known gaps and planned work |
-| [Development](docs/DEVELOPMENT.md) | Local setup, isolated tests and verification commands |
-| [Architecture](docs/ARCHITECTURE.md) / [Modules](docs/MODULES.md) | Domain boundaries and optional capabilities |
-| [Commerce rules](docs/COMMERCE_RULES.md) / [Database](docs/DATABASE.md) | Money, stock, snapshots, transactions and schema |
-| [Deployment](docs/DEPLOYMENT.md) / [Security](docs/SECURITY.md) | Containers, migrations, backups and launch risks |
-| [UI](docs/UI.md) | Navy/orange visual language and accessible interactions |
+## Screens
 
-Demo photos are stored locally; see [photo sources and license](docs/MEDIA.md). Screenshots show the development demo shop in Microsoft Edge.
+| Catalog                                                                           | Product                                                                                    |
+| --------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| ![Catalog with filters and product cards](docs/screenshots/catalog.png)           | ![Product page with framed gallery and buy box](docs/screenshots/product.png)              |
+| **Cart**                                                                          | **Checkout**                                                                               |
+| ![Cart with receipt-style summary](docs/screenshots/cart.png)                     | ![Checkout form and order summary](docs/screenshots/checkout.png)                          |
+| **Admin overview**                                                                | **Order detail**                                                                           |
+| ![Admin overview with store gauges and recent orders](docs/screenshots/admin.png) | ![Order receipt with status, payment and return actions](docs/screenshots/admin-order.png) |
+| **Features & checkout**                                                           | **Products with CSV import/export**                                                        |
+| ![Store profiles and grouped feature switches](docs/screenshots/features.png)     | ![Admin product list with CSV import and export](docs/screenshots/admin-products.png)      |
 
-Laravel v1 is preserved at the unchanged `larastore-v1-final` tag. This checkout also has a private recovery archive; see [Laravel v1](docs/DEVELOPMENT.md#laravel-v1). The current application is on `main`.
+<p>
+  <img src="docs/screenshots/mobile-vi.png" width="260" alt="Vietnamese storefront home on a phone" />
+  <img src="docs/screenshots/mobile-catalog-vi.png" width="260" alt="Vietnamese catalog on a phone" />
+</p>
 
-License: MIT, as declared in `package.json`.
+Screenshots are Microsoft Edge captures of the demo catalog.
+
+## Docs
+
+| Guide                                    | For                                                                                |
+| ---------------------------------------- | ---------------------------------------------------------------------------------- |
+| [Architecture](docs/ARCHITECTURE.md)     | Where code lives, optional features, how to add your own payment, storage or theme |
+| [Commerce rules](docs/COMMERCE_RULES.md) | Money, stock, orders and checkout invariants                                       |
+| [Operations](docs/OPERATIONS.md)         | Development, tests, deployment, backups, security                                  |
+| [UI](docs/UI.md)                         | Visual language and interaction rules                                              |
+| [Roadmap](docs/ROADMAP.md)               | What is done, next and later                                                       |
+
+Demo photos: [sources and license](docs/MEDIA.md). Laravel v1 lives at the `larastore-v1-final` tag. License: MIT.

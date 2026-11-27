@@ -1,6 +1,5 @@
 import vine from '@vinejs/vine'
 import type { HttpContext } from '@adonisjs/core/http'
-import { validationMessages } from '#core/support/validation_messages'
 const validator = vine.create({
   locale: vine.enum(['en', 'vi']),
   destination: vine.string().maxLength(1000).optional(),
@@ -62,9 +61,7 @@ function destinationPath(destination: string) {
 }
 export default class LocaleController {
   async update(ctx: HttpContext) {
-    const { locale, destination = '/' } = await ctx.request.validateUsing(validator, {
-      messagesProvider: validationMessages(ctx.locale),
-    })
+    const { locale, destination = '/' } = await ctx.request.validateUsing(validator)
     ctx.session.put('locale', locale)
     if (ctx.auth.user) await ctx.auth.user.merge({ preferredLocale: locale }).save()
     return ctx.response.redirect().toPath(destinationPath(destination))

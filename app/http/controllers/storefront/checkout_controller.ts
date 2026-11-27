@@ -3,17 +3,16 @@ import CheckoutModules, {
   emptySelections,
 } from '../../actions/checkout_modules.js'
 import type { CheckoutCharges } from '#domains/orders/data/checkout_charges'
-import ShippingRate from '#modules/shipping/models/shipping_rate'
+import ShippingRate from '#modules/shipping/shipping_rate'
 import { randomUUID } from 'node:crypto'
 import type { HttpContext } from '@adonisjs/core/http'
-import { cartSessionKey, emptyCart, readCartState } from '#domains/cart/data/cart_state'
-import { readCart } from '#domains/cart/queries/read_cart'
+import { cartSessionKey, emptyCart, readCartState } from '#domains/cart/cart_state'
+import { readCart } from '#domains/cart/read_cart'
 import PlaceOrder, { orderWasJustPlaced } from '#domains/orders/actions/place_order'
 import DeliverOrderMail from '#domains/orders/actions/deliver_order_mail'
 import CustomerAddress from '#domains/customers/models/customer_address'
-import { checkoutValidator } from '#domains/orders/validators/orders'
-import { rejectOrder } from '#domains/orders/errors/reject_order'
-import { validationMessages } from '#core/support/validation_messages'
+import { checkoutValidator } from '#domains/orders/validators'
+import { rejectOrder } from '#domains/orders/reject_order'
 export default class CheckoutController {
   async show(ctx: HttpContext) {
     const account = ctx.auth.user
@@ -85,9 +84,7 @@ export default class CheckoutController {
     })
   }
   async store(ctx: HttpContext) {
-    const input = await ctx.request.validateUsing(checkoutValidator, {
-      messagesProvider: validationMessages(ctx.locale),
-    })
+    const input = await ctx.request.validateUsing(checkoutValidator)
     if (input.token !== ctx.session.get('checkoutToken')) rejectOrder('invalidCheckout', ctx.locale)
     const order = await new PlaceOrder().execute(
       readCartState(ctx.session.get(cartSessionKey)),

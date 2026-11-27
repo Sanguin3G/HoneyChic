@@ -17,7 +17,7 @@ const form = useForm({ fullName: page.props.auth?.fullName ?? '' })
     <HcPanel>
       <h1>{{ t('account', 'title') }}</h1>
       <HcNotice />
-      <p>{{ page.props.auth?.email }}</p>
+      <p class="hc-help">{{ page.props.auth?.email }}</p>
       <form class="hc-form" @submit.prevent="form.patch('/account')">
         <HcInput
           id="fullName"

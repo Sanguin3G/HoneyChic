@@ -1,6 +1,6 @@
 import { test } from '@japa/runner'
 import testUtils from '@adonisjs/core/services/test_utils'
-import { cartSessionKey, emptyCart, type CartState } from '#domains/cart/data/cart_state'
+import { cartSessionKey, emptyCart, type CartState } from '#domains/cart/cart_state'
 import limiter from '@adonisjs/limiter/services/main'
 import User from '#domains/customers/models/user'
 import { cartFixture, inertiaPage, repriceCartProduct } from '../support/cart_fixture.js'

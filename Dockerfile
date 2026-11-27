@@ -17,9 +17,11 @@ FROM node:24-bookworm-slim AS production
 ENV NODE_ENV=production HOST=0.0.0.0 PORT=3333
 WORKDIR /app
 COPY --from=build --chown=node:node /app/build ./
-RUN npm ci --omit=dev && npm cache clean --force
+RUN npm ci --omit=dev && npm cache clean --force \n  && mkdir -p public/media/uploads && chown node:node public/media/uploads
 USER node
 EXPOSE 3333
 HEALTHCHECK --interval=30s --timeout=5s --start-period=15s \
   CMD node -e "fetch('http://127.0.0.1:'+process.env.PORT+'/health').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"
-CMD ["node", "bin/server.js"]
+# MIGRATE_ON_START=true suits a single container. With several replicas, run
+# `node ace migration:run --force` once as a release job and leave this unset.
+CMD ["sh", "-c", "if [ \"$MIGRATE_ON_START\" = true ]; then node ace migration:run --force || exit 1; fi; exec node bin/server.js"]

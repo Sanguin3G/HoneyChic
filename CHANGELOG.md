@@ -2,12 +2,20 @@
 
 ## Unreleased
 
+- Redesigned storefront and admin: ink, warm paper and honey replace navy and orange; light toolbar header, titled windows, framed hero photo, photo category tiles, buy box, source-list admin sidebar, iOS-style switches, receipt-style order views. Tailwind removed in favor of plain CSS tokens.
+- Added unpaid-order expiry: owner-set lifetime, `ExpireUnpaidOrders` through `CancelOrder`, in-process timer (`ORDER_EXPIRY_MINUTES`) and `node ace orders:expire`.
+- Added CSV product export and import (new products only, all-or-nothing, initial stock recorded).
+- Added first-run owner setup at `/welcome` with a setup code from the server log or `node ace owner:code`; the store row is created on first request.
+- Added a payment provider registry so a new gateway is one class and one entry.
+- Production compose migrates on start and keeps uploads on a volume.
+- Merged Features and module configuration into one page; Setup moved under Store settings.
+- Simplified code: flattened single-file domain folders, one admin route guard, global validation messages.
+- Consolidated docs into README, Architecture, Commerce rules, Operations, UI and Roadmap.
 - Fixed Setup Wizard footer link separators, synced `storeProfile` when account/checkout flags diverge on `/admin/settings`, wrapped `SetupController.store` in a single transaction, and added active shipping-rate guidance on Setup, Modules, and Checkout.
 - Formatted money and percentage previews/listings in `/admin/module-configuration` (`ShippingRates` and `CouponSettings`).
 - Added manual refunds (`RecordRefund`) and product returns (`RecordReturn`) with migration, domain actions, idempotent per-order references, retired-variant return restoration, bilingual EN/VI copy, and admin order forms.
 - Added store profiles, an optional setup page, order CSV download, and overview average and top products from non-cancelled snapshots.
 - A new customer confirms email with one hashed link when SMTP can send. Existing accounts, the owner, and staff are not asked.
-- Wrote refund, return, and unpaid-order expiry rules. Those actions are not built.
 - Fixed comma-separated trusted proxy configuration and covered explicit trust boundaries.
 - Restored field validation messages after Inertia form redirects.
 - Enforced readable merchant primary colors; improved focus contrast on dark storefront navigation.

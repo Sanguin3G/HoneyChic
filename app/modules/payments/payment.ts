@@ -1,0 +1,13 @@
+import { DateTime } from 'luxon'
+import { BaseModel, column } from '@adonisjs/lucid/orm'
+import type { PaymentMethod } from '#modules/payments/providers/index'
+export default class Payment extends BaseModel {
+  @column({ isPrimary: true }) declare id: number
+  @column() declare publicId: string
+  @column() declare orderId: number
+  @column() declare method: PaymentMethod
+  @column() declare status: 'pending' | 'paid'
+  @column() declare currency: string
+  @column({ consume: Number }) declare amountMinor: number
+  @column.dateTime() declare paidAt: DateTime | null
+}

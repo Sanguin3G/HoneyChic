@@ -24,6 +24,7 @@ export default class StoreSetting extends BaseModel {
   @column() declare timezone: string
   @column() declare orderPrefix: string
   @column() declare lowStockThreshold: number
+  @column() declare unpaidOrderHours: number | null
   @column() declare customerAccountsEnabled: boolean
   @column() declare registrationEnabled: boolean
   @column() declare guestCheckoutEnabled: boolean

@@ -2,8 +2,8 @@ import CreateProduct from '#domains/catalog/actions/create_product'
 import UpdateProduct from '#domains/catalog/actions/update_product'
 import Category from '#domains/catalog/models/category'
 import { loadProduct } from '#domains/catalog/queries/load_product'
-import { productEditor } from '#domains/catalog/data/product_data'
-import AdjustInventory from '#domains/inventory/actions/adjust_inventory'
+import { productEditor } from '#domains/catalog/product_data'
+import AdjustInventory from '#domains/inventory/adjust_inventory'
 export async function cartFixture(
   slug = 'cart-keyboard',
   currency = 'USD',

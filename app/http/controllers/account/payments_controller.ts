@@ -1,11 +1,10 @@
 import { validationMessages } from '#core/support/validation_messages'
 import type { HttpContext } from '@adonisjs/core/http'
 import { scopedOrder } from '#domains/orders/queries/scoped_order'
-import Payment from '#modules/payments/models/payment'
-import SettlePayment from '#modules/payments/actions/settle_payment'
-import { accessAdmin } from '#policies/admin'
+import Payment from '#modules/payments/payment'
+import SettlePayment from '#modules/payments/settle_payment'
 import Order from '#domains/orders/models/order'
-import { orderIdValidator } from '#domains/orders/validators/orders'
+import { orderIdValidator } from '#domains/orders/validators'
 export default class PaymentsController {
   async simulate(ctx: HttpContext) {
     const order = await scopedOrder(
@@ -36,7 +35,6 @@ export default class PaymentsController {
     return ctx.response.redirect().toPath('/orders/' + order.publicId)
   }
   async collect(ctx: HttpContext) {
-    await ctx.bouncer.authorize(accessAdmin)
     const { id } = await orderIdValidator.validate(ctx.params, {
       messagesProvider: validationMessages(ctx.locale),
     })

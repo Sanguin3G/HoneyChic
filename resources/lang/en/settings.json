@@ -1,7 +1,6 @@
 {
   "title": "Store settings",
   "overview": "Overview",
-  "foundationHelp": "Store configuration and account access are ready. Catalog and commerce workflows will follow in later phases.",
   "business": "Business information",
   "name": "Store name",
   "description": "Description",
@@ -17,7 +16,7 @@
   "removeImage": "Remove image",
   "primaryColor": "Primary color",
   "accentColor": "Accent color",
-  "colorHelp": "Leave a color blank to keep the current navy and orange. This does not change the rest of the theme.",
+  "colorHelp": "Leave a color blank to use the HoneyChic default. The primary color needs strong contrast with white text.",
   "clearColor": "Use default color",
   "socials": "Social links",
   "socialHelp": "Use https links. Blank fields stay hidden on the storefront.",
@@ -35,7 +34,10 @@
   "lowStockThreshold": "Low-stock threshold",
   "customerAccountsEnabled": "Enable customer accounts",
   "registrationEnabled": "Allow customer registration",
-  "accountsHelp": "Disabling accounts blocks customer sign-in and account access. Owner and staff access remains available. Order preferences will take effect when commerce is implemented.",
+  "accountsHelp": "Turning accounts off blocks customer sign-in. Owner and staff can still sign in.",
   "save": "Save settings",
-  "saved": "Store settings saved."
+  "saved": "Store settings saved.",
+  "unpaidOrderHours": "Cancel unpaid orders after (hours)",
+  "unpaidOrderHoursHelp": "Leave blank to keep unpaid orders open. Pending unpaid orders older than this are cancelled and their stock returns, including cash-on-delivery orders still pending.",
+  "accountsMoved": "Customer accounts, registration and guest checkout are switched on the page"
 }

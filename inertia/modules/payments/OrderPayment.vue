@@ -22,8 +22,7 @@ function pay() {
 }
 </script>
 <template>
-  <HcPanel v-if="payment">
-    <h2>{{ t('modules', 'paymentMethod') }}</h2>
+  <HcPanel v-if="payment" :title="t('modules', 'paymentMethod')">
     <p>
       {{ t('modules', payment.method) }} ·
       {{ t('orders', payment.status === 'paid' ? 'paid' : 'unpaid') }}

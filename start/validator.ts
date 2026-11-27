@@ -13,6 +13,8 @@
 
 import { DateTime } from 'luxon'
 import { VineDate } from '@vinejs/vine'
+import { RequestValidator } from '@adonisjs/core/http'
+import { validationMessages } from '#core/support/validation_messages'
 
 declare module '@vinejs/vine/types' {
   interface VineGlobalTransforms {
@@ -21,3 +23,9 @@ declare module '@vinejs/vine/types' {
 }
 
 VineDate.transform((value) => DateTime.fromJSDate(value))
+
+/**
+ * Every request validation uses the request locale's messages, so controllers
+ * call `ctx.request.validateUsing(validator)` without repeating a provider.
+ */
+RequestValidator.messagesProvider = (ctx) => validationMessages(ctx.locale ?? 'en')

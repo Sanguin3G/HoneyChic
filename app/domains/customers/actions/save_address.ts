@@ -1,7 +1,7 @@
 import db from '@adonisjs/lucid/services/db'
 import User from '#domains/customers/models/user'
 import CustomerAddress from '#domains/customers/models/customer_address'
-import { rejectOrder } from '#domains/orders/errors/reject_order'
+import { rejectOrder } from '#domains/orders/reject_order'
 import type { Locale } from '#core/support/locale'
 export default class SaveAddress {
   async execute(

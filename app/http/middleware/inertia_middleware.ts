@@ -1,5 +1,5 @@
 import { publicOrigin, indexingEnabled } from '#core/support/seo'
-import { cartSessionKey, readCartState, cartQuantity } from '#domains/cart/data/cart_state'
+import { cartSessionKey, readCartState, cartQuantity } from '#domains/cart/cart_state'
 import BaseInertiaMiddleware from '@adonisjs/inertia/inertia_middleware'
 import type { HttpContext } from '@adonisjs/core/http'
 import type { NextFn } from '@adonisjs/core/types/http'

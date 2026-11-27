@@ -61,10 +61,9 @@ function save() {
 }
 </script>
 <template>
-  <HcPanel
-    ><h2>{{ t('modules', 'shipping') }}</h2>
+  <HcPanel :title="t('modules', 'shipping')">
     <p class="hc-help">{{ t('modules', 'minorUnitsHelp') }}</p>
-    <ul>
+    <ul class="order-lines config-list">
       <li v-for="rate in rates" :key="rate.id">
         {{ rate.name }} · {{ t('modules', rate.kind) }} ·
         {{ previewMoney(rate.amountMinor, rate.currency)

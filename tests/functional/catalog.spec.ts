@@ -8,8 +8,8 @@ import Product from '#domains/catalog/models/product'
 import ProductVariant from '#domains/catalog/models/product_variant'
 import Category from '#domains/catalog/models/category'
 import StoreSetting from '#core/store/store_setting'
-import { productEditor } from '#domains/catalog/data/product_data'
-import type { ProductInput } from '#domains/catalog/validators/catalog'
+import { productEditor } from '#domains/catalog/product_data'
+import type { ProductInput } from '#domains/catalog/validators'
 import { parsePrice, decimalPrice, formatMoney } from '#shared/money'
 
 function simple(slug = 'coffee'): ProductInput {

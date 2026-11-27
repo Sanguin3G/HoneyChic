@@ -26,8 +26,8 @@ function cancel() {
     <OrderPayment :order-id="order.publicId" :status="order.status" :payment="payment" />
     <p v-for="(error, key) in form.errors" :key="key" class="hc-error" role="alert">{{ error }}</p>
     <div class="cart-toolbar">
-      <Link href="/products">{{ t('orders', 'continue') }}</Link>
-      <HcButton v-if="canCancel" :disabled="form.processing" @click="cancel">{{
+      <Link class="hc-button" href="/products">{{ t('orders', 'continue') }}</Link>
+      <HcButton v-if="canCancel" variant="danger" :disabled="form.processing" @click="cancel">{{
         t('orders', 'cancel')
       }}</HcButton>
     </div>

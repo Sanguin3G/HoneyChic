@@ -62,8 +62,11 @@ function reset() {
       >
     </div>
     <div class="catalog-layout">
-      <aside class="desktop-catalog-filters" :aria-label="t('storefront', 'filters')">
-        <h2>{{ t('storefront', 'filters') }}</h2>
+      <aside
+        class="desktop-catalog-filters hc-panel hc-panel--titled"
+        :aria-label="t('storefront', 'filters')"
+      >
+        <h2 class="hc-titlebar">{{ t('storefront', 'filters') }}</h2>
         <CatalogFilters
           v-model:filters="filters"
           prefix="desktop"

@@ -93,9 +93,10 @@ onBeforeUnmount(() => document.removeEventListener('pointerdown', onPointerDown)
   position: relative;
 }
 .language-menu > button {
-  gap: 0.35rem;
+  gap: 0.3rem;
   min-width: 44px;
-  padding-inline: 0.65rem;
+  min-height: 34px;
+  padding-inline: 0.6rem;
 }
 .language-menu__choices {
   position: absolute;
@@ -105,9 +106,9 @@ onBeforeUnmount(() => document.removeEventListener('pointerdown', onPointerDown)
   min-width: 11rem;
   padding: 0.3rem;
   border: 1px solid var(--border-strong);
-  border-radius: 8px;
+  border-radius: var(--radius-panel);
   background: var(--surface-raised);
-  box-shadow: 0 5px 16px #10244030;
+  box-shadow: var(--shadow-lift);
 }
 .language-menu__choices button {
   display: flex;
@@ -121,9 +122,12 @@ onBeforeUnmount(() => document.removeEventListener('pointerdown', onPointerDown)
   color: var(--text-primary);
   cursor: pointer;
 }
-.language-menu__choices button:hover,
+.language-menu__choices button:hover {
+  background: var(--gel-honey);
+  color: #2b1d05;
+}
 .language-menu__choices button[aria-checked='true'] {
-  background: var(--surface-inset);
+  font-weight: 700;
 }
 .language-menu__choices button:focus-visible {
   outline: 2px solid var(--focus);

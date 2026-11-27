@@ -9,12 +9,16 @@ services:
       HOST: 0.0.0.0
       NODE_ENV: production
       DB_HOST: postgres
+      MIGRATE_ON_START: "true"
     ports:
       - "127.0.0.1:${PORT:-3333}:${PORT:-3333}"
     depends_on:
       postgres:
         condition: service_healthy
     init: true
+    volumes:
+      # Merchant uploads when DRIVE_DISK=fs. Without this they vanish on rebuild.
+      - uploads-production:/app/public/media/uploads
     security_opt:
       - no-new-privileges:true
   postgres:
@@ -33,3 +37,4 @@ services:
       retries: 10
 volumes:
   postgres-production:
+  uploads-production:

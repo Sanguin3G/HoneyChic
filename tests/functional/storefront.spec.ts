@@ -3,7 +3,7 @@ import testUtils from '@adonisjs/core/services/test_utils'
 import CreateProduct from '#domains/catalog/actions/create_product'
 import Category from '#domains/catalog/models/category'
 import ProductVariant from '#domains/catalog/models/product_variant'
-import AdjustInventory from '#domains/inventory/actions/adjust_inventory'
+import AdjustInventory from '#domains/inventory/adjust_inventory'
 
 function pageData(html: string) {
   const data = html.match(/<script[^>]*data-page="[^"]*"[^>]*>([\s\S]*?)<\/script>/)?.[1]

@@ -33,8 +33,7 @@ const { t, locale } = useI18n()
       <Link href="/login">{{ t('auth', 'login') }}</Link></HcPanel
     >
     <div v-else-if="cart && token" class="cart-layout">
-      <HcPanel v-if="cart.totalMinor !== null && cart.currency"
-        ><h2>{{ t('orders', 'review') }}</h2>
+      <HcPanel v-if="cart.totalMinor !== null && cart.currency" :title="t('orders', 'review')">
         <CheckoutOptions
           :rates="rates ?? []"
           :selections="selections ?? { country: '', couponCode: '' }" />
@@ -50,7 +49,7 @@ const { t, locale } = useI18n()
         ><p role="alert">{{ t('cart', 'resolveIssues') }}</p>
         <Link href="/cart">{{ t('orders', 'recheck') }}</Link></HcPanel
       >
-      <HcPanel v-if="cart.currency">
+      <HcPanel v-if="cart.currency" :title="t('orders', 'summary')" class="checkout-summary">
         <ul class="order-lines">
           <li v-for="item in cart.items" :key="item.variantId">
             <strong>{{ item.product?.name ?? t('cart', 'unavailable') }}</strong>
@@ -61,20 +60,23 @@ const { t, locale } = useI18n()
             <p v-if="item.priceChanged" class="cart-warning">{{ t('cart', 'priceChanged') }}</p>
           </li>
         </ul>
+        <dl class="checkout-charges">
+          <div v-if="pricing?.discountMinor">
+            <dt>{{ t('modules', 'discount') }}</dt>
+            <dd>−{{ formatMoney(pricing.discountMinor, cart.currency, locale) }}</dd>
+          </div>
+          <div v-if="pricing">
+            <dt>{{ t('modules', 'shipping') }}</dt>
+            <dd>{{ formatMoney(pricing.shippingMinor, cart.currency, locale) }}</dd>
+          </div>
+        </dl>
         <p v-if="cart.totalMinor !== null && cart.currency" class="order-total">
-          {{ t('orders', 'total') }}:
-          {{ formatMoney(pricing?.totalMinor ?? cart.totalMinor, cart.currency, locale) }}
+          <span>{{ t('orders', 'total') }}</span>
+          <span>{{
+            formatMoney(pricing?.totalMinor ?? cart.totalMinor, cart.currency, locale)
+          }}</span>
         </p>
-        <p v-if="pricing?.discountMinor">
-          {{ t('modules', 'discount') }}: −{{
-            formatMoney(pricing.discountMinor, cart.currency, locale)
-          }}
-        </p>
-        <p v-if="pricing">
-          {{ t('modules', 'shipping') }}:
-          {{ formatMoney(pricing.shippingMinor, cart.currency, locale) }}
-        </p>
-        <Link href="/cart">{{ t('orders', 'recheck') }}</Link>
+        <Link class="hc-link" href="/cart">{{ t('orders', 'recheck') }}</Link>
       </HcPanel>
     </div>
   </StorefrontLayout>

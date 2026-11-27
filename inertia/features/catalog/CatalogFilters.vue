@@ -47,7 +47,9 @@ const { t } = useI18n()
         @change="filters.inStock = ($event.target as HTMLInputElement).checked ? '1' : ''"
       /><span>{{ t('storefront', 'availableOnly') }}</span></label
     >
-    <HcButton type="submit">{{ t('storefront', 'apply') }}</HcButton>
-    <HcButton variant="quiet" @click="$emit('reset')">{{ t('storefront', 'reset') }}</HcButton>
+    <div class="hc-actions">
+      <HcButton type="submit">{{ t('storefront', 'apply') }}</HcButton>
+      <HcButton variant="quiet" @click="$emit('reset')">{{ t('storefront', 'reset') }}</HcButton>
+    </div>
   </form>
 </template>

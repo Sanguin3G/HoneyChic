@@ -1,11 +1,11 @@
 import { test } from '@japa/runner'
 import testUtils from '@adonisjs/core/services/test_utils'
-import ChangeCartQuantity from '#domains/cart/actions/change_cart_quantity'
-import { emptyCart, maximumCartLines, type CartState } from '#domains/cart/data/cart_state'
-import { readCart } from '#domains/cart/queries/read_cart'
+import ChangeCartQuantity from '#domains/cart/change_cart_quantity'
+import { emptyCart, maximumCartLines, type CartState } from '#domains/cart/cart_state'
+import { readCart } from '#domains/cart/read_cart'
 import ProductVariant from '#domains/catalog/models/product_variant'
-import InventoryMovement from '#domains/inventory/models/inventory_movement'
-import AdjustInventory from '#domains/inventory/actions/adjust_inventory'
+import InventoryMovement from '#domains/inventory/inventory_movement'
+import AdjustInventory from '#domains/inventory/adjust_inventory'
 import { cartFixture, repriceCartProduct } from '../support/cart_fixture.js'
 const action = new ChangeCartQuantity()
 test.group('Cart integrity', (group) => {

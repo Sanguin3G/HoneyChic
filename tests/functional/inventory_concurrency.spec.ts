@@ -3,8 +3,8 @@ import { randomUUID } from 'node:crypto'
 import db from '@adonisjs/lucid/services/db'
 import CreateProduct from '#domains/catalog/actions/create_product'
 import ProductVariant from '#domains/catalog/models/product_variant'
-import InventoryMovement from '#domains/inventory/models/inventory_movement'
-import AdjustInventory from '#domains/inventory/actions/adjust_inventory'
+import InventoryMovement from '#domains/inventory/inventory_movement'
+import AdjustInventory from '#domains/inventory/adjust_inventory'
 
 // Real independent connections are essential here: a global test transaction would hide races.
 test('two independent stock deductions cannot consume the last item twice', async ({ assert }) => {

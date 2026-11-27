@@ -18,8 +18,10 @@ const { t } = useI18n()
     ><meta name="robots" content="noindex"
   /></Head>
   <AdminLayout
-    ><HcPanel
-      ><h1>{{ t('catalog', productId ? 'editProduct' : 'newProduct') }}</h1>
+    ><div class="admin-page-head">
+      <h1>{{ t('catalog', productId ? 'editProduct' : 'newProduct') }}</h1>
+    </div>
+    <HcPanel>
       <ProductForm
         :key="productId ?? 'new'"
         :product-id="productId"

@@ -9,7 +9,7 @@ defineProps<{ orders: OrderSummary[]; pagination: Pagination; base: string; admi
 const { t, locale } = useI18n()
 </script>
 <template>
-  <div class="hc-table-scroll">
+  <div v-if="orders.length" class="hc-table-scroll">
     <table class="order-table">
       <thead>
         <tr>
@@ -17,7 +17,7 @@ const { t, locale } = useI18n()
           <th>{{ t('orders', 'customer') }}</th>
           <th>{{ t('orders', 'status') }}</th>
           <th>{{ t('orders', 'payment') }}</th>
-          <th>{{ t('orders', 'total') }}</th>
+          <th class="numeric">{{ t('orders', 'total') }}</th>
         </tr>
       </thead>
       <tbody>
@@ -38,21 +38,27 @@ const { t, locale } = useI18n()
               t('orders', order.paymentStatus)
             }}</StatusMark>
           </td>
-          <td>{{ formatMoney(order.totalMinor, order.currency, locale) }}</td>
+          <td class="numeric">{{ formatMoney(order.totalMinor, order.currency, locale) }}</td>
         </tr>
       </tbody>
     </table>
   </div>
-  <p v-if="!orders.length">{{ t('orders', 'empty') }}</p>
-  <nav v-if="pagination.lastPage > 1" class="cart-toolbar" :aria-label="t('catalog', 'pagination')">
+  <p v-else class="hc-help">{{ t('orders', 'empty') }}</p>
+  <nav
+    v-if="pagination.lastPage > 1"
+    class="hc-pagination"
+    :aria-label="t('catalog', 'pagination')"
+  >
     <Link
       v-if="pagination.page > 1"
+      class="hc-button hc-button--small"
       :href="base + (base.includes('?') ? '&' : '?') + 'page=' + (pagination.page - 1)"
       >{{ t('catalog', 'previous') }}</Link
     >
     <span>{{ pagination.page }} / {{ pagination.lastPage }}</span>
     <Link
       v-if="pagination.page < pagination.lastPage"
+      class="hc-button hc-button--small"
       :href="base + (base.includes('?') ? '&' : '?') + 'page=' + (pagination.page + 1)"
       >{{ t('catalog', 'next') }}</Link
     >

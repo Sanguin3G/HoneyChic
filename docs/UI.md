@@ -1,19 +1,24 @@
-# UI direction
+# UI
 
-Navy and warm orange, visible borders, short radii, and tactile controls. Tokens are in `inertia/app/design/tokens.css`. Do not introduce glassmorphism, purple gradients, or generic SaaS cards.
+Modern layout with a few nostalgic touches from classic desktop software. The middle ground: dimensional and tactile, never flat Material and never a retro reskin.
 
-Controls are about 6–8px radius. Panels are 8–12px. Mobile controls are at least 44px tall. Honor reduced motion. Focus is visible. Storefront navigation on a dark bar uses a white focus outline.
+## Look
 
-Primitives are Button, Panel, Input, Textarea, Notice, and Dialog. Add another only when a real screen needs it. Status labels reuse the bordered stock-label treatment.
+- **Palette:** ink (`--brand-primary`), warm paper surfaces, honey (`--brand-accent`) for highlights, selection and badges. Tokens live in `inertia/app/design/tokens.css`. Merchant colors replace ink and honey; all gradients derive from them. Do not reintroduce navy-and-orange, or a yellow pill "Add to cart".
+- **Type:** system UI font for text, a serif (Palatino family) for headings, prices and store names.
+- **Depth:** panels have a hairline border and a soft shadow; buttons have a smooth gel gradient and press down on click; cards lift and glow honey on hover. No hard gloss lines, pinstripes or heavy bevels.
+- **Signature extras (use sparingly):** titled windows (`HcPanel` with `title`), the framed photo with an engraved nameplate on the home page, iOS-style switches for on/off settings, a source-list sidebar in admin.
+- **Radii:** controls 8px, panels 14px, pills for buttons and search.
 
-Interface copy exists in English and Vietnamese. Merchant product text stays as entered. Store branding is separate from the HoneyChic attribution. Optional brand colors replace only the primary and accent tokens, and a primary color must keep 4.5:1 contrast with white text.
+## Behavior
+
+- Visible focus ring on everything; mobile targets at least 44px; honor reduced motion.
+- Motion is short and purposeful: hover lift, image zoom, cart badge bump, drawer and menu slide-ins.
+- Status uses `StatusMark` (a pill with a lit dot). Notices use `HcNotice`.
+- Primitives: `HcButton` (primary, quiet, honey, danger; small), `HcPanel`, `HcInput`, `HcTextarea`, `HcNotice`, `HcDialog`. Add one only when a real screen needs it.
 
 ## Screens
 
-The storefront header is one row on desktop: brand, search, shop links, account. Below 800px, search stays on a second row and the account links stay in the labelled menu. Do not replace that menu with a swipe drawer.
-
-Catalog filters sit on the left on desktop. On mobile they use the native dialog, with Apply and Reset. Product options stay native selects. The hero image is the priority image. Catalog and hero photos crop with `object-fit: cover`. The product gallery stays `contain`.
-
-Cart and checkout show the name, SKU, price, and warnings. They do not repeat the full product description. Empty carts and empty admin metrics say what to do next.
-
-Admin navigation is persistent on desktop and collapses on mobile. Account navigation is a short list with a current marker. Missing pages and server errors use the same panel and a link home.
+- **Storefront:** translucent sticky toolbar (brand, pill search, icon-over-label items). Below 800px search takes a second row and account links sit in the labelled menu. Catalog filters are an inspector panel on desktop and a drawer on mobile. Product page: framed gallery left, buy box right.
+- **Admin:** source list on the left grouped into Sales, Catalog, Store; page title row with actions above the content; tables are zebra list views. On/off settings use grouped switches.
+- Interface copy exists in English and Vietnamese. Merchant text stays as entered. Empty states say what to do next.

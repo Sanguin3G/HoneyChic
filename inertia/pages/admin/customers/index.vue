@@ -17,8 +17,10 @@ const form = useForm({ q: props.filters.q })
 <template>
   <Head :title="t('admin', 'customers')"><meta name="robots" content="noindex,nofollow" /></Head>
   <AdminLayout
-    ><HcPanel
-      ><h1>{{ t('admin', 'customers') }}</h1>
+    ><div class="admin-page-head">
+      <h1>{{ t('admin', 'customers') }}</h1>
+    </div>
+    <HcPanel>
       <form
         class="admin-filters"
         @submit.prevent="form.transform((data) => (data.q ? data : {})).get('/admin/customers')"

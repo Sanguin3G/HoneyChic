@@ -64,26 +64,28 @@ function selectAddress(event: Event) {
       maxlength="120"
       required
     />
-    <HcInput
-      id="checkout-email"
-      v-model="form.customerEmail"
-      :label="t('orders', 'email')"
-      :error="form.errors.customerEmail"
-      type="email"
-      autocomplete="email"
-      maxlength="254"
-      required
-    />
-    <HcInput
-      id="checkout-phone"
-      v-model="form.customerPhone"
-      :label="t('orders', 'phone')"
-      :error="form.errors.customerPhone"
-      type="tel"
-      autocomplete="tel"
-      maxlength="40"
-      required
-    />
+    <div class="form-grid">
+      <HcInput
+        id="checkout-email"
+        v-model="form.customerEmail"
+        :label="t('orders', 'email')"
+        :error="form.errors.customerEmail"
+        type="email"
+        autocomplete="email"
+        maxlength="254"
+        required
+      />
+      <HcInput
+        id="checkout-phone"
+        v-model="form.customerPhone"
+        :label="t('orders', 'phone')"
+        :error="form.errors.customerPhone"
+        type="tel"
+        autocomplete="tel"
+        maxlength="40"
+        required
+      />
+    </div>
     <HcTextarea
       id="checkout-address"
       v-model="form.deliveryAddress"
@@ -108,9 +110,12 @@ function selectAddress(event: Event) {
       {{ form.errors.checkout || form.errors.token || form.errors.expectedTotalMinor }}
     </p>
     <p class="hc-help">{{ t('orders', 'terms') }}</p>
-    <p class="order-total">
-      {{ t('orders', 'total') }}: {{ formatMoney(totalMinor, currency, locale) }}
-    </p>
-    <HcButton type="submit" :disabled="form.processing">{{ t('orders', 'place') }}</HcButton>
+    <div class="checkout-submit">
+      <p class="order-total">
+        <span>{{ t('orders', 'total') }}</span
+        ><span>{{ formatMoney(totalMinor, currency, locale) }}</span>
+      </p>
+      <HcButton type="submit" :disabled="form.processing">{{ t('orders', 'place') }}</HcButton>
+    </div>
   </form>
 </template>

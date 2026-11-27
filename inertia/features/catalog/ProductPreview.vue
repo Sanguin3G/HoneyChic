@@ -20,24 +20,28 @@ const variant = computed(() => props.product.variants.find((item) => item.id ===
     <section class="product-information">
       <p class="eyebrow">{{ product.category?.name || t('catalog', 'uncategorized') }}</p>
       <h1>{{ product.name }}</h1>
-      <div class="product-purchase-summary" aria-live="polite" aria-atomic="true">
-        <p class="product-price">{{ formatMoney(variant.priceMinor, variant.currency, locale) }}</p>
-        <p class="product-availability" :data-available="variant.available">
-          <PhCheckCircle v-if="variant.available" :size="20" aria-hidden="true" /><PhMinusCircle
-            v-else
-            :size="20"
-            aria-hidden="true"
-          />{{ t('inventory', variant.available ? 'available' : 'out') }}
-        </p>
-        <p v-if="variant.description" class="selected-variant">
-          {{ t('storefront', 'selection') }}: {{ variant.description }}
+      <div class="buy-box hc-panel">
+        <div class="product-purchase-summary" aria-live="polite" aria-atomic="true">
+          <p class="product-price price">
+            {{ formatMoney(variant.priceMinor, variant.currency, locale) }}
+          </p>
+          <p class="product-stock" :data-available="variant.available">
+            <PhCheckCircle v-if="variant.available" :size="16" weight="fill" aria-hidden="true" />
+            <PhMinusCircle v-else :size="16" weight="fill" aria-hidden="true" />{{
+              t('inventory', variant.available ? 'available' : 'out')
+            }}
+          </p>
+        </div>
+        <VariantPicker
+          v-model="selectedId"
+          :options="product.options"
+          :variants="product.variants"
+        />
+        <AddCartForm :variant-id="variant.id" :available="variant.available" />
+        <p class="product-sku">
+          {{ t('catalog', 'sku') }} <strong>{{ variant.sku }}</strong>
         </p>
       </div>
-      <VariantPicker v-model="selectedId" :options="product.options" :variants="product.variants" />
-      <AddCartForm :variant-id="variant.id" :available="variant.available" />
-      <p class="product-sku">
-        {{ t('catalog', 'sku') }}: <strong>{{ variant.sku }}</strong>
-      </p>
       <div class="product-copy">
         <h2>{{ t('storefront', 'details') }}</h2>
         <p class="product-description">{{ product.description }}</p>

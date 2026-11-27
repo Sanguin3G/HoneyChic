@@ -1,7 +1,7 @@
 import db from '@adonisjs/lucid/services/db'
 import Order from '#domains/orders/models/order'
 import OrderRefund from '#domains/orders/models/order_refund'
-import { rejectOrder } from '#domains/orders/errors/reject_order'
+import { rejectOrder } from '#domains/orders/reject_order'
 import type { Locale } from '#core/support/locale'
 
 export default class RecordRefund {

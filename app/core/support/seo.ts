@@ -1,6 +1,6 @@
 import env from '#start/env'
 import { decimalPrice } from '#shared/money'
-import type { productDetail } from '#domains/catalog/data/product_data'
+import type { productDetail } from '#domains/catalog/product_data'
 export const publicOrigin = new URL(env.get('APP_URL')).origin
 export const indexingEnabled =
   env.get('NODE_ENV') === 'production' && (env.get('SEO_INDEXABLE') ?? false)

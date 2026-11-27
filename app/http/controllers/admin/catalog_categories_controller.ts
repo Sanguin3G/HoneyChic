@@ -1,14 +1,11 @@
 import type { HttpContext } from '@adonisjs/core/http'
 import Category from '#domains/catalog/models/category'
-import { accessAdmin } from '#policies/admin'
-import { categoryValidator } from '#domains/catalog/validators/catalog'
+import { categoryValidator } from '#domains/catalog/validators'
 import SaveCategory from '#domains/catalog/actions/save_category'
-import { validationMessages } from '#core/support/validation_messages'
-import { rejectCatalog } from '#domains/catalog/errors/reject_catalog'
+import { rejectCatalog } from '#domains/catalog/reject_catalog'
 
 export default class CatalogCategoriesController {
   async index(ctx: HttpContext) {
-    await ctx.bouncer.authorize(accessAdmin)
     const categories = await Category.query().orderBy('name')
     return ctx.inertia.render('admin/catalog/categories', {
       categories: categories.map((row) => ({
@@ -30,10 +27,7 @@ export default class CatalogCategoriesController {
   }
 
   private async save(ctx: HttpContext, id: number | null = null) {
-    await ctx.bouncer.authorize(accessAdmin)
-    const input = await ctx.request.validateUsing(categoryValidator, {
-      messagesProvider: validationMessages(ctx.locale),
-    })
+    const input = await ctx.request.validateUsing(categoryValidator)
     try {
       await new SaveCategory().execute(id, input, ctx.locale)
     } catch (error) {

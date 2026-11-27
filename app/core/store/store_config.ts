@@ -7,3 +7,14 @@ export const storeConfig = {
   currency: env.get('STORE_CURRENCY'),
   timezone: env.get('STORE_TIMEZONE'),
 }
+
+/** The first store row. Created on the first request, so a fresh install needs no seeding. */
+export const defaultStoreRow = {
+  ...storeConfig,
+  description: '',
+  address: '',
+  orderPrefix: 'HC',
+  lowStockThreshold: 5,
+  customerAccountsEnabled: true,
+  registrationEnabled: true,
+}

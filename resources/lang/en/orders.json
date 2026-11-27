@@ -9,7 +9,7 @@
   "address": "Delivery address",
   "note": "Order note",
   "total": "Order total",
-  "terms": "This records an unpaid order. Payment and delivery arrangements are handled by the merchant. No shipping fees, discounts or taxes are added in this version.",
+  "terms": "Placing the order records it as unpaid. The shop confirms payment and delivery with you. Prices and totals are checked again when you place it.",
   "disabled": "Checkout is disabled for this customer type.",
   "emptyCart": "Your cart is empty.",
   "checkoutDisabled": "Checkout is disabled for this customer type.",
@@ -89,5 +89,7 @@
   "returnNote": "Return note (optional)",
   "returnSave": "Record return",
   "returnSaved": "Return recorded and stock restored.",
-  "returned": "Returned"
+  "returned": "Returned",
+  "summary": "Order summary",
+  "contactDetails": "Contact and delivery"
 }

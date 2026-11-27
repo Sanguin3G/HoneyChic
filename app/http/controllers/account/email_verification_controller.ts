@@ -1,6 +1,5 @@
 import type { HttpContext } from '@adonisjs/core/http'
 import { readSecretLink } from '#core/support/secret_link'
-import { validationMessages } from '#core/support/validation_messages'
 import { forgotPasswordValidator } from '#domains/customers/validators/auth'
 import RequestEmailVerification from '#domains/customers/actions/request_email_verification'
 import ConfirmEmail from '#domains/customers/actions/confirm_email'
@@ -11,9 +10,7 @@ export default class EmailVerificationController {
   }
 
   async store(ctx: HttpContext) {
-    const { email } = await ctx.request.validateUsing(forgotPasswordValidator, {
-      messagesProvider: validationMessages(ctx.locale),
-    })
+    const { email } = await ctx.request.validateUsing(forgotPasswordValidator)
     await new RequestEmailVerification().execute(email, ctx.locale)
     ctx.session.flash('notice', 'auth.verifyResent')
     return ctx.response.redirect().toPath('/login')

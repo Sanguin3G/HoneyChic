@@ -3,8 +3,8 @@ import db from '@adonisjs/lucid/services/db'
 import Order from '#domains/orders/models/order'
 import OrderItem from '#domains/orders/models/order_item'
 import OrderReturn from '#domains/orders/models/order_return'
-import AdjustInventory from '#domains/inventory/actions/adjust_inventory'
-import { rejectOrder } from '#domains/orders/errors/reject_order'
+import AdjustInventory from '#domains/inventory/adjust_inventory'
+import { rejectOrder } from '#domains/orders/reject_order'
 import type { Locale } from '#core/support/locale'
 export default class CancelOrder {
   async execute(

@@ -2,7 +2,7 @@ import db from '@adonisjs/lucid/services/db'
 import Order from '#domains/orders/models/order'
 import CancelOrder from './cancel_order.js'
 import { orderTransitions, type OrderStatus } from '#domains/orders/data/order_states'
-import { rejectOrder } from '#domains/orders/errors/reject_order'
+import { rejectOrder } from '#domains/orders/reject_order'
 import type { Locale } from '#core/support/locale'
 export default class ChangeOrderStatus {
   async execute(publicId: string, status: OrderStatus, actorId: number, locale: Locale) {

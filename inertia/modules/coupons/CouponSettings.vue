@@ -80,10 +80,9 @@ function save() {
 }
 </script>
 <template>
-  <HcPanel
-    ><h2>{{ t('modules', 'coupons') }}</h2>
+  <HcPanel :title="t('modules', 'coupons')">
     <p class="hc-help">{{ t('modules', 'couponValueHelp') }}</p>
-    <ul>
+    <ul class="order-lines config-list">
       <li v-for="coupon in coupons" :key="coupon.id">
         {{ coupon.code }} · {{ formatCouponDiscount(coupon.kind, coupon.value, coupon.currency) }} ·
         {{ coupon.uses }}/{{ coupon.usageLimit ?? '∞' }} ·

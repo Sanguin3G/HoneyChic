@@ -46,42 +46,41 @@ function itemLabel(orderItemId: number) {
         </dd>
       </div>
     </dl>
-    <ul class="order-lines">
+    <ul class="order-lines receipt-lines">
       <li v-for="item in order.items" :key="item.id">
-        <strong>{{ item.productName }}</strong>
-        <p>{{ item.variantDescription }}</p>
-        <p>{{ t('orders', 'sku') }}: {{ item.sku }}</p>
-        <p>
-          {{ t('orders', 'quantity') }}: {{ item.quantity }} · {{ t('orders', 'unitPrice') }}:
-          {{ formatMoney(item.unitPriceMinor, order.currency, locale) }}
-        </p>
-        <p v-if="(item.returnedQuantity ?? 0) > 0">
-          {{ t('orders', 'returned') }}: {{ item.returnedQuantity }}
+        <div>
+          <strong>{{ item.productName }}</strong>
+          <p v-if="item.variantDescription" class="hc-help">{{ item.variantDescription }}</p>
+          <p class="hc-help">{{ t('orders', 'sku') }} {{ item.sku }}</p>
+          <p v-if="(item.returnedQuantity ?? 0) > 0" class="hc-help">
+            {{ t('orders', 'returned') }}: {{ item.returnedQuantity }}
+          </p>
+        </div>
+        <p class="receipt-amount">
+          {{ item.quantity }} × {{ formatMoney(item.unitPriceMinor, order.currency, locale) }}
         </p>
       </li>
     </ul>
-    <p v-if="order.discountMinor">
-      {{ t('modules', 'discount') }} ({{ order.couponCode }}): −{{
-        formatMoney(order.discountMinor, order.currency, locale)
-      }}
-    </p>
-    <p v-if="order.shippingName">
-      {{ t('modules', 'shipping') }} ({{ order.shippingName }}):
-      {{ formatMoney(order.shippingMinor, order.currency, locale) }}
-    </p>
+    <dl class="checkout-charges">
+      <div v-if="order.discountMinor">
+        <dt>{{ t('modules', 'discount') }} ({{ order.couponCode }})</dt>
+        <dd>−{{ formatMoney(order.discountMinor, order.currency, locale) }}</dd>
+      </div>
+      <div v-if="order.shippingName">
+        <dt>{{ t('modules', 'shipping') }} ({{ order.shippingName }})</dt>
+        <dd>{{ formatMoney(order.shippingMinor, order.currency, locale) }}</dd>
+      </div>
+    </dl>
     <p class="order-total">
-      <strong
-        >{{ t('orders', 'total') }}:
-        {{ formatMoney(order.totalMinor, order.currency, locale) }}</strong
-      >
+      <span>{{ t('orders', 'total') }}</span>
+      <span>{{ formatMoney(order.totalMinor, order.currency, locale) }}</span>
     </p>
     <p v-if="(order.refundedMinor ?? 0) > 0">
       {{ t('orders', 'refundedAmount') }}:
       {{ formatMoney(order.refundedMinor ?? 0, order.currency, locale) }}
     </p>
   </HcPanel>
-  <HcPanel v-if="(order.refunds?.length ?? 0) > 0">
-    <h2>{{ t('orders', 'refunds') }}</h2>
+  <HcPanel v-if="(order.refunds?.length ?? 0) > 0" :title="t('orders', 'refunds')">
     <ul class="order-lines">
       <li v-for="refund in order.refunds" :key="refund.id">
         <strong>{{ formatMoney(refund.amountMinor, order.currency, locale) }}</strong> ·
@@ -98,8 +97,7 @@ function itemLabel(orderItemId: number) {
       </li>
     </ul>
   </HcPanel>
-  <HcPanel v-if="(order.returns?.length ?? 0) > 0">
-    <h2>{{ t('orders', 'returns') }}</h2>
+  <HcPanel v-if="(order.returns?.length ?? 0) > 0" :title="t('orders', 'returns')">
     <ul class="order-lines">
       <li v-for="ret in order.returns" :key="ret.id">
         <strong>{{ itemLabel(ret.orderItemId) }}</strong> · {{ t('orders', 'quantity') }}:
@@ -116,9 +114,10 @@ function itemLabel(orderItemId: number) {
       </li>
     </ul>
   </HcPanel>
-  <HcPanel>
-    <h2>{{ t('orders', 'customer') }}</h2>
-    <p>{{ order.customerName }}</p>
+  <HcPanel :title="t('orders', 'customer')">
+    <p>
+      <strong>{{ order.customerName }}</strong>
+    </p>
     <p>{{ order.customerEmail }}</p>
     <p>{{ order.customerPhone }}</p>
     <h3>{{ t('orders', 'address') }}</h3>

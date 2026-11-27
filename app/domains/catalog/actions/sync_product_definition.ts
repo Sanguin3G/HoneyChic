@@ -1,8 +1,8 @@
 import type { TransactionClientContract } from '@adonisjs/lucid/types/database'
-import type { ProductInput } from '#domains/catalog/validators/catalog'
+import type { ProductInput } from '#domains/catalog/validators'
 import ProductVariant from '#domains/catalog/models/product_variant'
 import type { Locale } from '#core/support/locale'
-import { rejectCatalog } from '#domains/catalog/errors/reject_catalog'
+import { rejectCatalog } from '#domains/catalog/reject_catalog'
 
 /** Reconcile one product definition inside its caller's locked transaction. */
 export async function syncProductDefinition(

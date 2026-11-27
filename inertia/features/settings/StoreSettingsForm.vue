@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useForm } from '@inertiajs/vue3'
+import { Link, useForm } from '@inertiajs/vue3'
 import HcInput from '~/app/design/HcInput.vue'
 import HcButton from '~/app/design/HcButton.vue'
 import HcNotice from '~/app/design/HcNotice.vue'
@@ -28,6 +28,10 @@ function save() {
       timezone: data.timezone,
       orderPrefix: data.orderPrefix,
       lowStockThreshold: data.lowStockThreshold,
+      unpaidOrderHours:
+        data.unpaidOrderHours === null || String(data.unpaidOrderHours) === ''
+          ? null
+          : Number(data.unpaidOrderHours),
       customerAccountsEnabled: data.customerAccountsEnabled,
       registrationEnabled: data.registrationEnabled,
       guestCheckoutEnabled: data.guestCheckoutEnabled,
@@ -120,7 +124,7 @@ function save() {
               v-model="form.primaryColor"
               class="hc-input"
               maxlength="7"
-              placeholder="#172d48"
+              placeholder="#2b2621"
               :aria-invalid="form.errors.primaryColor ? true : undefined"
               :aria-describedby="
                 form.errors.primaryColor ? 'primaryColor-error color-help' : 'color-help'
@@ -130,7 +134,7 @@ function save() {
               id="primaryColor-picker"
               type="color"
               :aria-label="t('settings', 'primaryColor')"
-              :value="picker(form.primaryColor, '#172d48')"
+              :value="picker(form.primaryColor, '#2b2621')"
               @input="pickColor('primaryColor', $event)"
             />
           </div>
@@ -153,7 +157,7 @@ function save() {
               v-model="form.accentColor"
               class="hc-input"
               maxlength="7"
-              placeholder="#e5802e"
+              placeholder="#d99a20"
               :aria-invalid="form.errors.accentColor ? true : undefined"
               :aria-describedby="
                 form.errors.accentColor ? 'accentColor-error color-help' : 'color-help'
@@ -163,7 +167,7 @@ function save() {
               id="accentColor-picker"
               type="color"
               :aria-label="t('settings', 'accentColor')"
-              :value="picker(form.accentColor, '#e5802e')"
+              :value="picker(form.accentColor, '#d99a20')"
               @input="pickColor('accentColor', $event)"
             />
           </div>
@@ -292,26 +296,22 @@ function save() {
           required
         />
       </div>
-      <label class="hc-check">
-        <input v-model="form.customerAccountsEnabled" type="checkbox" />
-        {{ t('settings', 'customerAccountsEnabled') }}
-      </label>
-      <p v-if="form.errors.customerAccountsEnabled" class="hc-error" role="alert">
-        {{ form.errors.customerAccountsEnabled }}
+      <HcInput
+        id="unpaidOrderHours"
+        v-model="form.unpaidOrderHours"
+        :label="t('settings', 'unpaidOrderHours')"
+        :error="form.errors.unpaidOrderHours"
+        type="number"
+        min="1"
+        max="720"
+        step="1"
+        aria-describedby="unpaidOrderHours-help"
+      />
+      <p id="unpaidOrderHours-help" class="hc-help">{{ t('settings', 'unpaidOrderHoursHelp') }}</p>
+      <p class="hc-help">
+        {{ t('settings', 'accountsMoved') }}
+        <Link class="hc-link" href="/admin/modules">{{ t('admin', 'modules') }}</Link>
       </p>
-      <label class="hc-check">
-        <input v-model="form.registrationEnabled" type="checkbox" />
-        {{ t('settings', 'registrationEnabled') }}
-      </label>
-      <p v-if="form.errors.registrationEnabled" class="hc-error" role="alert">
-        {{ form.errors.registrationEnabled }}
-      </p>
-      <label class="hc-check"
-        ><input v-model="form.guestCheckoutEnabled" type="checkbox" />{{
-          t('admin', 'guestCheckout')
-        }}</label
-      >
-      <p class="hc-help">{{ t('settings', 'accountsHelp') }}</p>
     </fieldset>
     <HcButton type="submit" :disabled="form.processing">{{ t('settings', 'save') }}</HcButton>
   </form>

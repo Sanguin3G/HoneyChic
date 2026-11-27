@@ -1,7 +1,6 @@
 {
   "title": "Cài đặt cửa hàng",
   "overview": "Tổng quan",
-  "foundationHelp": "Cấu hình cửa hàng và truy cập tài khoản đã sẵn sàng. Danh mục và quy trình bán hàng sẽ được triển khai ở các giai đoạn sau.",
   "business": "Thông tin doanh nghiệp",
   "name": "Tên cửa hàng",
   "description": "Mô tả",
@@ -17,7 +16,7 @@
   "removeImage": "Gỡ ảnh",
   "primaryColor": "Màu chính",
   "accentColor": "Màu nhấn",
-  "colorHelp": "Để trống một màu để giữ xanh navy và cam hiện tại. Phần còn lại của giao diện không đổi.",
+  "colorHelp": "Để trống để dùng màu mặc định của HoneyChic. Màu chính cần tương phản tốt với chữ trắng.",
   "clearColor": "Dùng màu mặc định",
   "socials": "Liên kết mạng xã hội",
   "socialHelp": "Dùng liên kết https. Ô trống sẽ không hiện trên cửa hàng.",
@@ -35,7 +34,10 @@
   "lowStockThreshold": "Ngưỡng tồn kho thấp",
   "customerAccountsEnabled": "Bật tài khoản khách hàng",
   "registrationEnabled": "Cho phép khách hàng đăng ký",
-  "accountsHelp": "Tắt tài khoản sẽ chặn đăng nhập và truy cập tài khoản khách hàng. Chủ cửa hàng và nhân viên vẫn có thể truy cập. Tùy chọn đơn hàng sẽ có hiệu lực khi chức năng bán hàng được triển khai.",
+  "accountsHelp": "Tắt tài khoản sẽ chặn khách hàng đăng nhập. Chủ cửa hàng và nhân viên vẫn đăng nhập được.",
   "save": "Lưu cài đặt",
-  "saved": "Đã lưu cài đặt cửa hàng."
+  "saved": "Đã lưu cài đặt cửa hàng.",
+  "unpaidOrderHours": "Hủy đơn chưa thanh toán sau (giờ)",
+  "unpaidOrderHoursHelp": "Để trống để giữ đơn chưa thanh toán. Đơn đang chờ và chưa thanh toán quá thời gian này sẽ bị hủy và hoàn lại tồn kho, kể cả đơn thanh toán khi nhận hàng còn đang chờ.",
+  "accountsMoved": "Tài khoản khách hàng, đăng ký và mua không cần tài khoản được bật tắt ở trang"
 }

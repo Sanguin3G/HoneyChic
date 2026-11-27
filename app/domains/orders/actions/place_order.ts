@@ -7,12 +7,12 @@ import ProductVariant from '#domains/catalog/models/product_variant'
 import Category from '#domains/catalog/models/category'
 import Order from '#domains/orders/models/order'
 import OrderItem from '#domains/orders/models/order_item'
-import AdjustInventory from '#domains/inventory/actions/adjust_inventory'
-import { readCartState, type CartState } from '#domains/cart/data/cart_state'
-import { rejectOrder } from '#domains/orders/errors/reject_order'
+import AdjustInventory from '#domains/inventory/adjust_inventory'
+import { readCartState, type CartState } from '#domains/cart/cart_state'
+import { rejectOrder } from '#domains/orders/reject_order'
 import type { Locale } from '#core/support/locale'
 import type { Infer } from '@vinejs/vine/types'
-import type { checkoutValidator } from '#domains/orders/validators/orders'
+import type { checkoutValidator } from '#domains/orders/validators'
 
 export function orderWasJustPlaced(order: Order) {
   return order.$extras.justPlaced === true

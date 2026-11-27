@@ -2,8 +2,8 @@ import { randomUUID } from 'node:crypto'
 import type { HttpContext } from '@adonisjs/core/http'
 import StoreSetting from '#core/store/store_setting'
 import User from '#domains/customers/models/user'
-import ShippingRate from '#modules/shipping/models/shipping_rate'
-import Coupon from '#modules/coupons/models/coupon'
+import ShippingRate from '#modules/shipping/shipping_rate'
+import Coupon from '#modules/coupons/coupon'
 import { cartFixture } from './cart_fixture.js'
 export async function moduleFixture() {
   const store = await StoreSetting.findOrFail(1)

@@ -1,6 +1,5 @@
-import { orderPayment } from '#modules/payments/queries/order_payment'
+import { orderPayment } from '#modules/payments/order_payment'
 import type { HttpContext } from '@adonisjs/core/http'
-import { accessAdmin } from '#policies/admin'
 import Order from '#domains/orders/models/order'
 import { orderDetail, orderSummary } from '#domains/orders/data/order_data'
 import { orderExportLimit, ordersCsv } from '#domains/orders/data/order_csv'
@@ -11,7 +10,7 @@ import {
   orderIdValidator,
   orderRefundValidator,
   orderReturnValidator,
-} from '#domains/orders/validators/orders'
+} from '#domains/orders/validators'
 import { orderTransitions } from '#domains/orders/data/order_states'
 import ChangeOrderStatus from '#domains/orders/actions/change_order_status'
 import RecordRefund from '#domains/orders/actions/record_refund'
@@ -20,10 +19,7 @@ import DeliverOrderMail from '#domains/orders/actions/deliver_order_mail'
 import { validationMessages } from '#core/support/validation_messages'
 export default class OrdersController {
   async index(ctx: HttpContext) {
-    await ctx.bouncer.authorize(accessAdmin)
-    const input = await ctx.request.validateUsing(orderListValidator, {
-      messagesProvider: validationMessages(ctx.locale),
-    })
+    const input = await ctx.request.validateUsing(orderListValidator)
     const result = await adminOrders(input)
       .orderBy('id', 'desc')
       .paginate(input.page ?? 1, 20)
@@ -34,10 +30,7 @@ export default class OrdersController {
     })
   }
   async export(ctx: HttpContext) {
-    await ctx.bouncer.authorize(accessAdmin)
-    const input = await ctx.request.validateUsing(orderListValidator, {
-      messagesProvider: validationMessages(ctx.locale),
-    })
+    const input = await ctx.request.validateUsing(orderListValidator)
     const orders = await adminOrders(input).orderBy('id', 'desc').limit(orderExportLimit())
     ctx.response.header('Content-Type', 'text/csv; charset=utf-8')
     ctx.response.header('Content-Disposition', 'attachment; filename="orders.csv"')
@@ -46,7 +39,6 @@ export default class OrdersController {
   }
 
   async show(ctx: HttpContext) {
-    await ctx.bouncer.authorize(accessAdmin)
     const { id } = await orderIdValidator.validate(ctx.params, {
       messagesProvider: validationMessages(ctx.locale),
     })
@@ -66,10 +58,7 @@ export default class OrdersController {
     })
   }
   async update(ctx: HttpContext) {
-    await ctx.bouncer.authorize(accessAdmin)
-    const { status } = await ctx.request.validateUsing(orderStatusValidator, {
-      messagesProvider: validationMessages(ctx.locale),
-    })
+    const { status } = await ctx.request.validateUsing(orderStatusValidator)
     const { id } = await orderIdValidator.validate(ctx.params, {
       messagesProvider: validationMessages(ctx.locale),
     })
@@ -93,13 +82,10 @@ export default class OrdersController {
   }
 
   async refund(ctx: HttpContext) {
-    await ctx.bouncer.authorize(accessAdmin)
     const { id } = await orderIdValidator.validate(ctx.params, {
       messagesProvider: validationMessages(ctx.locale),
     })
-    const input = await ctx.request.validateUsing(orderRefundValidator, {
-      messagesProvider: validationMessages(ctx.locale),
-    })
+    const input = await ctx.request.validateUsing(orderRefundValidator)
     await new RecordRefund().execute(
       id,
       input,
@@ -111,13 +97,10 @@ export default class OrdersController {
   }
 
   async returnItem(ctx: HttpContext) {
-    await ctx.bouncer.authorize(accessAdmin)
     const { id } = await orderIdValidator.validate(ctx.params, {
       messagesProvider: validationMessages(ctx.locale),
     })
-    const input = await ctx.request.validateUsing(orderReturnValidator, {
-      messagesProvider: validationMessages(ctx.locale),
-    })
+    const input = await ctx.request.validateUsing(orderReturnValidator)
     await new RecordReturn().execute(
       id,
       input,

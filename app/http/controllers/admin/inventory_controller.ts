@@ -1,15 +1,14 @@
 import type { HttpContext } from '@adonisjs/core/http'
-import { accessAdmin } from '#policies/admin'
 import ProductVariant from '#domains/catalog/models/product_variant'
-import InventoryMovement from '#domains/inventory/models/inventory_movement'
-import AdjustInventory from '#domains/inventory/actions/adjust_inventory'
-import { listInventory } from '#domains/inventory/queries/list_inventory'
-import { inventoryData } from '#domains/inventory/data/inventory_data'
+import InventoryMovement from '#domains/inventory/inventory_movement'
+import AdjustInventory from '#domains/inventory/adjust_inventory'
+import { listInventory } from '#domains/inventory/list_inventory'
+import { inventoryData } from '#domains/inventory/inventory_data'
 import {
   inventoryAdjustmentValidator,
   inventoryQueryValidator,
   inventoryVariantValidator,
-} from '#domains/inventory/validators/inventory'
+} from '#domains/inventory/validators'
 import { validationMessages } from '#core/support/validation_messages'
 
 export default class InventoryController {
@@ -21,10 +20,7 @@ export default class InventoryController {
   }
 
   async index(ctx: HttpContext) {
-    await ctx.bouncer.authorize(accessAdmin)
-    const input = await ctx.request.validateUsing(inventoryQueryValidator, {
-      messagesProvider: validationMessages(ctx.locale),
-    })
+    const input = await ctx.request.validateUsing(inventoryQueryValidator)
     const result = await listInventory(input, ctx.store.lowStockThreshold).paginate(
       input.page ?? 1,
       20
@@ -37,14 +33,11 @@ export default class InventoryController {
     })
   }
   async show(ctx: HttpContext) {
-    await ctx.bouncer.authorize(accessAdmin)
     const variant = await ProductVariant.query()
       .where('id', await this.variantId(ctx))
       .preload('product')
       .firstOrFail()
-    const input = await ctx.request.validateUsing(inventoryQueryValidator, {
-      messagesProvider: validationMessages(ctx.locale),
-    })
+    const input = await ctx.request.validateUsing(inventoryQueryValidator)
     const result = await InventoryMovement.query()
       .where('productVariantId', variant.id)
       .preload('actor')
@@ -66,10 +59,7 @@ export default class InventoryController {
     })
   }
   async adjust(ctx: HttpContext) {
-    await ctx.bouncer.authorize(accessAdmin)
-    const input = await ctx.request.validateUsing(inventoryAdjustmentValidator, {
-      messagesProvider: validationMessages(ctx.locale),
-    })
+    const input = await ctx.request.validateUsing(inventoryAdjustmentValidator)
     await new AdjustInventory().execute(
       { ...input, variantId: await this.variantId(ctx), actorId: ctx.auth.user!.id },
       ctx.locale

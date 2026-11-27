@@ -18,6 +18,7 @@ const Session = () => import('#controllers/account/session_controller')
 const PasswordReset = () => import('#controllers/account/password_reset_controller')
 const EmailVerification = () => import('#controllers/account/email_verification_controller')
 const OrderRecovery = () => import('#controllers/storefront/order_recovery_controller')
+const Welcome = () => import('#controllers/account/welcome_controller')
 const Registration = () => import('#controllers/account/registration_controller')
 const Profile = () => import('#controllers/account/profile_controller')
 const Catalog = () => import('#controllers/storefront/catalog_controller')
@@ -65,6 +66,8 @@ router.get('/orders/recover/:id/:secret', [OrderRecovery, 'open'])
 
 router
   .group(() => {
+    router.get('/welcome', [Welcome, 'show']).as('welcome')
+    router.post('/welcome', [Welcome, 'store']).use(authThrottle)
     router.get('/login', [Session, 'show']).as('login')
     router.post('/login', [Session, 'store']).use(authThrottle)
     router.get('/register', [Registration, 'show']).as('register')
@@ -86,11 +89,18 @@ router
     router.delete('/account/addresses/:id', [Addresses, 'destroy'])
     router.get('/account', [Profile, 'show']).as('account')
     router.patch('/account', [Profile, 'update'])
+  })
+  .use(middleware.auth())
+
+router
+  .group(() => {
     router.get('/admin/inventory', [Inventory, 'index'])
     router.get('/admin/inventory/:id', [Inventory, 'show'])
     router.post('/admin/inventory/:id/adjust', [Inventory, 'adjust'])
     router.get('/admin/products', [Products, 'index'])
     router.get('/admin/products/create', [Products, 'create'])
+    router.get('/admin/products/export', [Products, 'export'])
+    router.post('/admin/products/import', [Products, 'import'])
     router.post('/admin/products/images', [Products, 'storeImage'])
     router.post('/admin/products', [Products, 'store'])
     router.get('/admin/products/:id/edit', [Products, 'edit'])
@@ -121,4 +131,4 @@ router
     router.get('/admin/settings', [Settings, 'edit']).as('admin.settings')
     router.put('/admin/settings', [Settings, 'update'])
   })
-  .use(middleware.auth())
+  .use([middleware.auth(), middleware.admin()])

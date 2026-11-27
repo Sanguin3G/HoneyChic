@@ -35,8 +35,13 @@ function search() {
 <template>
   <Head :title="t('admin', 'orders')"><meta name="robots" content="noindex,nofollow" /></Head>
   <AdminLayout
-    ><HcPanel
-      ><h1>{{ t('admin', 'orders') }}</h1>
+    ><div class="admin-page-head">
+      <h1>{{ t('admin', 'orders') }}</h1>
+      <a class="hc-button" :href="exportHref" :title="t('admin', 'exportHelp')">{{
+        t('admin', 'exportOrders')
+      }}</a>
+    </div>
+    <HcPanel>
       <form class="admin-filters" @submit.prevent="search">
         <HcInput id="order-search" v-model="form.q" :label="t('admin', 'search')" maxlength="120" />
         <label class="hc-field" for="order-status"
@@ -50,8 +55,6 @@ function search() {
         >
         <HcButton type="submit" :disabled="form.processing">{{ t('admin', 'filter') }}</HcButton>
       </form>
-      <p class="hc-help">{{ t('admin', 'exportHelp') }}</p>
-      <a :href="exportHref">{{ t('admin', 'exportOrders') }}</a>
       <OrderList :orders="orders" :pagination="pagination" :base="base" admin /> </HcPanel
   ></AdminLayout>
 </template>

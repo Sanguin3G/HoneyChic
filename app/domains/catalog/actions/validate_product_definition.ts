@@ -1,6 +1,6 @@
-import type { ProductInput } from '#domains/catalog/validators/catalog'
+import type { ProductInput } from '#domains/catalog/validators'
 import type { Locale } from '#core/support/locale'
-import { rejectCatalog } from '#domains/catalog/errors/reject_catalog'
+import { rejectCatalog } from '#domains/catalog/reject_catalog'
 import { parsePrice } from '#shared/money'
 
 export function validateProductDefinition(input: ProductInput, currency: string, locale: Locale) {

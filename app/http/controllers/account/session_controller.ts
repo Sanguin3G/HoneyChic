@@ -1,21 +1,19 @@
 import type { HttpContext } from '@adonisjs/core/http'
 import User from '#domains/customers/models/user'
 import { loginValidator } from '#domains/customers/validators/auth'
-import { validationMessages } from '#core/support/validation_messages'
 import { messagesFor } from '#core/support/translations'
 import { errors } from '@vinejs/vine'
 
 export default class SessionController {
-  show({ inertia, store, capabilities }: HttpContext) {
+  async show({ inertia, store, capabilities }: HttpContext) {
     return inertia.render('account/login', {
       canRegister: capabilities.customer_accounts.available && store.registrationEnabled,
+      firstRun: !(await User.query().where('role', 'owner').first()),
     })
   }
 
   async store(ctx: HttpContext) {
-    const { email, password } = await ctx.request.validateUsing(loginValidator, {
-      messagesProvider: validationMessages(ctx.locale),
-    })
+    const { email, password } = await ctx.request.validateUsing(loginValidator)
     let user: User
     try {
       user = await User.verifyCredentials(email, password)

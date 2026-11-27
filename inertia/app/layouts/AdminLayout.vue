@@ -1,13 +1,15 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { Link, router, usePage } from '@inertiajs/vue3'
 import {
-  PhFlag,
+  PhArrowSquareOut,
   PhGear,
   PhHouse,
+  PhList,
   PhPackage,
   PhPuzzlePiece,
   PhReceipt,
+  PhSignOut,
   PhSquaresFour,
   PhStorefront,
   PhUserCircle,
@@ -21,6 +23,43 @@ import { useI18n, type SharedProps } from '~/app/shared/i18n'
 const navOpen = ref(false)
 const page = usePage<SharedProps>()
 const { t } = useI18n()
+type NavLink = { href: string; label: string; icon: unknown; exact?: boolean }
+const sections = computed<{ label: string | null; links: NavLink[] }[]>(() => [
+  {
+    label: null,
+    links: [{ href: '/admin', label: t('settings', 'overview'), icon: PhHouse, exact: true }],
+  },
+  {
+    label: t('admin', 'navSales'),
+    links: [
+      { href: '/admin/orders', label: t('admin', 'orders'), icon: PhReceipt },
+      { href: '/admin/customers', label: t('admin', 'customers'), icon: PhUsers },
+    ],
+  },
+  {
+    label: t('admin', 'navCatalog'),
+    links: [
+      { href: '/admin/products', label: t('catalog', 'products'), icon: PhPackage },
+      { href: '/admin/categories', label: t('catalog', 'categories'), icon: PhSquaresFour },
+      { href: '/admin/inventory', label: t('inventory', 'title'), icon: PhWarehouse },
+    ],
+  },
+  {
+    label: t('admin', 'navStore'),
+    links: [
+      { href: '/admin/modules', label: t('admin', 'modules'), icon: PhPuzzlePiece },
+      ...(page.props.permissions.manageStore
+        ? [{ href: '/admin/settings', label: t('settings', 'title'), icon: PhGear }]
+        : []),
+    ],
+  },
+])
+function current(href: string, exact?: boolean) {
+  const path = page.url.split('?')[0]
+  if (exact) return path === href
+  if (href === '/admin/settings') return path === href || path.startsWith('/admin/setup')
+  return path === href || path.startsWith(href + '/')
+}
 </script>
 
 <template>
@@ -32,87 +71,68 @@ const { t } = useI18n()
       :class="{ 'admin-nav-open': navOpen }"
       @keydown.esc="navOpen = false"
     >
-      <Link class="admin-brand" href="/admin"
-        ><PhStorefront :size="24" aria-hidden="true" /> <strong>HoneyChic</strong></Link
-      >
-      <p>{{ page.props.store.name }}</p>
-      <HcButton
-        class="admin-nav-toggle"
-        variant="quiet"
-        :aria-expanded="navOpen"
-        aria-controls="admin-navigation"
-        @click="navOpen = !navOpen"
-        >{{ t('admin', navOpen ? 'closeMenu' : 'menu') }}</HcButton
-      >
+      <div class="admin-sidebar-head">
+        <Link class="admin-brand" href="/admin">
+          <img
+            v-if="page.props.store.logoUrl"
+            class="store-logo"
+            :src="page.props.store.logoUrl"
+            alt=""
+            width="32"
+            height="32"
+          />
+          <span v-else class="store-app-icon" aria-hidden="true"
+            ><PhStorefront :size="20" weight="fill"
+          /></span>
+          <span>
+            <strong>{{ page.props.store.name }}</strong>
+            <small>HoneyChic</small>
+          </span>
+        </Link>
+        <HcButton
+          class="admin-nav-toggle"
+          variant="quiet"
+          size="small"
+          :aria-expanded="navOpen"
+          aria-controls="admin-navigation"
+          :aria-label="t('admin', navOpen ? 'closeMenu' : 'menu')"
+          @click="navOpen = !navOpen"
+          ><PhList :size="18" aria-hidden="true" />{{ t('storefront', 'menu') }}</HcButton
+        >
+      </div>
       <nav id="admin-navigation" :aria-label="t('navigation', 'admin')" @click="navOpen = false">
-        <Link href="/admin" :aria-current="page.url === '/admin' ? 'page' : undefined">
-          <PhHouse :size="20" aria-hidden="true" />{{ t('settings', 'overview') }}
-        </Link>
-        <Link
-          href="/admin/products"
-          :aria-current="page.url.startsWith('/admin/products') ? 'page' : undefined"
-        >
-          <PhPackage :size="20" aria-hidden="true" />{{ t('catalog', 'products') }}
-        </Link>
-        <Link
-          href="/admin/categories"
-          :aria-current="page.url.startsWith('/admin/categories') ? 'page' : undefined"
-        >
-          <PhSquaresFour :size="20" aria-hidden="true" />{{ t('catalog', 'categories') }}
-        </Link>
-        <Link
-          href="/admin/inventory"
-          :aria-current="page.url.startsWith('/admin/inventory') ? 'page' : undefined"
-        >
-          <PhWarehouse :size="20" aria-hidden="true" />{{ t('inventory', 'title') }}
-        </Link>
-        <Link
-          href="/admin/orders"
-          :aria-current="page.url.startsWith('/admin/orders') ? 'page' : undefined"
-        >
-          <PhReceipt :size="20" aria-hidden="true" />{{ t('admin', 'orders') }}
-        </Link>
-        <Link
-          href="/admin/customers"
-          :aria-current="page.url.startsWith('/admin/customers') ? 'page' : undefined"
-        >
-          <PhUsers :size="20" aria-hidden="true" />{{ t('admin', 'customers') }}
-        </Link>
-        <Link
-          href="/admin/modules"
-          :aria-current="page.url.startsWith('/admin/modules') ? 'page' : undefined"
-        >
-          <PhPuzzlePiece :size="20" aria-hidden="true" />{{ t('admin', 'modules') }}
-        </Link>
-        <Link
-          v-if="page.props.permissions.manageStore"
-          href="/admin/setup"
-          :aria-current="page.url.startsWith('/admin/setup') ? 'page' : undefined"
-        >
-          <PhFlag :size="20" aria-hidden="true" />{{ t('admin', 'setup') }}
-        </Link>
-        <Link
-          v-if="page.props.permissions.manageStore"
-          href="/admin/settings"
-          :aria-current="page.url === '/admin/settings' ? 'page' : undefined"
-        >
-          <PhGear :size="20" aria-hidden="true" />{{ t('settings', 'title') }}
-        </Link>
-        <Link class="admin-nav-exit" href="/">
-          <PhStorefront :size="20" aria-hidden="true" />{{ t('navigation', 'storefront') }}
-        </Link>
+        <template v-for="(section, index) in sections" :key="index">
+          <p v-if="section.label" class="admin-nav-heading">{{ section.label }}</p>
+          <Link
+            v-for="link in section.links"
+            :key="link.href"
+            :href="link.href"
+            :aria-current="current(link.href, link.exact) ? 'page' : undefined"
+          >
+            <component :is="link.icon as object" :size="18" aria-hidden="true" />{{ link.label }}
+          </Link>
+        </template>
+        <p class="admin-nav-heading">{{ t('admin', 'navYou') }}</p>
         <Link href="/account">
-          <PhUserCircle :size="20" aria-hidden="true" />{{ t('navigation', 'account') }}
+          <PhUserCircle :size="18" aria-hidden="true" />{{ t('navigation', 'account') }}
         </Link>
       </nav>
     </aside>
     <div class="admin-workspace">
       <header class="admin-toolbar">
-        <span>{{ page.props.auth?.fullName }}</span>
+        <Link class="hc-button hc-button--small" href="/"
+          ><PhArrowSquareOut :size="16" aria-hidden="true" />{{
+            t('navigation', 'storefront')
+          }}</Link
+        >
+        <span class="admin-toolbar-spacer"></span>
+        <span class="admin-user"
+          ><PhUserCircle :size="18" aria-hidden="true" />{{ page.props.auth?.fullName }}</span
+        >
         <LocaleSwitcher />
-        <HcButton variant="quiet" @click="router.post('/logout')">{{
-          t('auth', 'logout')
-        }}</HcButton>
+        <HcButton variant="quiet" size="small" @click="router.post('/logout')"
+          ><PhSignOut :size="16" aria-hidden="true" />{{ t('auth', 'logout') }}</HcButton
+        >
       </header>
       <main id="main" tabindex="-1"><slot /></main>
     </div>

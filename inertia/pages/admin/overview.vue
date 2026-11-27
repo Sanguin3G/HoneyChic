@@ -37,31 +37,32 @@ const metrics = [
         ><strong>{{ dashboard.counts[metric.key] }}</strong></HcPanel
       >
     </div>
-    <HcPanel
-      ><h2>{{ t('admin', 'orderValue') }}</h2>
-      <p class="hc-help">{{ t('admin', 'valueHelp') }}</p>
-      <p v-if="!dashboard.totals.length">{{ t('admin', 'noOrderValue') }}</p>
-      <ul v-else class="order-lines">
-        <li v-for="total in dashboard.totals" :key="total.currency">
-          <strong>{{ formatMoney(BigInt(total.amountMinor), total.currency, locale) }}</strong> ·
-          {{ total.count }} {{ t('admin', 'count') }} · {{ t('admin', 'average') }}
-          {{ formatMoney(BigInt(total.averageMinor), total.currency, locale) }}
-        </li>
-      </ul>
-    </HcPanel>
-    <HcPanel
-      ><h2>{{ t('admin', 'topProducts') }}</h2>
-      <p class="hc-help">{{ t('admin', 'topHelp') }}</p>
-      <p v-if="!dashboard.topProducts.length">{{ t('admin', 'noTopProducts') }}</p>
-      <ul v-else class="order-lines">
-        <li v-for="product in dashboard.topProducts" :key="product.currency + product.name">
-          {{ product.name }} · {{ product.quantity }} ·
-          <strong>{{ formatMoney(BigInt(product.amountMinor), product.currency, locale) }}</strong>
-        </li>
-      </ul>
-    </HcPanel>
-    <HcPanel
-      ><h2>{{ t('admin', 'recent') }}</h2>
+    <div class="admin-columns">
+      <HcPanel :title="t('admin', 'orderValue')">
+        <p class="hc-help">{{ t('admin', 'valueHelp') }}</p>
+        <p v-if="!dashboard.totals.length">{{ t('admin', 'noOrderValue') }}</p>
+        <ul v-else class="order-lines">
+          <li v-for="total in dashboard.totals" :key="total.currency">
+            <strong>{{ formatMoney(BigInt(total.amountMinor), total.currency, locale) }}</strong> ·
+            {{ total.count }} {{ t('admin', 'count') }} · {{ t('admin', 'average') }}
+            {{ formatMoney(BigInt(total.averageMinor), total.currency, locale) }}
+          </li>
+        </ul>
+      </HcPanel>
+      <HcPanel :title="t('admin', 'topProducts')">
+        <p class="hc-help">{{ t('admin', 'topHelp') }}</p>
+        <p v-if="!dashboard.topProducts.length">{{ t('admin', 'noTopProducts') }}</p>
+        <ul v-else class="order-lines">
+          <li v-for="product in dashboard.topProducts" :key="product.currency + product.name">
+            {{ product.name }} · {{ product.quantity }} ·
+            <strong>{{
+              formatMoney(BigInt(product.amountMinor), product.currency, locale)
+            }}</strong>
+          </li>
+        </ul>
+      </HcPanel>
+    </div>
+    <HcPanel :title="t('admin', 'recent')">
       <OrderList
         :orders="dashboard.recent"
         :pagination="{ page: 1, lastPage: 1, total: dashboard.recent.length }"

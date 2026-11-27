@@ -70,6 +70,7 @@ export const settingsValidator = vine.create({
     .toUpperCase()
     .regex(/^[A-Z0-9-]{1,12}$/),
   lowStockThreshold: vine.number().withoutDecimals().min(0).max(1000000),
+  unpaidOrderHours: vine.number().withoutDecimals().min(1).max(720).nullable().optional(),
   customerAccountsEnabled: vine.boolean(),
   registrationEnabled: vine.boolean(),
   guestCheckoutEnabled: vine.boolean().optional(),

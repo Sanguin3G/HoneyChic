@@ -1,5 +1,4 @@
 import type { HttpContext } from '@adonisjs/core/http'
-import { accessAdmin } from '#policies/admin'
 import User from '#domains/customers/models/user'
 import Order from '#domains/orders/models/order'
 import { orderSummary } from '#domains/orders/data/order_data'
@@ -11,10 +10,7 @@ import {
 import { validationMessages } from '#core/support/validation_messages'
 export default class CustomersController {
   async index(ctx: HttpContext) {
-    await ctx.bouncer.authorize(accessAdmin)
-    const input = await ctx.request.validateUsing(customerListValidator, {
-      messagesProvider: validationMessages(ctx.locale),
-    })
+    const input = await ctx.request.validateUsing(customerListValidator)
     const query = User.query().where('role', 'customer')
     if (input.q)
       query.where((scope) =>
@@ -30,14 +26,11 @@ export default class CustomersController {
     })
   }
   async show(ctx: HttpContext) {
-    await ctx.bouncer.authorize(accessAdmin)
     const { id } = await customerIdValidator.validate(ctx.params, {
       messagesProvider: validationMessages(ctx.locale),
     })
     const customer = await User.query().where('role', 'customer').where('id', id).firstOrFail()
-    const input = await ctx.request.validateUsing(customerListValidator, {
-      messagesProvider: validationMessages(ctx.locale),
-    })
+    const input = await ctx.request.validateUsing(customerListValidator)
     const result = await Order.query()
       .where('customerId', customer.id)
       .orderBy('id', 'desc')
@@ -49,13 +42,10 @@ export default class CustomersController {
     })
   }
   async update(ctx: HttpContext) {
-    await ctx.bouncer.authorize(accessAdmin)
     const { id } = await customerIdValidator.validate(ctx.params, {
       messagesProvider: validationMessages(ctx.locale),
     })
-    const input = await ctx.request.validateUsing(customerUpdateValidator, {
-      messagesProvider: validationMessages(ctx.locale),
-    })
+    const input = await ctx.request.validateUsing(customerUpdateValidator)
     const customer = await User.query().where('role', 'customer').where('id', id).firstOrFail()
     await customer.merge(input).save()
     ctx.session.flash('notice', 'admin.customerSaved')

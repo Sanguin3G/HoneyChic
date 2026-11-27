@@ -7,7 +7,7 @@ import UpdateCapabilities from '#core/capabilities/update_capabilities'
 import StoreSetting from '#core/store/store_setting'
 import { settingsValidator } from '#core/store/settings_validator'
 import UpdateStoreSettings from '#core/store/update_store_settings'
-import ShippingRate from '#modules/shipping/models/shipping_rate'
+import ShippingRate from '#modules/shipping/shipping_rate'
 import { validationMessages } from '#core/support/validation_messages'
 
 const validator = vine.create({
@@ -43,9 +43,7 @@ export default class SetupController {
 
   async store(ctx: HttpContext) {
     await ctx.bouncer.authorize(manageStore)
-    const input = await ctx.request.validateUsing(validator, {
-      messagesProvider: validationMessages(ctx.locale),
-    })
+    const input = await ctx.request.validateUsing(validator)
     await db.transaction(async (trx) => {
       const current = await StoreSetting.query({ client: trx })
         .where('id', 1)

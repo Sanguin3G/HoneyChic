@@ -2,19 +2,20 @@ import type { HttpContext } from '@adonisjs/core/http'
 import type { TransactionClientContract } from '@adonisjs/lucid/types/database'
 import type { CheckoutCharges, CheckoutParticipation } from '#domains/orders/data/checkout_charges'
 import type Order from '#domains/orders/models/order'
-import type Coupon from '#modules/coupons/models/coupon'
-import ApplyCoupon from '#modules/coupons/actions/apply_coupon'
-import QuoteShipping from '#modules/shipping/actions/quote_shipping'
-import CreatePayment from '#modules/payments/actions/create_payment'
+import type Coupon from '#modules/coupons/coupon'
+import ApplyCoupon from '#modules/coupons/apply_coupon'
+import QuoteShipping from '#modules/shipping/quote_shipping'
+import CreatePayment from '#modules/payments/create_payment'
 import StoreSetting from '#core/store/store_setting'
 import { capabilitiesFor } from '#core/capabilities/capabilities'
-import { rejectModule } from '#modules/support/require_capability'
-import { rejectOrder } from '#domains/orders/errors/reject_order'
+import { paymentProviders, type PaymentMethod } from '#modules/payments/providers/index'
+import { rejectModule } from '#modules/require_capability'
+import { rejectOrder } from '#domains/orders/reject_order'
 export interface CheckoutSelections {
   shippingRateId?: number
   country: string
   couponCode: string
-  paymentMethod?: 'cod' | 'fake'
+  paymentMethod?: PaymentMethod
 }
 export const emptySelections: CheckoutSelections = { country: '', couponCode: '' }
 export function availableSelections(
@@ -27,9 +28,7 @@ export function availableSelections(
     country: capabilities.shipping.available ? selections.country : '',
     couponCode: capabilities.coupons.available ? selections.couponCode : '',
     paymentMethod:
-      method && capabilities[method === 'cod' ? 'payments.cod' : 'payments.fake'].available
-        ? method
-        : undefined,
+      method && capabilities[paymentProviders[method].capability].available ? method : undefined,
   }
 }
 export default class CheckoutModules implements CheckoutParticipation {
@@ -79,7 +78,7 @@ export default class CheckoutModules implements CheckoutParticipation {
     const paymentEnabled =
       capabilities['payments.cod'].available || capabilities['payments.fake'].available
     if (paymentEnabled && !method) rejectModule('paymentRequired', this.ctx.locale)
-    if (method && !capabilities[method === 'cod' ? 'payments.cod' : 'payments.fake'].available)
+    if (method && !capabilities[paymentProviders[method].capability].available)
       rejectModule('disabled', this.ctx.locale)
     if (
       this.reviewed &&

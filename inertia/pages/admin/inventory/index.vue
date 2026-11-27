@@ -29,9 +29,13 @@ function search() {
 <template>
   <Head :title="t('inventory', 'title')"><meta name="robots" content="noindex" /></Head>
   <AdminLayout
-    ><HcPanel
-      ><h1>{{ t('inventory', 'title') }}</h1>
-      <p>{{ t('inventory', 'threshold') }}: {{ threshold }}</p>
+    ><div class="admin-page-head">
+      <div>
+        <h1>{{ t('inventory', 'title') }}</h1>
+        <p class="hc-help">{{ t('inventory', 'threshold') }}: {{ threshold }}</p>
+      </div>
+    </div>
+    <HcPanel>
       <form class="catalog-search" @submit.prevent="search">
         <HcInput
           id="inventory-search"

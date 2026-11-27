@@ -16,25 +16,27 @@ const { t, locale } = useI18n()
           :src="product.image.url"
           :alt="product.image.altText"
           width="480"
-          height="340"
+          height="360"
           loading="lazy"
         />
         <div v-else class="product-placeholder">
-          <PhImage :size="40" aria-hidden="true" />{{ t('catalog', 'noImage') }}
+          <PhImage :size="36" aria-hidden="true" />{{ t('catalog', 'noImage') }}
         </div>
-        <PhArrowUpRight class="product-card-arrow" :size="22" aria-hidden="true" />
+        <PhArrowUpRight class="product-card-arrow" :size="26" aria-hidden="true" />
       </div>
       <div class="product-card-copy">
         <p class="product-card-category">{{ product.category?.name }}</p>
         <h2>{{ product.name }}</h2>
-        <strong v-if="product.priceMinor !== null && product.currency"
-          ><template v-if="product.hasVariants">{{ t('catalog', 'from') + '\u00a0' }}</template
-          >{{ formatMoney(product.priceMinor, product.currency, locale) }}</strong
-        >
-        <p class="product-availability" :data-available="product.available">
-          <span aria-hidden="true" class="availability-dot"></span
-          >{{ t('inventory', product.available ? 'available' : 'out') }}
-        </p>
+        <div class="product-card-footer">
+          <strong v-if="product.priceMinor !== null && product.currency" class="price"
+            ><template v-if="product.hasVariants">{{ t('catalog', 'from') + '\u00a0' }}</template
+            >{{ formatMoney(product.priceMinor, product.currency, locale) }}</strong
+          >
+          <span class="product-availability" :data-available="product.available">
+            <span aria-hidden="true" class="availability-dot"></span
+            >{{ t('inventory', product.available ? 'available' : 'out') }}
+          </span>
+        </div>
       </div>
     </Link>
   </article>

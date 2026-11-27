@@ -16,15 +16,14 @@ function remove(id: number) {
   <Head :title="t('orders', 'addresses')"><meta name="robots" content="noindex,nofollow" /></Head>
   <AccountLayout>
     <h1>{{ t('orders', 'addresses') }}</h1>
-    <HcPanel v-for="address in addresses" :key="address.id"
-      ><h2>{{ address.label }}</h2>
-      <AddressForm :address="address" /><HcButton variant="quiet" @click="remove(address.id)">{{
-        t('orders', 'deleteAddress')
-      }}</HcButton></HcPanel
-    >
-    <HcPanel
-      ><h2>{{ t('orders', 'saveAddress') }}</h2>
-      <AddressForm
-    /></HcPanel>
+    <HcPanel v-for="address in addresses" :key="address.id" :title="address.label">
+      <template #actions>
+        <HcButton variant="danger" size="small" @click="remove(address.id)">{{
+          t('orders', 'deleteAddress')
+        }}</HcButton>
+      </template>
+      <AddressForm :address="address" />
+    </HcPanel>
+    <HcPanel :title="t('orders', 'saveAddress')"><AddressForm /></HcPanel>
   </AccountLayout>
 </template>

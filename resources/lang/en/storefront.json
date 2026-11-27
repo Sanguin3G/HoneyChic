@@ -18,7 +18,6 @@
   "searchPlaceholder": "Product name or SKU",
   "details": "Product details",
   "chooseOptions": "Choose your options",
-  "selection": "Selected variant",
   "unavailableCombination": "This option is not offered.",
   "home": "Home",
   "categoryIntro": "A place for every kind of find.",
@@ -30,5 +29,10 @@
   "facebook": "Facebook",
   "instagram": "Instagram",
   "youtube": "YouTube",
-  "tiktok": "TikTok"
+  "tiktok": "TikTok",
+  "contact": "Contact",
+  "follow": "Follow",
+  "featured": "Featured",
+  "browseBy": "Browse by",
+  "newest": "Just in"
 }

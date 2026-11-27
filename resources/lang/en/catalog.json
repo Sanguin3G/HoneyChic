@@ -69,5 +69,19 @@
   "catalog": "Shop",
   "imageGallery": "Product images",
   "retireStock": "Set remaining stock to zero with a recorded adjustment before retiring this variant.",
-  "pagination": "Pagination"
+  "pagination": "Pagination",
+  "exportCsv": "Export CSV",
+  "importCsv": "Import CSV",
+  "importFile": "CSV file",
+  "importHelp": "Columns: name, slug, status, category, description, sku, options, price, stock. Rows with the same slug become one product; write options as \"Size: M / Color: Red\". Existing slugs are skipped. Stock is recorded as initial stock.",
+  "importSubmit": "Import products",
+  "importCreated": "Products created: {count}",
+  "importSkipped": "Skipped because the slug already exists: {slugs}",
+  "importFailed": "Nothing was imported. Fix these rows and try again:",
+  "importRow": "Row {row}:",
+  "importHeader": "The first row must name the columns, including name, sku and price.",
+  "importTooMany": "Import at most 1,000 rows at a time.",
+  "importOptions": "Every row of a product needs the same option names, written as \"Name: Value / Name: Value\".",
+  "importSkuTaken": "SKU {sku} already belongs to another product.",
+  "importStock": "Stock must be a whole number of 0 or more."
 }

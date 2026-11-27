@@ -15,6 +15,7 @@ const optionalKeys = [
   'tiktok',
   'primaryColor',
   'accentColor',
+  'unpaidOrderHours',
 ] as const
 
 export default class UpdateStoreSettings {

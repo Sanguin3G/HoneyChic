@@ -1,38 +1,59 @@
+import { readFile } from 'node:fs/promises'
+import vine from '@vinejs/vine'
 import type { HttpContext } from '@adonisjs/core/http'
+import ImportProducts, { productsCsv } from '#domains/catalog/product_csv'
 import Category from '#domains/catalog/models/category'
-import { accessAdmin } from '#policies/admin'
 import {
   productValidator,
   productImageValidator,
   catalogQueryValidator,
-} from '#domains/catalog/validators/catalog'
+} from '#domains/catalog/validators'
 import ProductImage from '#domains/catalog/models/product_image'
 import { mediaUrl, releaseUnusedUploads } from '#core/support/stored_media'
 import { storePublicImage } from '#core/support/store_public_image'
-import { validationMessages } from '#core/support/validation_messages'
-import { rejectCatalog } from '#domains/catalog/errors/reject_catalog'
+import { rejectCatalog } from '#domains/catalog/reject_catalog'
 import CreateProduct from '#domains/catalog/actions/create_product'
 import UpdateProduct from '#domains/catalog/actions/update_product'
 import SearchCatalog from '#domains/catalog/queries/search_catalog'
 import { loadProduct } from '#domains/catalog/queries/load_product'
-import { productEditor, productSummary } from '#domains/catalog/data/product_data'
+import { productEditor, productSummary } from '#domains/catalog/product_data'
+
+const importValidator = vine.create({
+  file: vine.file({ size: '2mb', extnames: ['csv', 'txt'] }),
+})
 
 export default class CatalogProductsController {
   async index(ctx: HttpContext) {
-    await ctx.bouncer.authorize(accessAdmin)
-    const filters = await ctx.request.validateUsing(catalogQueryValidator, {
-      messagesProvider: validationMessages(ctx.locale),
-    })
+    const filters = await ctx.request.validateUsing(catalogQueryValidator)
     const result = await new SearchCatalog().query(filters, true).paginate(filters.page ?? 1, 20)
     return ctx.inertia.render('admin/catalog/products', {
       products: result.all().map(productSummary),
       filters: { q: filters.q ?? '' },
       pagination: { page: result.currentPage, lastPage: result.lastPage, total: result.total },
+      importResult: ctx.session.flashMessages.get('importResult') ?? null,
     })
   }
 
+  async export(ctx: HttpContext) {
+    ctx.response.header('Content-Type', 'text/csv; charset=utf-8')
+    ctx.response.header('Content-Disposition', 'attachment; filename="products.csv"')
+    ctx.response.header('Cache-Control', 'no-store')
+    return ctx.response.send(await productsCsv())
+  }
+
+  async import(ctx: HttpContext) {
+    const { file } = await ctx.request.validateUsing(importValidator)
+    const result = await new ImportProducts().execute(
+      await readFile(file.tmpPath!, 'utf8'),
+      ctx.store.currency,
+      ctx.auth.getUserOrFail().id,
+      ctx.locale
+    )
+    ctx.session.flash('importResult', result)
+    return ctx.response.redirect().toPath('/admin/products')
+  }
+
   async create(ctx: HttpContext) {
-    await ctx.bouncer.authorize(accessAdmin)
     const categories = await Category.query().orderBy('name')
     return ctx.inertia.render('admin/catalog/edit_product', {
       productId: null,
@@ -46,7 +67,6 @@ export default class CatalogProductsController {
   }
 
   async edit(ctx: HttpContext) {
-    await ctx.bouncer.authorize(accessAdmin)
     const product = await loadProduct(Number(ctx.params.id))
     const categories = await Category.query().orderBy('name')
     return ctx.inertia.render('admin/catalog/edit_product', {
@@ -65,10 +85,7 @@ export default class CatalogProductsController {
   }
 
   async storeImage(ctx: HttpContext) {
-    await ctx.bouncer.authorize(accessAdmin)
-    const { image } = await ctx.request.validateUsing(productImageValidator, {
-      messagesProvider: validationMessages(ctx.locale),
-    })
+    const { image } = await ctx.request.validateUsing(productImageValidator)
     const storageKey = await storePublicImage(image)
     return { storageKey, url: mediaUrl(storageKey) }
   }
@@ -78,10 +95,7 @@ export default class CatalogProductsController {
   }
 
   private async save(ctx: HttpContext, id?: number) {
-    await ctx.bouncer.authorize(accessAdmin)
-    const input = await ctx.request.validateUsing(productValidator, {
-      messagesProvider: validationMessages(ctx.locale),
-    })
+    const input = await ctx.request.validateUsing(productValidator)
     const previousImages = id
       ? await ProductImage.query().where('productId', id).select('storageKey')
       : []

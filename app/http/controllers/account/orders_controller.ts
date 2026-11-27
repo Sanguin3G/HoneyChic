@@ -1,17 +1,14 @@
 import type { HttpContext } from '@adonisjs/core/http'
 import Order from '#domains/orders/models/order'
 import { scopedOrder } from '#domains/orders/queries/scoped_order'
-import { orderPayment } from '#modules/payments/queries/order_payment'
+import { orderPayment } from '#modules/payments/order_payment'
 import CancelOrder from '#domains/orders/actions/cancel_order'
 import DeliverOrderMail from '#domains/orders/actions/deliver_order_mail'
 import { orderDetail, orderSummary } from '#domains/orders/data/order_data'
-import { orderListValidator } from '#domains/orders/validators/orders'
-import { validationMessages } from '#core/support/validation_messages'
+import { orderListValidator } from '#domains/orders/validators'
 export default class OrdersController {
   async index(ctx: HttpContext) {
-    const input = await ctx.request.validateUsing(orderListValidator, {
-      messagesProvider: validationMessages(ctx.locale),
-    })
+    const input = await ctx.request.validateUsing(orderListValidator)
     const result = await Order.query()
       .where('customerId', ctx.auth.getUserOrFail().id)
       .orderBy('id', 'desc')

@@ -31,6 +31,7 @@ export default defineConfig({
     () => import('#start/routes'),
     () => import('#start/kernel'),
     () => import('#start/validator'),
+    { file: () => import('#start/order_expiry'), environment: ['web'] },
   ],
   tests: {
     suites: [{ files: ['tests/functional/**/*.spec.{ts,js}'], name: 'functional', timeout: 30000 }],

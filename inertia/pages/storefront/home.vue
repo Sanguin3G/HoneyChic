@@ -7,7 +7,10 @@ import CategoryLinks from '~/features/storefront/CategoryLinks.vue'
 import ProductCard from '~/features/catalog/ProductCard.vue'
 import { useI18n, type SharedProps } from '~/app/shared/i18n'
 import type { ProductSummary } from '~/features/catalog/types'
-defineProps<{ products: ProductSummary[]; categories: { name: string; slug: string }[] }>()
+defineProps<{
+  products: ProductSummary[]
+  categories: { name: string; slug: string; image: { url: string; altText: string } | null }[]
+}>()
 const page = usePage<SharedProps>()
 const { t } = useI18n()
 </script>
@@ -18,16 +21,21 @@ const { t } = useI18n()
     path="/"
   />
   <StorefrontLayout
-    ><HomeHero :product="products[0]" /><CategoryLinks :categories="categories" />
+    ><HomeHero :product="products[0]" :has-categories="categories.length > 0" /><CategoryLinks
+      :categories="categories"
+    />
     <section class="shop-collection">
       <div class="section-heading">
-        <h2>{{ t('storefront', 'collection') }}</h2>
-        <Link href="/products">{{ t('storefront', 'viewAll') }}</Link>
+        <div>
+          <p class="eyebrow">{{ t('storefront', 'newest') }}</p>
+          <h2>{{ t('storefront', 'collection') }}</h2>
+        </div>
+        <Link class="hc-button" href="/products">{{ t('storefront', 'viewAll') }}</Link>
       </div>
       <div v-if="products.length" class="product-grid">
         <ProductCard v-for="product in products" :key="product.id" :product="product" />
       </div>
-      <div v-else class="catalog-empty">
+      <div v-else class="catalog-empty hc-panel">
         <h2>{{ t('storefront', 'emptyTitle') }}</h2>
         <p>{{ t('storefront', 'emptyBody') }}</p>
       </div>

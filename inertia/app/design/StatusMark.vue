@@ -8,19 +8,41 @@ defineProps<{ tone: StatusTone }>()
 </template>
 
 <style scoped>
+/* A small bezel pill with a lit dot, like a status light. */
 .status-mark {
-  display: inline-block;
-  padding: 0.15rem 0.5rem;
-  border: 1px solid currentColor;
-  border-radius: var(--radius-control);
-  font-size: 0.875rem;
-  font-weight: 650;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.1rem 0.55rem 0.1rem 0.4rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--gel-silver);
+  color: var(--ink-soft);
+  font-size: 0.78rem;
+  font-weight: 700;
+  white-space: nowrap;
+  box-shadow: var(--shadow-control);
+}
+.status-mark::before {
+  content: '';
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #ffffffb0, currentColor 65%);
+  box-shadow: 0 0 0 1px rgb(0 0 0 / 15%);
+}
+.status-mark[data-state='success']::before {
+  color: var(--success);
+  background-color: var(--success);
 }
 .status-mark[data-state='success'] {
-  color: var(--success);
+  color: #24562f;
 }
 .status-mark[data-state='warning'] {
-  color: var(--warning);
+  color: #6b4500;
+}
+.status-mark[data-state='warning']::before {
+  background-color: #d99a20;
 }
 .status-mark[data-state='danger'] {
   color: var(--danger);

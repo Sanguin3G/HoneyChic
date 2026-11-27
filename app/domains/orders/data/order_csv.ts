@@ -1,13 +1,8 @@
 import { decimalPrice } from '#shared/money'
+import { csvCell as cell } from '#core/support/csv'
 import type Order from '#domains/orders/models/order'
 
 const columns = ['number', 'created_at', 'customer', 'status', 'payment', 'currency', 'total']
-
-function cell(value: string) {
-  const guarded = /^[=+\-@\t\r]/.test(value) ? "'" + value : value
-  if (/[",\n\r]/.test(guarded)) return '"' + guarded.replaceAll('"', '""') + '"'
-  return guarded
-}
 
 export function ordersCsv(orders: Order[], timezone: string) {
   const lines = [columns.join(',')]

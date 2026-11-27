@@ -2,11 +2,11 @@ import { moduleFlags } from '#core/capabilities/capabilities'
 import { profileFlags, storeProfiles } from '#core/capabilities/store_profiles'
 import vine from '@vinejs/vine'
 import type { HttpContext } from '@adonisjs/core/http'
-import { accessAdmin, manageStore } from '#policies/admin'
+import { manageStore } from '#policies/admin'
 import StoreSetting from '#core/store/store_setting'
 import UpdateCapabilities from '#core/capabilities/update_capabilities'
-import ShippingRate from '#modules/shipping/models/shipping_rate'
-import { validationMessages } from '#core/support/validation_messages'
+import ShippingRate from '#modules/shipping/shipping_rate'
+import { moduleConfiguration } from '#controllers/admin/module_configuration_controller'
 const validator = vine.create({
   guestCheckoutEnabled: vine.boolean(),
   customerAccountsEnabled: vine.boolean(),
@@ -23,7 +23,6 @@ const profileValidator = vine.create({
 })
 export default class ModulesController {
   async index(ctx: HttpContext) {
-    await ctx.bouncer.authorize(accessAdmin)
     const hasShippingRates = Boolean(
       await ShippingRate.query()
         .where('isActive', true)
@@ -39,13 +38,12 @@ export default class ModulesController {
         storeProfile: ctx.store.storeProfile,
         hasShippingRates,
       },
+      ...(await moduleConfiguration()),
     })
   }
   async update(ctx: HttpContext) {
     await ctx.bouncer.authorize(manageStore)
-    const input = await ctx.request.validateUsing(validator, {
-      messagesProvider: validationMessages(ctx.locale),
-    })
+    const input = await ctx.request.validateUsing(validator)
     await new UpdateCapabilities().execute(input)
     const store = await StoreSetting.findOrFail(1)
     store.storeProfile = 'custom'
@@ -55,9 +53,7 @@ export default class ModulesController {
   }
   async profile(ctx: HttpContext) {
     await ctx.bouncer.authorize(manageStore)
-    const { storeProfile } = await ctx.request.validateUsing(profileValidator, {
-      messagesProvider: validationMessages(ctx.locale),
-    })
+    const { storeProfile } = await ctx.request.validateUsing(profileValidator)
     if (storeProfile !== 'custom') {
       await new UpdateCapabilities().execute(profileFlags[storeProfile])
     }

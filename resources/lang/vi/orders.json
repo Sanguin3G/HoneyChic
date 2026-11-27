@@ -9,7 +9,7 @@
   "address": "Địa chỉ giao hàng",
   "note": "Ghi chú đơn hàng",
   "total": "Tổng đơn hàng",
-  "terms": "Đơn hàng được ghi nhận ở trạng thái chưa thanh toán. Người bán sẽ thống nhất cách thanh toán và giao hàng. Phiên bản này chưa tính thêm phí vận chuyển, giảm giá hoặc thuế.",
+  "terms": "Khi đặt, đơn hàng được ghi nhận là chưa thanh toán. Cửa hàng sẽ xác nhận cách thanh toán và giao hàng với bạn. Giá và tổng tiền được kiểm tra lại khi bạn đặt hàng.",
   "disabled": "Loại khách hàng này chưa được phép đặt hàng.",
   "emptyCart": "Giỏ hàng trống.",
   "checkoutDisabled": "Loại khách hàng này chưa được phép đặt hàng.",
@@ -89,5 +89,7 @@
   "returnNote": "Ghi chú trả hàng (tùy chọn)",
   "returnSave": "Ghi nhận trả hàng",
   "returnSaved": "Đã ghi nhận trả hàng và hoàn lại tồn kho.",
-  "returned": "Đã trả"
+  "returned": "Đã trả",
+  "summary": "Tóm tắt đơn hàng",
+  "contactDetails": "Liên hệ và giao hàng"
 }

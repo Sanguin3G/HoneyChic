@@ -1,110 +1,77 @@
 # Commerce rules
 
-Read this document before changing important commerce workflows. Catalog, inventory, cart, order, cancellation, manual refunds, returns and optional-module checkout rules are implemented. Unpaid-expiry rules are written below and are not implemented. Real provider webhooks remain later work.
+Read before changing catalog, inventory, cart, checkout, orders, payments or modules. Change a rule here together with the action and a test that protects it.
 
-- Inventory belongs to variants; stock cannot become negative. Checkout and stock adjustments use transactions and appropriate database locks.
-- Meaningful stock changes record delta, reason, reference, actor, and timestamp.
-- Money uses integer minor units plus currency. Never float arithmetic or a hardcoded currency symbol. Formatting respects each currency's fraction digits, including VND.
-- Every product has at least one variant. SKU, price, and inventory belong to the variant. Product options are generic, not fashion-specific.
-- Checkout uses current server-authoritative prices and recalculates all totals. Cart price changes must be communicable to the customer.
-- Order items snapshot product name, variant description, SKU, unit price, quantity, discounts, and relevant tax. Orders snapshot checkout/customer information.
-- Product/customer deletion must not erase business records or invalidate order history. Relationships must be nullable/restricted where appropriate.
-- Fulfillment and payment states are separate, explicitly defined state machines.
-- `CancelOrder` is the single customer/admin cancellation action. Transactions/locking ensure inventory is restored exactly once.
-- Payment callbacks are idempotent. Duplicate callbacks must not duplicate payments or mutate orders incorrectly.
-- Guest checkout is first-class when enabled; disabled guest checkout must be enforced server-side.
-- Reviews require ownership of a purchased item in a completed/fulfilled order and an explicit duplicate-review policy.
-- Authorization must prevent customers from reading/modifying others' orders and non-admins from modifying admin resources.
-- Disabling optional modules must not break core commerce. First-party migrations run regardless of feature enablement.
+## Invariants
 
-## Current catalog decisions
+- Money is integer minor units plus a currency, within the safe integer range. No floats, no hardcoded symbols. Formatting follows each currency's digits (VND has none).
+- Stock lives on the variant and is never negative (0 … 2,147,483,647, enforced by PostgreSQL and the action).
+- Every stock change goes through `AdjustInventory` and records delta, resulting balance, reason, reference, actor and time.
+- Checkout uses server prices and recalculates every total. Browser totals are for comparison only.
+- Orders snapshot items (name, options, SKU, unit price, quantity, discount, tax), customer contact, address, note, currency, number and locale. Later catalog, account or settings changes never rewrite them.
+- Deleting a product, variant or customer never breaks order history: links are nullable or restricted.
+- Checkout, cancellation and payment settlement are atomic.
+- Cancellation restores stock exactly once.
+- Payment callbacks are idempotent per event reference.
+- Fulfillment and payment are separate state machines.
+- Guest checkout, when disabled, is enforced on the server.
+- Customers only reach their own orders; only owner and staff reach admin.
 
-- Simple products have exactly one default variant; option-based products have unique valid combinations. Options are generic and bounded, not required fashion fields.
-- All variants of a product share its creation currency. Store currency changes apply to new products only; existing prices are not relabelled or converted.
-- Prices accept nonnegative exact decimal strings with currency-supported precision, stored as integer minor units up to Number.MAX_SAFE_INTEGER. VND rejects fractional input.
-- Updates retain submitted variant IDs belonging to the product; omitted variants are retired rather than deleted. Their SKUs remain reserved. Inventory builds on these identities; remaining stock must reach zero through a recorded movement before a variant is retired.
-- Published products are public only with an active variant and an active category (or no category). Draft/archived products are unavailable through direct public URLs too.
-- Images retain relative keys, nonblank alt text and order; exactly one image is primary when images exist. No absolute environment URLs are stored. Merchant uploads use generated `uploads/<uuid>` keys. A previous upload is deleted only after the product transaction commits and only when no image row still references it. Seeded `catalog/` files are never deleted.
+## Catalog
 
-## Current inventory decisions
+- Every product has at least one variant; a simple product has exactly one default variant. Options are generic (at most 3, 30 values each), combinations unique.
+- SKU, price and stock belong to the variant. All variants share the currency the product was created in. Changing the store currency affects new products only.
+- Prices are exact decimal strings within the currency's digits, stored as minor units.
+- Saving a product keeps submitted variant IDs and retires omitted ones (never deletes). Retired SKUs stay reserved. A variant with stock cannot be retired; bring it to zero with a recorded movement first.
+- Public means published, with an active variant and an active category (or none). Drafts and archived products are hidden, direct URLs included.
+- Images keep relative keys, alt text and order; exactly one is primary when any exist. Uploads use `uploads/<uuid>` keys; an old upload is deleted only after the transaction commits and only when nothing references it. Seeded `catalog/` files are never deleted.
 
-- New and migrated variants start at zero; the application never guesses opening balances. Demo seeding does not invent or reset stock.
-- Stock is an integer from 0 to 2,147,483,647, enforced in PostgreSQL and the action. Quantity changes must be whole, nonzero and within the signed supported range.
-- AdjustInventory locks the variant before reading its balance. Stock and movement (including resulting balance) commit or roll back together. A supplied transaction remains the caller’s responsibility.
-- Initial stock is positive and allowed only before the first movement. Restock/return/cancellation are positive; sale is negative; manual adjustment/correction are signed. PlaceOrder and CancelOrder supply order idempotency/authorization. Payment settlement never writes inventory.
-- Only owner/staff can read/adjust inventory. Manual endpoints allow initial_stock, manual_adjustment, restock and correction; actor comes from the session, never submitted input.
-- Movement history has no mutation endpoint. Variant deletion is restricted; deleting an actor nulls the actor relationship while retaining the movement.
-- Retired variants permit cancellation restoration, return restoration and negative corrections only; manual positive additions remain blocked. Out of stock means stock at or below zero. Low stock means active stock greater than zero and at or below the merchant threshold. Dashboard counts and the inventory filter use that same split.
-- Public availability is informational; checkout rechecks stock under locks. Multi-variant transactions must lock IDs consistently to avoid deadlocks.
+### CSV import
 
-Record any intended change here, alongside the action and meaningful regression protection.
+- Columns: `name, slug, status, category, description, sku, options, price, stock`. Rows sharing a slug form one product; `options` reads `Size: M / Color: Red`.
+- Import only creates products. An existing slug is skipped, never updated. A taken SKU is an error.
+- Every row is validated first; any error imports nothing. Products, categories and stock are created in one transaction.
+- Stock is recorded as each new variant's `initial_stock` movement, with the importing user as actor. At most 1,000 rows per file.
 
-## Current cart decisions
+## Inventory
 
-- Both anonymous and authenticated visitors use the same browser session cart. Its lifetime follows the two-hour session; it is not an account-synchronized cart.
-- A line identifies one variant. Adding again accumulates its quantity; updating replaces it. Quantities are integers from 1 to 99, with at most 12 different variants. Remove/clear are explicit and idempotent.
-- Add/update require current publication, active category/variant and sufficient stock for the resulting line quantity. Cart changes do not reserve or deduct stock, and create no inventory movements. Future checkout must recheck and lock stock.
-- Each cart has one currency. A different-currency addition is rejected until the cart is cleared; existing product currencies never get relabelled after store-currency changes.
-- Every read calculates current unit prices and totals on the server. The original added price remains solely for change notices; quantity edits do not silently acknowledge a price change. Removing/re-adding starts a new price baseline.
-- Line multiplication and subtotal accumulation use BigInt, converted only within the safe integer range. Overflowing mutations are rejected. Later merchant price increases show an amount warning without a rounded subtotal. Zero-priced items are valid.
-- Missing/retired/unpublished/hidden-category lines remain removable. Current private product text/media/price is withheld. Reduced stock is shown as a quantity issue. Any unavailable/insufficient/overflowing line suppresses the subtotal rather than showing a misleading partial total.
-- Session references and original-price observations are not checkout authority. Cookie sessions cannot serialize simultaneous cart edits across tabs; the last response wins. This limitation does not grant stock or freeze prices.
+- New variants start at zero. Seeding never invents stock.
+- `AdjustInventory` locks the variant before reading it; stock and movement commit together. A caller may pass its transaction.
+- `initial_stock` is positive and only before the first movement. Restock, return and cancellation are positive; sale is negative; manual adjustment and correction are signed.
+- Retired variants accept cancellation and return restorations and negative corrections only.
+- Out of stock is ≤ 0. Low stock is > 0 and ≤ the store threshold. Dashboard and inventory filters use the same split.
+- Movement history has no edit endpoint. Only owner and staff read or adjust inventory; the actor comes from the session.
 
-## Current order decisions
+## Cart
 
-- Checkout requires guest_checkout for guests or customer_accounts for account checkout. Existing admins can always administer even when both are disabled. These preferences never skip migrations.
-- The server stores a checkout review of each variant, quantity and price. A changed price requires another review even when offsetting price changes leave the same total. Availability and currency are checked again under locks.
-- A unique session-owned checkout key and transactional advisory lock make retries return the same order without duplicate stock deductions. A new reviewed cart gets a fresh key after completion. Retrying the previous completed key does not clear a newly populated cart.
-- The transaction locks products in ascending ID order, then categories, then variants in ascending ID order. Every order item and sale movement commits with the order or none do.
-- Totals are item subtotal minus coupon discount plus shipping. Item discount/tax remains zero. Payment starts unpaid; COD collection and fake settlement never invent fulfillment progress.
-- Items preserve product name, variant description, SKU, unit price, quantity, discount and tax. Customer contact/address/note, currency and order prefix/number are snapshots. Later catalog/account/settings changes cannot reconstruct or rewrite them.
-- Customer/product/variant references are nullable with SET NULL. Order items restrict order deletion. Catalog deletion is still not exposed; inventory history may independently restrict variant deletion.
-- Fulfillment: pending → processing → shipped → completed; processing may complete directly for pickup/local fulfillment. Pending/processing may cancel. No backwards transitions. Payment starts unpaid and is unaffected by fulfillment changes.
-- Customers/guests may cancel only their pending unpaid order. Admins may cancel pending/processing unpaid orders. Orders with recorded returns, or paid, shipped or completed orders, cannot use stock-restoring cancellation and follow the refund and return rules below.
-- CancelOrder locks the order, returns an already-cancelled order unchanged, restores each variant once and marks cancelled in the same transaction. A variant retired after sale still receives its historical restoration; admins may remove its restored balance with a recorded negative correction.
-- The order stores the checkout locale. Confirmation, shipped, and cancellation emails use that snapshot and are sent only after the order transaction commits. A mail failure does not roll back the order or stock, and retrying checkout does not send another confirmation.
-- Guest access uses the most recent guest order in the encrypted two-hour session, or a hashed recovery link from the order email. The link lasts 7 days and can be opened again until it expires. A public UUID, email address, or order number alone never authorizes access. Accounts can access only their own orders. Private cart/checkout/order responses are no-store.
-- Addresses are customer-scoped, at most 20 per account. Editing/deleting a saved address never changes an order snapshot. Guest orders are not automatically attached to later registrations.
+- One session cart for guests and accounts, lasting the two-hour session. A line is one variant; quantity 1–99, at most 12 lines, one currency per cart.
+- Adding or updating checks publication and stock but reserves nothing.
+- Every read recalculates prices on the server. A changed price shows a notice; quantity edits do not silently accept it.
+- Line math uses BigInt; overflow is rejected. Any unavailable, short or overflowing line hides the subtotal instead of showing a partial one.
 
-## Optional-module decisions
+## Checkout and orders
 
-- New optional modules default disabled. Their schema is unconditional. Disabled features reject new mutations but preserve core order history.
-- Total = item subtotal − order-level coupon discount + shipping. Item discount/tax remains zero; the coupon discount is an order snapshot, never falsely allocated to individual lines. Coupon discounts are capped at item subtotal and cannot discount shipping. Percentage uses integer basis points and floors to minor units.
-- Coupons require matching currency, minimum subtotal, active UTC dates and remaining usage. Checkout locks a coupon and records one redemption per order; retries do not consume another use. Cancellation does not release usage, preventing repeated discounted ordering.
-- Shipping uses server rates, currency and explicit destination country codes. Empty rate zones mean all countries; pickup is free; free thresholds use pre-discount item subtotal. Rate/name/amount changes require a new checkout review.
-- Payment selection and coupon/shipping choices live in the session after validation. Frontend totals remain comparison-only. The application adapter creates payment/redemption in the same order transaction; failures roll everything back.
-- Reviewing checkout clears choices for unavailable modules and replaces the prior charge review with current totals. Disabling a module after review still rejects submission until another review; do not silently normalize charges while placing an order.
-- COD is unpaid until owner/staff explicitly records collected cash for processing/shipped/completed orders. Fake settlement is development/test only. No real-provider callback or refund endpoint exists.
-- Settlement locks order then payment, verifies amount/currency/reference, authorizes the actor and accepts each event once. Cancelled orders cannot become paid; paid orders cannot use stock-restoring cancellation. Payment changes never advance fulfillment.
-- Reviews require a completed order owned by the current customer containing the product. One editable review per customer/product; guest orders are not automatically attached. Reviews display escaped text, not HTML.
-- Wishlist is account-scoped, at most 100 products, idempotent per product. Public visibility is reapplied when reading it.
+- Checkout needs `guest_checkout` for guests or `customer_accounts` for accounts. Admins can always administer.
+- The server stores a checkout review of variants, quantities and prices. Any price change, even one that keeps the total, needs another review.
+- A session-owned checkout key plus an advisory lock make retries return the same order without deducting stock twice.
+- Lock order: products ascending, then categories, then variants ascending. Items and sale movements commit with the order or not at all.
+- Total = item subtotal − coupon discount + shipping. Item discount and tax stay zero.
+- Fulfillment: pending → processing → shipped → completed; processing may complete directly. Only pending and processing may cancel. No backwards moves.
+- Customers and guests cancel only their own pending unpaid order; admins may cancel pending or processing unpaid orders. Paid, shipped, completed or returned orders use refunds and returns instead.
+- `CancelOrder` locks the order, returns an already-cancelled order unchanged, then restores each variant (by ascending variant ID) and marks it cancelled in one transaction. A variant retired after the sale still gets its units back.
+- Order mail goes out after commit in the order's locale. A mail failure never rolls back an order.
+- Guests reach their order through the two-hour session or a hashed recovery link (7 days). A UUID, email or number alone grants nothing.
 
-## Refunds, returns, and unpaid expiry
+## Optional modules
 
-Manual refunds and product returns (`RecordRefund`, `RecordReturn`) are implemented. Unpaid-order expiry rules below are not implemented; do not add an expiry endpoint or scheduler until those actions exist. A manual refund or return does not need a payment-provider account.
+- Coupons need matching currency, minimum subtotal, active UTC dates and remaining uses. Checkout locks the coupon and records one redemption per order; cancellation does not return the use. Discounts never exceed the item subtotal or touch shipping; percentages floor to minor units.
+- Shipping uses server rates by destination country (empty = everywhere). Pickup is free; free-above uses the pre-discount subtotal. Rate changes need a new review.
+- Reviewing checkout drops choices for unavailable modules. Disabling a module after review rejects submission until another review.
+- COD stays unpaid until owner or staff records cash on a processing, shipped or completed order. Fake settlement is development and test only.
+- `SettlePayment` locks order then payment, checks amount, currency and reference, authorizes the actor and accepts each event once. Cancelled orders cannot be paid; paid orders cannot use stock-restoring cancellation. Payments never move fulfillment or stock.
 
-### Refunds
+## Refunds, returns and expiry
 
-- A refund records payment only. It does not restore stock and it does not change fulfillment.
-- Only a paid order can be refunded. An unpaid order uses CancelOrder. A cancelled order cannot be refunded.
-- The amount is an integer in the order currency, from 1 minor unit through the order total minus refunds already recorded. There is no conversion and no float.
-- Payment status becomes `refunded` only when the refunded sum equals the order total. A smaller refund leaves the order paid.
-- Each refund has a merchant reference. The same reference on the same order is returned unchanged and does not move the sum twice.
-- Only an owner or a staff member can record a refund. The customer cannot.
-- A manual refund records cash or another off-platform repayment. It does not call Stripe, VNPay, or any other provider. A provider refund waits until that provider exists, and it still has to pass these checks before it changes the order.
-
-### Returns
-
-- A return records inventory only. It is not a refund and it is not CancelOrder.
-- The returned quantity for a line cannot exceed the sold quantity minus quantities already returned for that line.
-- Stock comes back through one recorded positive movement with reason `return`, in the same transaction as the return. A second request for the same return does not move stock again.
-- The variant is locked in the same order used by cancellation. A variant retired after the sale can still take the returned units. A positive manual adjustment of a retired variant stays blocked.
-- A return may exist without a refund, and a refund may exist without a return.
-
-### Unpaid expiry
-
-- Only a pending unpaid order can expire. Paid, processing, shipped, completed, and cancelled orders do not.
-- Expiry calls CancelOrder, so stock is restored once. It does not use a second cancellation path.
-- The merchant chooses the lifetime. An empty lifetime means orders do not expire. No lifetime is active until this is implemented.
-- The decision runs on a schedule, not inside checkout. Add that schedule only when this workload exists, and record why it exists.
-- Guest and account orders use the same rule. Cancellation mail is sent after the transaction commits. A mail failure does not restore the order.
+- **Refund** records repayment only: no stock, no fulfillment change. Only paid, uncancelled orders; amount from 1 minor unit to what remains. The order becomes `refunded` when refunds reach the total. Each merchant reference is accepted once per order. Owner or staff only. Manual refunds call no provider.
+- **Return** records stock only: returned quantity never exceeds sold minus already returned; stock comes back through one `return` movement in the same transaction; the same request never moves stock twice. Variants lock in cancellation order.
+- **Unpaid expiry**: the owner sets a lifetime in hours (blank = never). `ExpireUnpaidOrders` cancels pending unpaid orders older than that through `CancelOrder`, so stock returns once; orders paid, processed or returned meanwhile are skipped under the lock. Cancellation mail follows each commit. It runs in the web process every `ORDER_EXPIRY_MINUTES` (default 15, 0 = off) or by `node ace orders:expire`. Cash-on-delivery orders still pending are included; move them to processing to keep them.

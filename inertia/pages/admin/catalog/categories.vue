@@ -14,13 +14,11 @@ const { t } = useI18n()
 <template>
   <Head :title="t('catalog', 'categories')"><meta name="robots" content="noindex" /></Head>
   <AdminLayout
-    ><HcPanel
-      ><div class="catalog-toolbar">
-        <h1>{{ t('catalog', 'categories') }}</h1>
-        <HcButton variant="quiet" @click="selected = null">{{
-          t('catalog', 'newCategory')
-        }}</HcButton>
-      </div>
+    ><div class="admin-page-head">
+      <h1>{{ t('catalog', 'categories') }}</h1>
+      <HcButton @click="selected = null">{{ t('catalog', 'newCategory') }}</HcButton>
+    </div>
+    <HcPanel>
       <div class="table-scroll">
         <table class="catalog-table">
           <thead>

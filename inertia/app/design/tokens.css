@@ -1,28 +1,67 @@
+/*
+  HoneyChic tokens: ink, warm paper and honey. A modern base with a few
+  nostalgic accents (soft gel controls, titled windows, framed photos).
+  Merchants may override --brand-primary (ink) and --brand-accent (honey);
+  every gradient and tint below is derived from those two.
+*/
 :root {
-  --surface: #f1f3f5;
-  --surface-raised: #ffffff;
-  --surface-inset: #e5eaf0;
-  --border: #c2cbd5;
-  --border-strong: #778a9f;
-  --brand-primary: #172d48;
-  --brand-accent: #e5802e;
-  --brand-accent-soft: #fff0dc;
-  --text-primary: #172d48;
-  --text-muted: #516174;
+  --brand-primary: #2b2621;
+  --brand-accent: #d99a20;
+
+  --ink: #2b2621;
+  --ink-soft: #4a423a;
+  --text-primary: var(--ink);
+  --text-muted: #6d6358;
   --text-on-brand: #ffffff;
-  --success: #217047;
-  --warning: #855500;
-  --danger: #b52e2e;
-  --focus: #1465ac;
-  --radius-control: 6px;
-  --radius-panel: 10px;
-}
-@theme inline {
-  --color-surface: var(--surface);
-  --color-surface-raised: var(--surface-raised);
-  --color-surface-inset: var(--surface-inset);
-  --color-brand-primary: var(--brand-primary);
-  --color-brand-accent: var(--brand-accent);
-  --color-text-primary: var(--text-primary);
-  --color-text-muted: var(--text-muted);
+  --accent-ink: color-mix(in srgb, var(--brand-accent) 55%, #2b1a00);
+  --accent-soft: color-mix(in srgb, var(--brand-accent) 14%, #fffdf8);
+  --accent-glow: color-mix(in srgb, var(--brand-accent) 35%, transparent);
+
+  --page: #f3efe8;
+  --surface: #f8f5ef;
+  --surface-raised: #fffdfa;
+  --surface-inset: #eee8de;
+  --border: #ddd4c5;
+  --border-strong: #b3a793;
+  --hairline: #ebe5da;
+
+  --success: #2f7a3f;
+  --warning: #8a5a00;
+  --danger: #b3312b;
+  --focus: #3b82d6;
+  --focus-glow: 0 0 0 3px rgb(59 130 214 / 35%);
+
+  --font-ui:
+    system-ui, 'Segoe UI Variable Text', 'Segoe UI', -apple-system, 'Helvetica Neue', Arial,
+    sans-serif;
+  --font-display: 'Iowan Old Style', 'Palatino Linotype', Palatino, 'Book Antiqua', Georgia, serif;
+
+  --radius-control: 8px;
+  --radius-panel: 14px;
+  --radius-pill: 999px;
+
+  /* Soft gel: a smooth light-to-base gradient with an inner top highlight. */
+  --gel-ink: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--brand-primary) 80%, #ffffff) 0%,
+    var(--brand-primary) 100%
+  );
+  --gel-honey: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--brand-accent) 62%, #fff6df) 0%,
+    var(--brand-accent) 100%
+  );
+  --gel-silver: linear-gradient(180deg, #ffffff 0%, #f2eee7 100%);
+  --toolbar: rgb(250 248 244 / 88%);
+  --titlebar: linear-gradient(180deg, #faf7f2 0%, #f0ebe2 100%);
+  --source-list: #efeae1;
+
+  --shadow-window: 0 1px 2px rgb(43 38 33 / 8%), 0 12px 32px -18px rgb(43 38 33 / 28%);
+  --shadow-control: inset 0 1px 0 rgb(255 255 255 / 45%), 0 1px 2px rgb(43 38 33 / 16%);
+  --shadow-inset: inset 0 1px 2px rgb(43 38 33 / 10%);
+  --shadow-lift: 0 2px 6px rgb(43 38 33 / 8%), 0 22px 40px -20px rgb(43 38 33 / 38%);
+  --emboss: 0 1px 0 rgb(255 255 255 / 70%);
+  --deboss: 0 -1px 0 rgb(0 0 0 / 20%);
+
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
 }

@@ -34,5 +34,11 @@ export const runnerHooks: Required<Pick<Config, 'setup' | 'teardown'>> = {
 }
 
 export const configureSuite: Config['configureSuite'] = (suite) => {
-  if (suite.name === 'functional') return suite.setup(() => testUtils.httpServer().start())
+  if (suite.name !== 'functional') return
+  suite.setup(async () => {
+    const close = await testUtils.httpServer().start()
+    // Render one page so Vite compiles the SSR bundle before any test's 30 s clock starts.
+    await fetch(`http://${env.get('HOST')}:${env.get('PORT')}/`).catch(() => undefined)
+    return close
+  })
 }

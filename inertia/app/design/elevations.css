@@ -1,11 +1,82 @@
-:root {
-  --elevation-panel: 0 2px 0 rgb(23 45 72 / 12%), 0 8px 20px rgb(23 45 72 / 6%);
-  --elevation-control: inset 0 1px 0 rgb(255 255 255 / 35%), 0 2px 0 rgb(23 45 72 / 22%);
-}
+/* A panel is a small window: paper body, hairline frame, soft drop shadow. */
 .hc-panel {
+  position: relative;
+  min-width: 0;
+  padding: 1.5rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-panel);
+  background: linear-gradient(180deg, #fffefb 0%, #fbf8f2 100%);
+  box-shadow: var(--shadow-window);
+}
+.hc-panel > h1:first-child,
+.hc-panel > h2:first-child {
+  margin-top: 0;
+}
+
+/* Title bar with an embossed caption, used when a panel names itself. */
+.hc-panel--titled {
+  padding: 0;
+  overflow: clip;
+}
+.hc-titlebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  min-height: 2.4rem;
+  margin: 0;
+  padding: 0.35rem 1rem;
+  font-family: var(--font-ui);
+  border-bottom: 1px solid var(--border);
+  background: var(--titlebar);
+  color: var(--ink-soft);
+  font-size: 0.8rem;
+  font-weight: 650;
+  letter-spacing: 0.02em;
+}
+.hc-titlebar :is(h2, h3) {
+  margin: 0;
+  font-family: var(--font-ui);
+  font-size: inherit;
+  letter-spacing: inherit;
+}
+.hc-panel-body {
+  padding: 1.25rem 1.5rem 1.5rem;
+}
+
+/* iOS grouped list: rounded group, hairline rows, label left and control right. */
+.hc-group {
+  margin: 0;
+  padding: 0;
+  list-style: none;
   border: 1px solid var(--border);
   border-radius: var(--radius-panel);
   background: var(--surface-raised);
-  box-shadow: var(--elevation-panel);
-  padding: 1.5rem;
+  box-shadow: 0 1px 0 rgb(255 255 255 / 80%);
+  overflow: clip;
+}
+.hc-group > * {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  min-height: 48px;
+  padding: 0.6rem 1rem;
+}
+.hc-group > * + * {
+  border-top: 1px solid var(--hairline);
+}
+.hc-group-label {
+  margin: 1.25rem 0 0.4rem 0.9rem;
+  color: var(--text-muted);
+  font-size: 0.74rem;
+  font-weight: 650;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.hc-group-note {
+  margin: 0.4rem 0.9rem 0;
+  color: var(--text-muted);
+  font-size: 0.84rem;
+  line-height: 1.45;
 }

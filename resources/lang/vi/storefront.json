@@ -18,7 +18,6 @@
   "searchPlaceholder": "Tên sản phẩm hoặc SKU",
   "details": "Thông tin sản phẩm",
   "chooseOptions": "Chọn tùy chọn",
-  "selection": "Biến thể đã chọn",
   "unavailableCombination": "Tùy chọn này không được bán.",
   "home": "Trang chủ",
   "categoryIntro": "Khám phá những lựa chọn ở từng danh mục.",
@@ -30,5 +29,10 @@
   "facebook": "Facebook",
   "instagram": "Instagram",
   "youtube": "YouTube",
-  "tiktok": "TikTok"
+  "tiktok": "TikTok",
+  "contact": "Liên hệ",
+  "follow": "Theo dõi",
+  "featured": "Nổi bật",
+  "browseBy": "Duyệt theo",
+  "newest": "Mới về"
 }

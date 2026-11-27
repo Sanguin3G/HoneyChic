@@ -9,6 +9,7 @@ export interface StoreSettings {
   timezone: string
   orderPrefix: string
   lowStockThreshold: number
+  unpaidOrderHours: number | null
   customerAccountsEnabled: boolean
   registrationEnabled: boolean
   guestCheckoutEnabled: boolean

@@ -4,7 +4,6 @@ import { brandImageValidator, settingsValidator } from '#core/store/settings_val
 import UpdateStoreSettings from '#core/store/update_store_settings'
 import { mediaUrl, releaseUnusedUploads } from '#core/support/stored_media'
 import { storePublicImage } from '#core/support/store_public_image'
-import { validationMessages } from '#core/support/validation_messages'
 
 export default class SettingsController {
   async edit(ctx: HttpContext) {
@@ -21,6 +20,7 @@ export default class SettingsController {
         timezone: ctx.store.timezone,
         orderPrefix: ctx.store.orderPrefix,
         lowStockThreshold: ctx.store.lowStockThreshold,
+        unpaidOrderHours: ctx.store.unpaidOrderHours,
         customerAccountsEnabled: ctx.store.customerAccountsEnabled,
         registrationEnabled: ctx.store.registrationEnabled,
         guestCheckoutEnabled: ctx.store.guestCheckoutEnabled,
@@ -41,18 +41,14 @@ export default class SettingsController {
 
   async storeImage(ctx: HttpContext) {
     await ctx.bouncer.authorize(manageStore)
-    const { image } = await ctx.request.validateUsing(brandImageValidator, {
-      messagesProvider: validationMessages(ctx.locale),
-    })
+    const { image } = await ctx.request.validateUsing(brandImageValidator)
     const storageKey = await storePublicImage(image)
     return { storageKey, url: mediaUrl(storageKey) }
   }
 
   async update(ctx: HttpContext) {
     await ctx.bouncer.authorize(manageStore)
-    const input = await ctx.request.validateUsing(settingsValidator, {
-      messagesProvider: validationMessages(ctx.locale),
-    })
+    const input = await ctx.request.validateUsing(settingsValidator)
     const previous = [ctx.store.logoKey, ctx.store.faviconKey].filter(
       (key): key is string => key !== null
     )

@@ -4,7 +4,7 @@ import User from '#domains/customers/models/user'
 import CreateProduct from '#domains/catalog/actions/create_product'
 import { loadProduct } from '#domains/catalog/queries/load_product'
 import ProductVariant from '#domains/catalog/models/product_variant'
-import InventoryMovement from '#domains/inventory/models/inventory_movement'
+import InventoryMovement from '#domains/inventory/inventory_movement'
 
 function pageData(html: string) {
   const data = html.match(/<script[^>]*data-page="[^"]*"[^>]*>([\s\S]*?)<\/script>/)?.[1]

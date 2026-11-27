@@ -1,17 +1,12 @@
 import type { HttpContext } from '@adonisjs/core/http'
-import {
-  cartSessionKey,
-  emptyCart,
-  readCartState,
-  removeCartItem,
-} from '#domains/cart/data/cart_state'
-import ChangeCartQuantity from '#domains/cart/actions/change_cart_quantity'
-import { readCart } from '#domains/cart/queries/read_cart'
+import { cartSessionKey, emptyCart, readCartState, removeCartItem } from '#domains/cart/cart_state'
+import ChangeCartQuantity from '#domains/cart/change_cart_quantity'
+import { readCart } from '#domains/cart/read_cart'
 import {
   addCartValidator,
   updateCartValidator,
   cartVariantValidator,
-} from '#domains/cart/validators/cart'
+} from '#domains/cart/validators'
 import { validationMessages } from '#core/support/validation_messages'
 
 export default class CartController {
@@ -21,9 +16,7 @@ export default class CartController {
     })
   }
   async add(ctx: HttpContext) {
-    const input = await ctx.request.validateUsing(addCartValidator, {
-      messagesProvider: validationMessages(ctx.locale),
-    })
+    const input = await ctx.request.validateUsing(addCartValidator)
     const state = await new ChangeCartQuantity().execute(
       readCartState(ctx.session.get(cartSessionKey)),
       { ...input, mode: 'add' },
@@ -40,9 +33,7 @@ export default class CartController {
     return id
   }
   async update(ctx: HttpContext) {
-    const input = await ctx.request.validateUsing(updateCartValidator, {
-      messagesProvider: validationMessages(ctx.locale),
-    })
+    const input = await ctx.request.validateUsing(updateCartValidator)
     const state = await new ChangeCartQuantity().execute(
       readCartState(ctx.session.get(cartSessionKey)),
       { ...input, variantId: await this.variantId(ctx), mode: 'replace' },

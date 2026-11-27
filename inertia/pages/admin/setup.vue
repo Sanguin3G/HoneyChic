@@ -70,7 +70,9 @@ const form = useForm({
             class="hc-help"
           >
             {{ t('modules', 'shippingRateHint') }}
-            <Link href="/admin/module-configuration">{{ t('modules', 'configuration') }}</Link>
+            <Link class="hc-link" href="/admin/modules#configuration">{{
+              t('modules', 'configuration')
+            }}</Link>
           </p>
           <p v-if="form.errors.storeProfile" class="hc-error" role="alert">
             {{ form.errors.storeProfile }}

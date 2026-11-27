@@ -48,8 +48,8 @@ function submit() {
 }
 </script>
 <template>
-  <form @submit.prevent="submit">
-    <div class="catalog-grid">
+  <form class="hc-form product-form" @submit.prevent="submit">
+    <div class="form-grid">
       <HcInput
         id="product-name"
         v-model="form.name"
@@ -101,9 +101,9 @@ function submit() {
     <OptionEditor v-model:form="definition" :errors="form.errors" />
     <VariantEditor v-model:form="definition" :currency="currency" :errors="form.errors" />
     <ImageEditor v-model:form="definition" :errors="form.errors" :initial-urls="initialUrls" />
-    <div class="form-actions">
+    <div class="form-actions sticky-actions">
       <HcButton type="submit" :disabled="form.processing">{{ t('catalog', 'save') }}</HcButton
-      ><Link href="/admin/products">{{ t('catalog', 'back') }}</Link>
+      ><Link class="hc-button" href="/admin/products">{{ t('catalog', 'back') }}</Link>
     </div>
   </form>
 </template>

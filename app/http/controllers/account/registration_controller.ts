@@ -4,7 +4,6 @@ import { mailFrom } from '#core/support/mail_sender'
 import RegisterCustomer from '#domains/customers/actions/register_customer'
 import RequestEmailVerification from '#domains/customers/actions/request_email_verification'
 import { registrationValidator } from '#domains/customers/validators/auth'
-import { validationMessages } from '#core/support/validation_messages'
 import { messagesFor } from '#core/support/translations'
 import { errors } from '@vinejs/vine'
 
@@ -20,9 +19,7 @@ export default class RegistrationController {
 
   async store(ctx: HttpContext) {
     if (!this.allowed(ctx)) return ctx.response.forbidden()
-    const input = await ctx.request.validateUsing(registrationValidator, {
-      messagesProvider: validationMessages(ctx.locale),
-    })
+    const input = await ctx.request.validateUsing(registrationValidator)
     const store = await StoreSetting.findOrFail(1)
     const verify = mailFrom(store) !== null
     let user

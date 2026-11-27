@@ -19,9 +19,7 @@ export default class AddressesController {
     })
   }
   async store(ctx: HttpContext) {
-    const input = await ctx.request.validateUsing(addressValidator, {
-      messagesProvider: validationMessages(ctx.locale),
-    })
+    const input = await ctx.request.validateUsing(addressValidator)
     await new SaveAddress().execute(ctx.auth.getUserOrFail().id, input, ctx.locale)
     return ctx.response.redirect().toPath('/account/addresses')
   }
@@ -29,9 +27,7 @@ export default class AddressesController {
     const { id } = await addressIdValidator.validate(ctx.params, {
       messagesProvider: validationMessages(ctx.locale),
     })
-    const input = await ctx.request.validateUsing(addressValidator, {
-      messagesProvider: validationMessages(ctx.locale),
-    })
+    const input = await ctx.request.validateUsing(addressValidator)
     await new SaveAddress().execute(ctx.auth.getUserOrFail().id, input, ctx.locale, id)
     return ctx.response.redirect().toPath('/account/addresses')
   }

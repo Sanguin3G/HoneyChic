@@ -17,6 +17,7 @@ const env = await Env.create(new URL('../', import.meta.url), {
   APP_URL: Env.schema.string(),
   TRUSTED_PROXIES: Env.schema.string.optional(),
   SEO_INDEXABLE: Env.schema.boolean.optional(),
+  ORDER_EXPIRY_MINUTES: Env.schema.number.optional(),
   LIMITER_STORE: Env.schema.enum(['database', 'memory'] as const),
   SESSION_DRIVER: Env.schema.enum(['cookie'] as const),
   DB_HOST: Env.schema.string({ format: 'host' }),

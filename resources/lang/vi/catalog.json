@@ -69,5 +69,19 @@
   "catalog": "Cửa hàng",
   "imageGallery": "Ảnh sản phẩm",
   "retireStock": "Ghi nhận điều chỉnh số lượng tồn về không trước khi ngừng bán biến thể này.",
-  "pagination": "Phân trang"
+  "pagination": "Phân trang",
+  "exportCsv": "Xuất CSV",
+  "importCsv": "Nhập CSV",
+  "importFile": "Tệp CSV",
+  "importHelp": "Các cột: name, slug, status, category, description, sku, options, price, stock. Các dòng cùng slug tạo thành một sản phẩm; ghi tùy chọn dạng \"Size: M / Color: Red\". Slug đã tồn tại sẽ được bỏ qua. Tồn kho được ghi là tồn kho ban đầu.",
+  "importSubmit": "Nhập sản phẩm",
+  "importCreated": "Đã tạo sản phẩm: {count}",
+  "importSkipped": "Bỏ qua vì slug đã tồn tại: {slugs}",
+  "importFailed": "Chưa nhập gì. Hãy sửa các dòng sau rồi thử lại:",
+  "importRow": "Dòng {row}:",
+  "importHeader": "Dòng đầu tiên phải là tên cột, gồm name, sku và price.",
+  "importTooMany": "Mỗi lần chỉ nhập tối đa 1.000 dòng.",
+  "importOptions": "Mọi dòng của một sản phẩm cần cùng tên tùy chọn, ghi dạng \"Tên: Giá trị / Tên: Giá trị\".",
+  "importSkuTaken": "SKU {sku} đã thuộc về sản phẩm khác.",
+  "importStock": "Tồn kho phải là số nguyên từ 0 trở lên."
 }

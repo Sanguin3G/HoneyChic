@@ -15,13 +15,19 @@ function href(page: number) {
 }
 </script>
 <template>
-  <nav v-if="pagination.lastPage > 1" class="form-actions" :aria-label="t('catalog', 'page')">
-    <Link v-if="pagination.page > 1" :href="href(pagination.page - 1)">{{
-      t('catalog', 'previous')
-    }}</Link>
+  <nav v-if="pagination.lastPage > 1" class="hc-pagination" :aria-label="t('catalog', 'page')">
+    <Link
+      v-if="pagination.page > 1"
+      class="hc-button hc-button--small"
+      :href="href(pagination.page - 1)"
+      >{{ t('catalog', 'previous') }}</Link
+    >
     <span>{{ t('catalog', 'page') }} {{ pagination.page }} / {{ pagination.lastPage }}</span>
-    <Link v-if="pagination.page < pagination.lastPage" :href="href(pagination.page + 1)">{{
-      t('catalog', 'next')
-    }}</Link>
+    <Link
+      v-if="pagination.page < pagination.lastPage"
+      class="hc-button hc-button--small"
+      :href="href(pagination.page + 1)"
+      >{{ t('catalog', 'next') }}</Link
+    >
   </nav>
 </template>
